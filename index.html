@@ -1,0 +1,841 @@
+<html lang="ja"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.1/themes/base/jquery.ui.all.css">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+    <script>
+    var controller_url = 'apply';
+    </script>
+    
+    <link rel="icon" href="./favicon.ico" type="image/x-icon">
+    
+    <script language="Javascript" src="./code.js"></script>
+        <!-- Bootstrap CSS（CDN版） -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    
+        <!-- jQuery & jQuery UI（CDN版） -->
+        <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+        <!-- Bootstrap JS（CDN版） -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="./style.css" type="text/css">
+    
+    <title>エントリーシート</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    </head>
+    <body cz-shortcut-listen="true">
+    <form id="MainForm" name="MainForm" method="post" enctype="multipart/form-data" action=""> 
+    
+    <input type="hidden" id="status" name="status" value="">
+    <input type="hidden" id="is_open" name="is_open" value="1">
+    <input type="hidden" id="ticket" name="ticket" value="">
+    <input type="text" name="dummy_text_to_avoid_submitting_by_pushing_enter_key" style="position:absolute;visibility:hidden"> 
+    
+    <div class="main-content">
+    
+    
+    <script>
+    const first_test_data = [];
+    const second_test_data = [];
+    const validationErrors = [];
+    </script>
+    
+    <div class="Form">
+        <!-- hiden-field等 -->
+        <input name="dummy_text_to_avoid_submitting_by_pushing_enter_key" style="position:absolute;visibility:hidden" type="text">
+        
+        <fieldset>
+            <legend>あなたについて</legend>
+            <!-- 氏名(漢字) -->
+            <div class="Form-Item">
+                <p class="Form-Item-Label">
+                    氏名(漢字)
+                </p>
+                <!-- 姓 -->
+                <div class="Form-Item-Input-Wrapper">
+                    <input type="text" id="name_1" name="name_1" value="" class="Form-Item-Input" placeholder="東進" autocomplete="family-name" required="">			</div>
+                <!-- 名 -->
+                <div class="Form-Item-Input-Wrapper">
+                    <input type="text" id="name_2" name="name_2" value="" class="Form-Item-Input" placeholder="太郎" autocomplete="given-name" required="">			</div>
+            </div>
+    
+            <!-- 氏名(カナ) -->
+            <div class="Form-Item">
+                <p class="Form-Item-Label">
+                    氏名(カナ)
+                </p>
+                <!-- セイ -->
+                <div class="Form-Item-Input-Wrapper">
+                    <input type="text" id="name_1_kana" name="name_1_kana" value="" class="Form-Item-Input" placeholder="ﾄｳｼﾝ" pattern="[ｦ-ﾟ\s]+" title="半角カタカナで入力してください" required="">			</div>
+                <!-- メイ -->
+                <div class="Form-Item-Input-Wrapper">
+                    <input type="text" id="name_2_kana" name="name_2_kana" value="" class="Form-Item-Input" placeholder="ﾀﾛｳ" pattern="[ｦ-ﾟ\s]+" title="半角カタカナで入力してください" required="">			</div>
+            </div>
+    
+            <script>
+                function toHalfWidthKana(str) {
+                    // 1. ひらがなを全角カタカナに変換する
+                    //   （Unicode上で「ひらがな」(3040-309F)を「カタカナ」(30A0-30FF)へシフト）
+                    str = str.replace(/[\u3041-\u3096]/g, function(match) {
+                        // ひらがなのコードポイントをカタカナのコードポイントにシフト
+                        const code = match.charCodeAt(0) + 0x60;
+                        return String.fromCharCode(code);
+                    });
+    
+                    // 2. 全角カタカナを半角カタカナに変換するマッピング
+                    const kanaMap = {
+                        'ガ': 'ｶﾞ', 'ギ': 'ｷﾞ', 'グ': 'ｸﾞ', 'ゲ': 'ｹﾞ', 'ゴ': 'ｺﾞ',
+                        'ザ': 'ｻﾞ', 'ジ': 'ｼﾞ', 'ズ': 'ｽﾞ', 'ゼ': 'ｾﾞ', 'ゾ': 'ｿﾞ',
+                        'ダ': 'ﾀﾞ', 'ヂ': 'ﾁﾞ', 'ヅ': 'ﾂﾞ', 'デ': 'ﾃﾞ', 'ド': 'ﾄﾞ',
+                        'バ': 'ﾊﾞ', 'ビ': 'ﾋﾞ', 'ブ': 'ﾌﾞ', 'ベ': 'ﾍﾞ', 'ボ': 'ﾎﾞ',
+                        'パ': 'ﾊﾟ', 'ピ': 'ﾋﾟ', 'プ': 'ﾌﾟ', 'ペ': 'ﾍﾟ', 'ポ': 'ﾎﾟ',
+                        'ヴ': 'ｳﾞ', 'ッ': 'ｯ', 'ャ': 'ｬ', 'ュ': 'ｭ', 'ョ': 'ｮ',
+                        'ァ': 'ｧ', 'ィ': 'ｨ', 'ゥ': 'ｩ', 'ェ': 'ｪ', 'ォ': 'ｫ',
+                        'ー': 'ｰ', '。': '｡', '、': '､', '「': '｢', '」': '｣',
+                        'ヲ': 'ｦ', 'ン': 'ﾝ', 'カ': 'ｶ', 'キ': 'ｷ', 'ク': 'ｸ',
+                        'ケ': 'ｹ', 'コ': 'ｺ', 'サ': 'ｻ', 'シ': 'ｼ', 'ス': 'ｽ',
+                        'セ': 'ｾ', 'ソ': 'ｿ', 'タ': 'ﾀ', 'チ': 'ﾁ', 'ツ': 'ﾂ',
+                        'テ': 'ﾃ', 'ト': 'ﾄ', 'ナ': 'ﾅ', 'ニ': 'ﾆ', 'ヌ': 'ﾇ',
+                        'ネ': 'ﾈ', 'ノ': 'ﾉ', 'ハ': 'ﾊ', 'ヒ': 'ﾋ', 'フ': 'ﾌ',
+                        'ヘ': 'ﾍ', 'ホ': 'ﾎ', 'マ': 'ﾏ', 'ミ': 'ﾐ', 'ム': 'ﾑ',
+                        'メ': 'ﾒ', 'モ': 'ﾓ', 'ヤ': 'ﾔ', 'ユ': 'ﾕ', 'ヨ': 'ﾖ',
+                        'ラ': 'ﾗ', 'リ': 'ﾘ', 'ル': 'ﾙ', 'レ': 'ﾚ', 'ロ': 'ﾛ',
+                        'ワ': 'ﾜ', 'ヰ': 'ｲ', 'ヱ': 'ｴ', 'ヮ': 'ﾜ', 'ア': 'ｱ',
+                        'イ': 'ｲ', 'ウ': 'ｳ', 'エ': 'ｴ', 'オ': 'ｵ'
+                    };
+    
+                    // 3. 全角カタカナを半角カタカナに置換
+                    return str.replace(/[\u30A1-\u30FF]/g, function(match) {
+                        return kanaMap[match] || match; // 対応する変換があれば変換
+                    });
+                }
+
+                // IME対応のフリガナ入力処理を初期化
+                document.addEventListener('DOMContentLoaded', function() {
+                    // フリガナフィールドのIME対応処理
+                    const kanaFields = ['name_1_kana', 'name_2_kana'];
+                    
+                    kanaFields.forEach(function(fieldId) {
+                        const field = document.getElementById(fieldId);
+                        if (field) {
+                            let isComposing = false;
+                            
+                            // IME変換開始
+                            field.addEventListener('compositionstart', function() {
+                                isComposing = true;
+                            });
+                            
+                            // IME変換終了時に変換処理を実行
+                            field.addEventListener('compositionend', function(e) {
+                                isComposing = false;
+                                this.value = toHalfWidthKana(this.value);
+                            });
+                            
+                            // 通常の入力（IME使用以外）の場合
+                            field.addEventListener('input', function(e) {
+                                if (!isComposing) {
+                                    this.value = toHalfWidthKana(this.value);
+                                }
+                            });
+                            
+                            // フォーカスが外れた時にも変換処理を実行（安全のため）
+                            field.addEventListener('blur', function() {
+                                this.value = toHalfWidthKana(this.value);
+                            });
+                        }
+                    });
+                });
+            </script>
+    
+            <!-- 性別 -->
+            <div class="Form-Item">
+                <p class="Form-Item-Label">
+                    性別
+                </p>
+                <div class="Form-Item-Input-Wrapper">
+                    <select name="id_sex" class="Form-Item-Input" id="id_sex">
+    <option value="" selected="selected">--選択してください--</option>
+    <option value="1">男性</option>
+    <option value="2">女性</option>
+    </select>
+                </div>
+            </div>
+    
+            <!-- 生年月日 -->
+            <div class="Form-Item">
+                <p class="Form-Item-Label">
+                    生年月日
+                </p>
+                <div class="Form-Item-Input-Wrapper">
+                    <input type="date" name="birthday" value="" id="birthday" class="Form-Item-Input" autocomplete="bday" required="1">
+                </div>
+            </div>
+    
+            <!-- 郵便番号入力 -->
+            <div class="Form-Item">
+                <p class="Form-Item-Label">
+                    郵便番号
+                </p>
+                <div class="Form-Item-Input-Wrapper">
+                    <input type="text" id="address_num" name="address_num" value="" class="Form-Item-Input" maxlength="7" placeholder="1130033" autocomplete="postal-code" wide="auto" required="">
+                    <button type="button" id="search_address_btn" class="Form-Button" style="margin-left: 10px;">住所検索</button>
+                    <small>
+                        ※郵便番号はハイフンなしの半角数字7桁で入力してください
+                    </small>
+                    <div id="postal_code_error" class="error-message" style="display: none; color: red; font-size: 12px; margin-top: 5px;"></div>
+                </div>
+            </div>
+    
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    const addressNumInput = document.getElementById('address_num');
+                    const searchBtn = document.getElementById('search_address_btn');
+                    const errorDiv = document.getElementById('postal_code_error');
+
+                    // 郵便番号検索処理を関数化
+                    function searchPostalCode() {
+                        const postalCode = addressNumInput.value.trim();
+                        
+                        // エラーメッセージをクリア
+                        hidePostalCodeError();
+                        
+                        // 郵便番号のフォーマットチェック（半角数字7桁）
+                        if (!/^\d{7}$/.test(postalCode)) {
+                            showPostalCodeError("郵便番号は半角数字7桁で入力してください。");
+                            return;
+                        }
+
+                        // 郵便番号検索APIを使用
+                        const url = `https://zipcloud.ibsnet.co.jp/api/search?zipcode=${postalCode}`;
+                        searchBtn.textContent = "検索中...";
+                        searchBtn.disabled = true;
+                        
+                        fetch(url)
+                        .then(response => response.json())
+                        .then(data => {
+                            // APIが正常に動作している場合（statusが200）のみ、結果チェック
+                            if (data.status === 200 && data.results && data.results.length > 0) {
+                                const result = data.results[0];
+                                document.getElementById("address_str").value = `${result.address1}${result.address2}${result.address3}`;
+                                showPostalCodeError("住所が自動入力されました。", "green");
+                            } else {
+                                // 結果が存在しない場合、もしくは status が 200 以外の場合はエラー表示
+                                showPostalCodeError(data.message || "該当する住所が見つかりませんでした。");
+                                document.getElementById("address_str").value = "";
+                            }
+                        })
+                        .catch(error => {
+                            console.error("エラーが発生しました:", error);
+                            showPostalCodeError("住所検索に失敗しました。時間をおいて再度お試しください。");
+                        })
+                        .finally(() => {
+                            searchBtn.textContent = "住所検索";
+                            searchBtn.disabled = false;
+                        });
+                    }
+
+                    // エラーメッセージ表示
+                    function showPostalCodeError(message, color = "red") {
+                        errorDiv.textContent = message;
+                        errorDiv.style.color = color;
+                        errorDiv.style.display = "block";
+                    }
+
+                    // エラーメッセージ非表示
+                    function hidePostalCodeError() {
+                        errorDiv.style.display = "none";
+                    }
+
+                    // 郵便番号入力時のバリデーション（自動変換なし）
+                    addressNumInput.addEventListener('input', function () {
+                        const value = this.value;
+                        
+                        // 全角数字や不正な文字が含まれている場合は警告
+                        if (/[０-９]/.test(value)) {
+                            showPostalCodeError("全角数字が含まれています。半角数字で入力してください。");
+                        } else if (/[^\d]/.test(value)) {
+                            showPostalCodeError("数字以外の文字が含まれています。半角数字のみで入力してください。");
+                        } else if (value.length > 0 && value.length < 7) {
+                            showPostalCodeError("郵便番号は7桁で入力してください。");
+                        } else if (value.length === 7) {
+                            hidePostalCodeError();
+                        } else {
+                            hidePostalCodeError();
+                        }
+                    });
+
+                    // フォーカスが外れた時のバリデーション
+                    addressNumInput.addEventListener('blur', function () {
+                        const value = this.value.trim();
+                        if (value.length > 0 && !/^\d{7}$/.test(value)) {
+                            showPostalCodeError("郵便番号は半角数字7桁で入力してください。");
+                        }
+                    });
+
+                    // 住所検索ボタンのクリックイベント
+                    searchBtn.addEventListener('click', searchPostalCode);
+
+                    // Enterキーでも検索実行
+                    addressNumInput.addEventListener('keypress', function(e) {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            searchPostalCode();
+                        }
+                    });
+                });
+            </script>
+    
+            <!-- 住所入力 -->
+            <div class="Form-Item">
+                <p class="Form-Item-Label">
+                    住所
+                </p>
+                <div class="Form-Item-Input-Wrapper">
+                    <input type="text" id="address_str" name="address_str" value="" class="Form-Item-Input" placeholder="住所検索ボタンで自動入力、または手動で入力してください">			</div>
+            </div>
+    
+            <!-- 建物名入力 -->
+            <div class="Form-Item">
+                <p class="Form-Item-Label">
+                    建物名
+                </p>
+                <div class="Form-Item-Input-Wrapper">
+                    <input type="text" id="address_str_building" name="address_str_building" value="" class="Form-Item-Input" placeholder="ナガセ本郷ビル７階">			</div>
+            </div>
+    
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    function toFullWidth(str) {
+                        return str.replace(/[0-9-]/g, function(s) {
+                            return String.fromCharCode(s.charCodeAt(0) + 65248);
+                        });
+                    }
+    
+                    function convertInputToFullWidth(event) {
+                        event.target.value = toFullWidth(event.target.value);
+                    }
+    
+                    document.getElementById("address_str").addEventListener("input", convertInputToFullWidth);
+                    document.getElementById("address_str_building").addEventListener("input", convertInputToFullWidth);
+                });
+            </script>
+    
+            <!-- 電話番号(自宅) -->
+            <div class="Form-Item">
+                <p class="Form-Item-Label">
+                    電話番号(自宅)
+                </p>
+                <div class="Form-Item-Input-Wrapper">
+                    <input type="text" id="tel_home" name="tel_home" value="" class="Form-Item-Input" placeholder="03-1234-5678">				<small>※ハイフン区切り</small>
+                </div>
+            </div>
+    
+            <script>
+                // 電話番号の全角数字と全角ハイフンを半角に変換し、
+                // 合計13文字以上の入力を防ぐ
+                document.getElementById('tel_home')?.addEventListener('input', function () {
+                    // まずは全角→半角変換
+                    let newVal = this.value
+                        .replace(/[０-９]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xFEE0))
+                        .replace(/－/g, '-'); // 全角ハイフンを半角ハイフンに変換
+                    // 入力値が12文字以上の場合は、11文字目までに切り詰める
+                    if(newVal.length >= 13) {
+                        alert("電話番号は12文字まで入力可能です。");
+                        newVal = newVal.slice(0, 12);
+                    }
+                    this.value = newVal;
+                });
+            </script>
+    
+    
+            <!-- 電話番号(携帯) -->
+            <div class="Form-Item">
+                <p class="Form-Item-Label">
+                    電話番号(携帯)
+                </p>
+                <div class="Form-Item-Input-Wrapper">
+                    <input type="text" id="tel_mobile" name="tel_mobile" value="" class="Form-Item-Input" placeholder="090-1234-5678" required="">				<small style="color:gray; display:block;">※ハイフン区切り</small>
+                </div>
+            </div>
+    
+            <script>
+                // 電話番号の全角数字と全角ハイフンを半角に変換し、
+                // 合計13文字以上の入力を防ぐ
+                document.getElementById('tel_mobile')?.addEventListener('input', function () {
+                    // まずは全角→半角変換
+                    let newVal = this.value
+                        .replace(/[０-９]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xFEE0))
+                        .replace(/－/g, '-'); // 全角ハイフンを半角ハイフンに変換
+                    // 入力値が13文字以上の場合は、11文字目までに切り詰める
+                    if(newVal.length >= 14) {
+                        alert("電話番号は13文字まで入力可能です。");
+                        newVal = newVal.slice(0, 13);
+                    }
+                    this.value = newVal;
+                });
+            </script>
+        </fieldset>
+    
+        <fieldset>
+            <legend>大学について</legend>
+            <div class="exclusion-note">
+                短期大学・専門学校在籍・卒業の方は対象外です。
+            </div>
+            <!-- 大学名 -->
+            <div class="Form-Item">
+                <p class="Form-Item-Label">
+                    大学
+                </p>
+                <div class="Form-Item-Input-Wrapper">
+                    <input type="text" id="daigaku" name="daigaku" value="" class="Form-Item-Input" placeholder="東京大学" required="">				<small>※最後に「大学」と付けて入力してください。</small>
+                </div>
+            </div>
+    
+            <!-- 学部 -->
+            <div class="Form-Item">
+                <p class="Form-Item-Label">
+                    学部
+                </p>
+                <div class="Form-Item-Input-Wrapper">
+                    <input type="text" id="gakubu" name="gakubu" value="" class="Form-Item-Input" placeholder="理学部" required="">				<small>※最後に「学部」と付けて入力してください。</small>
+                </div>
+            </div>
+    
+            <!-- 学科 -->
+            <div class="Form-Item">
+                <p class="Form-Item-Label">
+                    学科
+                </p>
+                <div class="Form-Item-Input-Wrapper">
+                    <input type="text" id="gakka" name="gakka" value="" class="Form-Item-Input" placeholder="数学科" required="">				<small>※最後に「学科」と付けて入力してください。</small>
+                </div>
+            </div>
+    
+            <!-- 大学入学月日 -->
+            <div class="Form-Item">
+                <p class="Form-Item-Label">
+                    大学入学月日
+                </p>
+                <div class="Form-Item-Input-Wrapper">
+                    <input type="date" name="daigaku_nyugaku_bi" value="" class="Form-Item-Input" required="1">
+                </div>
+            </div>
+    
+            <!-- 大学受験区分 -->
+            <div class="Form-Item">
+                <p class="Form-Item-Label">
+                    大学受験区分
+                </p>
+                <div class="Form-Item-Input-Wrapper">
+                    <select name="daigaku_juken_kubun" class="Form-Item-Input" id="daigaku_juken_kubun" required="">
+    <option value="" selected="selected">--選択してください--</option>
+    <option value="1">一般</option>
+    <option value="2">内部進学</option>
+    <option value="3">指定校推薦</option>
+    <option value="4">AO</option>
+    <option value="5">帰国子女</option>
+    </select>
+                </div>
+            </div>
+    
+            <!-- 大学院名 -->
+            <div class="Form-Item">
+                <p class="Form-Item-Label">
+                    大学院
+                </p>
+                <div class="Form-Item-Input-Wrapper">
+                    <input type="text" id="daigakuin" name="daigakuin" value="" class="Form-Item-Input" placeholder="東京大学大学院">				<small>※最後に「大学大学院」と付けて入力してください。</small>
+                </div>
+            </div>
+    
+            <!-- 研究科 -->
+            <div class="Form-Item">
+                <p class="Form-Item-Label">
+                    研究科
+                </p>
+                <div class="Form-Item-Input-Wrapper">
+                    <input type="text" id="kenkyuka" name="kenkyuka" value="" class="Form-Item-Input" placeholder="理学系研究科">				<small>※最後に「研究科」と付けて入力してください。</small>
+                </div>
+            </div>
+    
+            <!-- 専攻 -->
+            <div class="Form-Item">
+                <p class="Form-Item-Label">
+                    専攻
+                </p>
+                <div class="Form-Item-Input-Wrapper">
+                    <input type="text" id="senkou" name="senkou" value="" class="Form-Item-Input" placeholder="物理学専攻">				<small>※最後に「専攻」と付けて入力してください。</small>
+                </div>
+            </div>
+    
+            <!-- 学年 -->
+            <div class="Form-Item">
+                <p class="Form-Item-Label">
+                    学年
+                </p>
+                <div class="Form-Item-Input-Wrapper">
+                    <select name="school_year" class="Form-Item-Input" required="" id="school_year">
+    <option value="" selected="selected">--選択してください--</option>
+    <option value="1">1</option>
+    <option value="2">2</option>
+    <option value="3">3</option>
+    <option value="4">4</option>
+    <option value="5">5</option>
+    <option value="6">6</option>
+    <option value="101">修士1</option>
+    <option value="102">修士2</option>
+    <option value="200">博士</option>
+    <option value="900">既卒</option>
+    </select>
+                </div>
+            </div>
+    
+            <!-- 大学で所属している部活・サークル・団体 -->
+            <div class="Form-Item">
+                <p class="Form-Item-Label">
+                    大学で所属している部活・サークル・団体
+                </p>
+                <div class="Form-Item-Input-Wrapper">
+                    <input type="text" id="daigaku_org" name="daigaku_org" value="" class="Form-Item-Input">			</div>
+                        </div>
+
+        </fieldset>
+        
+        </fieldset>
+    
+        
+    
+                
+    
+            
+    
+            <!-- 大学受験時の東進在籍歴（複数選択可） -->
+            <div class="Form-Item">
+                <p class="Form-Item-Label">
+                    東進在籍歴<br>(複数選択可)
+                </p>
+                <!-- ここでチェックボックス群を縦に並べるコンテナ -->
+                <div class="Form-Item-Right">
+                    <div class="form-check"><input type="checkbox" name="daigaku_juken_toshin_zaisekireki_1" value="1" id="daigaku_juken_toshin_zaisekireki_1" style="" class="form-check-input">
+    <label for="daigaku_juken_toshin_zaisekireki_1">東進ハイスクール</label>&nbsp;</div><div class="form-check"><input type="checkbox" name="daigaku_juken_toshin_zaisekireki_2" value="1" id="daigaku_juken_toshin_zaisekireki_2" style="" class="form-check-input">
+    <label for="daigaku_juken_toshin_zaisekireki_2">東進衛星予備校</label>&nbsp;</div><div class="form-check"><input type="checkbox" name="daigaku_juken_toshin_zaisekireki_3" value="1" id="daigaku_juken_toshin_zaisekireki_3" style="" class="form-check-input">
+    <label for="daigaku_juken_toshin_zaisekireki_3">東大特進</label>&nbsp;</div><div class="form-check"><input type="checkbox" name="daigaku_juken_toshin_zaisekireki_9" value="1" id="daigaku_juken_toshin_zaisekireki_9" style="" class="form-check-input">
+    <label for="daigaku_juken_toshin_zaisekireki_9">在籍なし</label>&nbsp;</div>
+                    <small style="color: gray;">
+                        ※複数の選択肢にチェックを入れることができます。
+                    </small>
+                </div>
+            </div>
+    
+            <!-- 通学していた校舎名（東進在籍有の方のみ） -->
+            <div class="Form-Item">
+                <p class="Form-Item-Label">
+                    通学していた校舎名(東進在籍有の方のみ)
+                </p>
+                <div class="Form-Item-Input-Wrapper">
+                    <input type="text" id="daigaku_juken_toshin_koushamei" name="daigaku_juken_toshin_koushamei" value="" class="Form-Item-Input" placeholder="例: ○○校">			</div>
+            </div>
+    
+            <!-- 大学受験時に東進以外で通学していた塾・予備校名 -->
+            <div class="Form-Item">
+                <p class="Form-Item-Label">
+                    大学受験時に東進以外で通学していた塾・予備校名
+                </p>
+                <div class="Form-Item-Input-Wrapper">
+                    <input type="text" id="daigaku_juken_toshin_igai_jukumei" name="daigaku_juken_toshin_igai_jukumei" value="" class="Form-Item-Input" placeholder="例: ○○予備校">			</div>
+            </div>
+        </fieldset>
+    
+        <fieldset>
+            <legend>中高について</legend>
+            <!-- 出身高校 -->
+            <fieldset>
+                <legend>高校について</legend>
+    
+                <div class="Form-Item">
+                    <p class="Form-Item-Label">
+                        都道府県等
+                    </p>
+                    <div class="Form-Item-Input-Wrapper">
+                        <select name="koukou_pref" class="Form-Item-Input" id="koukou_pref" required="">
+    <option value="" selected="selected">--選択してください--</option>
+    <optgroup label="北海道・東北">
+    <option value="北海道">北海道</option>
+    <option value="青森県">青森県</option>
+    <option value="岩手県">岩手県</option>
+    <option value="宮城県">宮城県</option>
+    <option value="秋田県">秋田県</option>
+    <option value="山形県">山形県</option>
+    <option value="福島県">福島県</option>
+    </optgroup>
+    <optgroup label="関東">
+    <option value="茨城県">茨城県</option>
+    <option value="栃木県">栃木県</option>
+    <option value="群馬県">群馬県</option>
+    <option value="埼玉県">埼玉県</option>
+    <option value="千葉県">千葉県</option>
+    <option value="東京都">東京都</option>
+    <option value="神奈川県">神奈川県</option>
+    </optgroup>
+    <optgroup label="中部">
+    <option value="新潟県">新潟県</option>
+    <option value="富山県">富山県</option>
+    <option value="石川県">石川県</option>
+    <option value="福井県">福井県</option>
+    <option value="山梨県">山梨県</option>
+    <option value="長野県">長野県</option>
+    <option value="岐阜県">岐阜県</option>
+    <option value="静岡県">静岡県</option>
+    <option value="愛知県">愛知県</option>
+    </optgroup>
+    <optgroup label="近畿">
+    <option value="三重県">三重県</option>
+    <option value="滋賀県">滋賀県</option>
+    <option value="京都府">京都府</option>
+    <option value="大阪府">大阪府</option>
+    <option value="兵庫県">兵庫県</option>
+    <option value="奈良県">奈良県</option>
+    <option value="和歌山県">和歌山県</option>
+    </optgroup>
+    <optgroup label="中国・四国">
+    <option value="鳥取県">鳥取県</option>
+    <option value="島根県">島根県</option>
+    <option value="岡山県">岡山県</option>
+    <option value="広島県">広島県</option>
+    <option value="山口県">山口県</option>
+    <option value="徳島県">徳島県</option>
+    <option value="香川県">香川県</option>
+    <option value="愛媛県">愛媛県</option>
+    <option value="高知県">高知県</option>
+    </optgroup>
+    <optgroup label="九州・沖縄">
+    <option value="福岡県">福岡県</option>
+    <option value="佐賀県">佐賀県</option>
+    <option value="長崎県">長崎県</option>
+    <option value="熊本県">熊本県</option>
+    <option value="大分県">大分県</option>
+    <option value="宮崎県">宮崎県</option>
+    <option value="鹿児島県">鹿児島県</option>
+    <option value="沖縄県">沖縄県</option>
+    </optgroup>
+    <optgroup label="その他">
+    <option value="海外">海外</option>
+    </optgroup>
+    </select>
+                    </div>
+                    <small>※海外の高校を卒業された方は「海外」を選択してください。</small>
+                </div>
+    
+                <div class="Form-Item">
+                    <p class="Form-Item-Label">
+                        区分
+                    </p>
+                    <div class="Form-Item-Input-Wrapper">
+                        <select name="koukou_kubun" class="Form-Item-Input" id="koukou_kubun" required="">
+    <option value="" selected="selected">--選択してください--</option>
+    <option value="1">国立</option>
+    <option value="2">公立</option>
+    <option value="3">私立</option>
+    <option value="0">その他</option>
+    </select>
+                    </div>
+                    <small>※大学入学資格検定・高卒認定試験等を受験された方は「その他」を選択してください。</small>
+                </div>
+    
+                <div class="Form-Item">
+                    <p class="Form-Item-Label">
+                        校名
+                    </p>
+                    <div class="Form-Item-Input-Wrapper">
+                        <input type="text" id="koukou_name" name="koukou_name" value="" class="Form-Item-Input" placeholder="〇〇高校" required="">				</div>
+                    <small>※大学入学資格検定・高卒認定試験等を受験された方は試験名を入力してください。</small>
+                </div>
+            </fieldset>
+    
+            <fieldset>
+                <legend>中学について</legend>
+    
+                <!-- 出身中学 -->
+    
+                <div class="Form-Item">
+                    <p class="Form-Item-Label">
+                        受験有無
+                    </p>
+                    <div class="Form-Item-Input-Wrapper">
+                        <select name="chugaku_juken_umu" class="Form-Item-Input" id="chugaku_juken_umu" required="">
+    <option value="" selected="selected">--選択してください--</option>
+    <option value="1">受験した</option>
+    <option value="2">受験していない</option>
+    </select>
+                    </div>
+                </div>
+    
+                <div class="Form-Item">
+                    <p class="Form-Item-Label">
+                        出身中学
+                    </p>
+                    <div class="Form-Item-Input-Wrapper">
+                        <input type="text" id="chugaku_name" name="chugaku_name" value="" class="Form-Item-Input" placeholder="〇〇中学校" required="">				</div>
+                </div>
+            </fieldset>
+    
+        </fieldset>
+    
+        
+    
+        <!-- 確認ボタン -->
+        <div class="button-container">
+            <button class="submit-button" type="button" data-theme="e" onclick="Javascript:showConfirmation()">
+                確認する
+            </button>
+        </div>
+    </div>
+
+    <!-- 確認画面 -->
+    <div id="confirmationScreen" style="display: none;">
+        <h2 style="text-align: center; color: #333; border-bottom: 2px solid #ccc; padding-bottom: 10px;">入力内容確認</h2>
+        
+        <div class="confirmation-content" style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <div id="confirmationData"></div>
+        </div>
+
+        <div class="button-container" style="text-align: center; margin-top: 20px;">
+            <button class="submit-button" type="button" style="background: #6c757d; margin-right: 10px;" onclick="Javascript:backToInput()">
+                戻る
+            </button>
+            <button class="submit-button" type="button" data-theme="e" onclick="Javascript:downloadCSV()">
+                csvとして出力
+            </button>
+        </div>
+    </div>
+
+    </div><!-- page end -->
+    <div id="footer">
+        </div>
+    </form>
+
+    <script>
+        // 確認画面表示機能
+        function showConfirmation() {
+            // 入力内容を収集
+            const formData = collectFormData();
+            
+            // 確認画面のHTMLを生成
+            const confirmationHTML = generateConfirmationHTML(formData);
+            
+            // 確認画面に表示
+            document.getElementById('confirmationData').innerHTML = confirmationHTML;
+            
+            // 画面切り替え
+            document.querySelector('.Form').style.display = 'none';
+            document.getElementById('confirmationScreen').style.display = 'block';
+        }
+
+        // 入力画面に戻る
+        function backToInput() {
+            document.getElementById('confirmationScreen').style.display = 'none';
+            document.querySelector('.Form').style.display = 'block';
+        }
+
+        // フォームデータ収集
+        function collectFormData() {
+            return {
+                '姓': document.getElementById('name_1')?.value || '',
+                '名': document.getElementById('name_2')?.value || '',
+                '姓フリガナ': document.getElementById('name_1_kana')?.value || '',
+                '名フリガナ': document.getElementById('name_2_kana')?.value || '',
+                '性別': document.getElementById('id_sex')?.value || '',
+                '生年月日': document.getElementById('birthday')?.value || '',
+                '郵便番号': document.getElementById('address_num')?.value || '',
+                '住所': document.getElementById('address_str')?.value || '',
+                '建物名': document.getElementById('address_str_building')?.value || '',
+                '電話番号(自宅)': document.getElementById('tel_home')?.value || '',
+                '電話番号(携帯)': document.getElementById('tel_mobile')?.value || '',
+                '大学': document.getElementById('daigaku')?.value || '',
+                '学部': document.getElementById('gakubu')?.value || '',
+                '学科': document.getElementById('gakka')?.value || '',
+                '大学入学月日': document.getElementById('daigaku_nyugaku_bi')?.value || '',
+                '大学受験区分': document.getElementById('daigaku_juken_kubun')?.value || '',
+                '大学院': document.getElementById('daigakuin')?.value || '',
+                '研究科': document.getElementById('kenkyuka')?.value || '',
+                '専攻': document.getElementById('senkou')?.value || '',
+                '学年': document.getElementById('school_year')?.value || '',
+                '大学で所属している部活・サークル・団体': document.getElementById('daigaku_org')?.value || '',
+                '高校都道府県等': document.getElementById('koukou_pref')?.value || '',
+                '高校区分': document.getElementById('koukou_kubun')?.value || '',
+                '高校校名': document.getElementById('koukou_name')?.value || '',
+                '中学受験有無': document.getElementById('chugaku_juken_umu')?.value || '',
+                '出身中学': document.getElementById('chugaku_name')?.value || '',
+                '作成日時': new Date().toLocaleString('ja-JP')
+            };
+        }
+
+        // 確認画面HTML生成
+        function generateConfirmationHTML(data) {
+            let html = '<table style="width: 100%; border-collapse: collapse;">';
+            
+            for (const [key, value] of Object.entries(data)) {
+                if (value && value.trim() !== '') {
+                    html += `
+                        <tr style="border-bottom: 1px solid #ddd;">
+                            <td style="padding: 8px; font-weight: bold; background: #f1f1f1; width: 30%;">${key}</td>
+                            <td style="padding: 8px;">${value}</td>
+                        </tr>
+                    `;
+                }
+            }
+            
+            html += '</table>';
+            return html;
+        }
+
+        // CSVダウンロード機能
+        async function downloadCSV() {
+            // フォームデータを収集
+            const formData = collectFormData();
+
+            // CSVヘッダーとデータを作成
+            const headers = Object.keys(formData);
+            const values = Object.values(formData);
+            
+            // CSVコンテンツを作成（BOM付きUTF-8）
+            let csvContent = '\uFEFF'; // BOM
+            csvContent += headers.map(header => `"${header}"`).join(',') + '\n';
+            csvContent += values.map(value => `"${value.toString().replace(/"/g, '""')}"`).join(',') + '\n';
+
+            // ファイル名生成
+            const lastName = formData['姓'] || 'unnamed';
+            const firstName = formData['名'] || '';
+            const name = lastName + firstName;
+            const timestamp = new Date().toISOString().slice(0, 16).replace(/[-:T]/g, '').replace(/(\d{8})(\d{4})/, '$1_$2');
+            const fileName = `${name}_エントリーシート_${timestamp}.csv`;
+
+            try {
+                // 従来のダウンロード方法
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                
+                if (link.download !== undefined) {
+                    const url = URL.createObjectURL(blob);
+                    link.setAttribute('href', url);
+                    link.setAttribute('download', fileName);
+                    link.style.visibility = 'hidden';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(url);
+                    
+                    alert('CSVファイルがダウンロードされました。\nファイル名: ' + fileName);
+                } else {
+                    alert('ダウンロード機能が利用できません。');
+                }
+            } catch (error) {
+                alert('CSVファイル作成中にエラーが発生しました：' + error.message);
+            }
+        }
+    </script>
+    
+    </body></html>

@@ -1,0 +1,526 @@
+/* ãƒ¡ã‚¤ãƒ³ãƒ•ã‚©ãƒ¼ãƒ ã‚³ãƒ³ãƒ†ãƒŠ */
+.Form {
+    margin-top: 80px;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 720px;
+}
+@media screen and (max-width: 480px) {
+    .Form {
+        margin-top: 40px;
+    }
+}
+
+/* å„ãƒ•ã‚©ãƒ¼ãƒ ã‚¢ã‚¤ãƒ†ãƒ  */
+.Form-Item {
+    border-top: 1px solid #ddd;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    width: 100%;
+    display: flex;
+    /* align-items: center; */
+    margin-bottom: 0;
+    flex-wrap: wrap;
+}
+@media screen and (max-width: 480px) {
+    .Form-Item {
+        padding-left: 14px;
+        padding-right: 14px;
+        padding-top: 16px;
+        padding-bottom: 16px;
+        flex-wrap: wrap;
+    }
+}
+
+/* ãƒ©ãƒ™ãƒ«é–¢é€£ */
+.Form-Item-Label {
+    display: flex;
+    align-items: center;
+    flex: 0 0 200px;
+    letter-spacing: 0.05em;
+    font-weight: bold;
+    font-size: 18px;
+    margin-bottom: 0;
+}
+@media screen and (max-width: 480px) {
+    .Form-Item-Label {
+        max-width: inherit;
+        display: flex;
+        align-items: center;
+        font-size: 15px;
+    }
+}
+.Form-Item-Label.isMsg {
+    margin-top: 8px;
+    margin-bottom: auto;
+}
+@media screen and (max-width: 480px) {
+    .Form-Item-Label.isMsg {
+        margin-top: 0;
+    }
+}
+
+
+/* å…¥åŠ›æ¬„å¤§æž  */
+.Form-Item-Input-Wrapper {
+    margin-left: 40px;
+    flex: 1;
+    width: 100%;
+    max-width: 410px;
+}
+@media screen and (max-width: 480px) {
+    .Form-Item-Input-Wrapper {
+        margin-left: 0;
+        margin-top: 18px;
+        flex: inherit;
+    }
+}
+/* å…¥åŠ›æ¬„ */
+.Form-Item-Input {
+    border: 1px solid #ddd;
+    align-items: center;
+    border-radius: 6px;
+    padding-left: 1em;
+    padding-right: 1em;
+    height: 48px;
+    width: 100%;
+    background: #eaedf2;
+    font-size: 18px;
+}
+
+/* エラーのスタイリング */
+.Form-Item-Input.error {
+    border-color: #dc3545;
+    background-color: #f8d7da;
+}
+
+.error {
+    color: #dc3545;
+    font-size: 14px;
+    margin-top: 5px;
+    display: block;
+}
+
+select.Form-Item-Input {
+    padding-right: 0;
+}
+@media screen and (max-width: 480px) {
+    .Form-Item-Input {
+        height: 40px;
+        font-size: 15px;
+    }
+}
+
+.Form-Item-Right small {
+    margin-top: 4px;
+    color: gray;
+}
+
+.Form-Item small {
+    display: block; /* æ"¹è¡Œã•ã›ã‚‹ */
+    margin-top: 4px;
+    color: gray;
+    flex-basis: 100%;
+}
+
+/* å³å´ã‚³ãƒ³ãƒ†ãƒŠ */
+.Form-Item-Right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-direction: column;
+    flex: 1;
+    align-items: flex-start;
+}
+
+
+/* ãƒ†ã‚­ã‚¹ãƒˆã‚¨ãƒªã‚¢ */
+.Form-Item-Textarea {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding-left: 1em;
+    padding-right: 1em;
+    height: 216px;
+    width: 100%;
+    background: #eaedf2;
+    font-size: 18px;
+}
+@media screen and (max-width: 480px) {
+    .Form-Item-Textarea {
+        margin-top: 18px;
+        height: 200px;
+        font-size: 15px;
+    }
+}
+
+/* ãƒ•ã‚©ãƒ¼ãƒ é€ä¿¡ãƒœã‚¿ãƒ³ */
+.Form-Btn {
+    border-radius: 6px;
+    margin-top: 8px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    width: 200px;
+    display: block;
+    letter-spacing: 0.05em;
+    background: #008876;
+    color: #fff;
+    font-weight: bold;
+    font-size: 20px;
+}
+@media screen and (max-width: 480px) {
+    .Form-Btn {
+        margin-top: 8px;
+        padding-top: 8px;
+        padding-bottom: 8px;
+        width: 160px;
+        font-size: 16px;
+    }
+}
+
+/* =======================
+ãƒœã‚¿ãƒ³ã®ã‚¹ã‚¿ã‚¤ãƒ« 
+======================= */
+.button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-top: 30px;
+    margin-bottom: 30px;
+  }
+  
+  button {
+    border: none;
+    border-radius: 6px;
+    margin: 0 auto 20px auto;
+    padding: 12px 24px;
+    display: inline-block;
+    letter-spacing: 0.05em;
+    background: #008876;
+    color: #fff;
+    font-weight: bold;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  button:hover {
+    background-color: #006b5a;
+    transform: translateY(-2px);
+  }
+  button:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .submit-button {
+    border-radius: 6px;
+    margin: 0 auto 20px auto;
+    padding: 12px 24px;
+    display: inline-block;
+    letter-spacing: 0.05em;
+    background: #008876;
+    color: #fff;
+    font-weight: bold;
+    font-size: 18px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  .submit-button:hover {
+    background-color: #006b5a;
+    transform: translateY(-2px);
+  }
+  .back-button {
+    background-color: #6c757d;
+  }
+  .back-button:hover {
+    background-color: #5a6268;
+    transform: translateY(-2px);
+  }
+  @media screen and (max-width: 480px) {
+    .button {
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+    
+    .submit-button {
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+  }
+
+/* =======================
+ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®ã‚¹ã‚¿ã‚¤ãƒ« 
+======================= */
+#emailError, 
+#emailSuccess,
+#otpError,
+#otpSuccess {
+    margin-top: 10px;
+}
+#otpSection {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background-color: #f8f9fa;
+}
+
+/* =======================
+å…¥åŠ›ãƒã‚§ãƒƒã‚¯ã®ã‚¹ã‚¿ã‚¤ãƒ« 
+======================= */
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: #008876;
+    box-shadow: 0 0 0 2px rgba(0, 136, 118, 0.2);
+}
+input.completed,
+select.completed {
+    border-color: #28a745;
+    background-color: #d4edda;
+}
+
+/* =======================
+ã‚¿ã‚¤ãƒˆãƒ« 
+======================= */
+h2 {
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 24px;
+}
+
+fieldset {
+    border: 2px solid #008876;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 30px;
+    background-color: #f8f9fa;
+}
+
+/* legend ã®ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆä½™ç™½ã‚'ãƒªã‚»ãƒƒãƒˆ */
+legend {
+    background-color: #008876;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+/* æ³¨æ„æ›¸ãã®è£…é£¾ */
+.exclusion-note {
+    background-color: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 15px;
+    font-size: 14px;
+    color: #856404;
+}
+
+.exclusion-note-cbt {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 15px;
+    font-size: 14px;
+    color: #721c24;
+}
+
+/* ãƒ†ãƒ¼ãƒ–ãƒ«å…¨ä½"ã®ã‚¹ã‚¿ã‚¤ãƒ« */
+.Table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    background-color: white;
+}
+
+/* ãƒ†ãƒ¼ãƒ–ãƒ«è¦‹å‡ºã—ï¼ˆthï¼‰ã¨ã‚»ãƒ«ï¼ˆtdï¼‰ã®å…±é€šã‚¹ã‚¿ã‚¤ãƒ« */
+.Table th,
+.Table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    vertical-align: middle;
+}
+
+/* ãƒ†ãƒ¼ãƒ–ãƒ«è¦‹å‡ºã—ï¼ˆthï¼‰ã®å€‹åˆ¥ã‚¹ã‚¿ã‚¤ãƒ« */
+.Table th {
+    background-color: #008876;
+    color: white;
+    font-weight: bold;
+    position: sticky;
+    top: 0;
+}
+
+/* è¡Œã«ãƒ›ãƒãƒ¼ã—ãŸã¨ãã®èƒŒæ™¯å¤‰åŒ– */
+.Table tbody tr:hover {
+    background-color: #f5f5f5;
+}
+
+/* ã‚¹ãƒžãƒ›ç­‰ã®å°ç"»é¢å'èª¿æ•´ */
+@media screen and (max-width: 480px) {
+    .Table {
+        font-size: 14px;
+    }
+    .Table th,
+    .Table td {
+        padding: 8px 4px;
+    }
+}
+
+.form-check {
+    margin-bottom: 10px;
+}
+
+#exam-fieldsets-container {
+    margin-top: 15px;
+}
+
+#introducer_note {
+    margin-top: 5px;
+}
+
+/* =======================
+二次試験の行スタイル 
+======================= */
+.Subject-Row {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 15px;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.Subject-Label {
+    flex: 0 0 120px;
+    font-weight: bold;
+    margin-right: 20px;
+    margin-bottom: 0;
+}
+
+.Subject-Right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.Subject-Right .Form-Item-Input-Wrapper {
+    margin-left: 0;
+}
+
+/* フィールドセット内のテーブルスタイル */
+.exam-fieldset {
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+}
+
+.exam-subject-fieldset {
+    margin-bottom: 15px;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    padding: 10px;
+}
+
+/* スコアインプットのスタイル */
+.score-input {
+    margin-top: 5px;
+}
+
+@media screen and (max-width: 480px) {
+    fieldset {
+        padding: 15px;
+    }
+    legend {
+        font-size: 14px;
+        padding: 6px 12px;
+    }
+}
+
+/* =======================
+住所検索ボタンのスタイル 
+======================= */
+#search_address_btn {
+    background-color: #008876;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    white-space: nowrap;
+}
+
+#search_address_btn:hover {
+    background-color: #006b5a;
+}
+
+#search_address_btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.error-message {
+    font-size: 12px;
+    margin-top: 5px;
+    display: block;
+}
+
+/* 郵便番号入力フィールドのラッパー調整 */
+.Form-Item-Input-Wrapper {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.Form-Item-Input-Wrapper small {
+    flex-basis: 100%;
+    margin-top: 5px;
+}
+
+@media screen and (max-width: 480px) {
+    #search_address_btn {
+        padding: 6px 12px;
+        font-size: 12px;
+        margin-top: 5px;
+        flex-basis: 100%;
+    }
+    
+    .Form-Item-Input-Wrapper {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+/* �Z�������{�^���̃X�^�C�� */
+#search_address_btn {
+    background-color: #008876;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    white-space: nowrap;
+}
+
+#search_address_btn:hover {
+    background-color: #006b5a;
+}
+
+#search_address_btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
