@@ -329,24 +329,67 @@
                     電話番号(自宅)
                 </p>
                 <div class="Form-Item-Input-Wrapper">
-                    <input type="text" id="tel_home" name="tel_home" value="" class="Form-Item-Input" placeholder="03-1234-5678">				<small>※ハイフン区切り</small>
+                    <input type="text" id="tel_home" name="tel_home" value="" class="Form-Item-Input" placeholder="03-1234-5678">
+                    <small>※ハイフン区切りの半角数字で入力してください</small>
+                    <div id="tel_home_error" class="error-message" style="display: none; color: red; font-size: 12px; margin-top: 5px;"></div>
                 </div>
             </div>
     
             <script>
-                // 電話番号の全角数字と全角ハイフンを半角に変換し、
-                // 合計13文字以上の入力を防ぐ
-                document.getElementById('tel_home')?.addEventListener('input', function () {
-                    // まずは全角→半角変換
-                    let newVal = this.value
-                        .replace(/[０-９]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xFEE0))
-                        .replace(/－/g, '-'); // 全角ハイフンを半角ハイフンに変換
-                    // 入力値が12文字以上の場合は、11文字目までに切り詰める
-                    if(newVal.length >= 13) {
-                        alert("電話番号は12文字まで入力可能です。");
-                        newVal = newVal.slice(0, 12);
+                document.addEventListener("DOMContentLoaded", function () {
+                    const telHomeInput = document.getElementById('tel_home');
+                    const telHomeError = document.getElementById('tel_home_error');
+
+                    // 電話番号のフォーマットをチェック（固定電話用）
+                    function validateHomePhone(value) {
+                        // 固定電話の正規表現：0X-XXXX-XXXX または 0XX-XXX-XXXX
+                        const homePhoneRegex = /^0\d{1,3}-\d{1,4}-\d{4}$/;
+                        return homePhoneRegex.test(value);
                     }
-                    this.value = newVal;
+
+                    // エラーメッセージ表示
+                    function showTelHomeError(message) {
+                        telHomeError.textContent = message;
+                        telHomeError.style.display = "block";
+                    }
+
+                    // エラーメッセージ非表示
+                    function hideTelHomeError() {
+                        telHomeError.style.display = "none";
+                    }
+
+                    // 電話番号(自宅)入力時のバリデーション
+                    telHomeInput?.addEventListener('input', function () {
+                        const value = this.value.trim();
+                        
+                        if (value === '') {
+                            hideTelHomeError();
+                            return;
+                        }
+
+                        // 全角数字や全角ハイフンが含まれている場合は警告
+                        if (/[０-９]/.test(value)) {
+                            showTelHomeError("全角数字が含まれています。半角数字で入力してください。");
+                        } else if (/－/.test(value)) {
+                            showTelHomeError("全角ハイフンが含まれています。半角ハイフンで入力してください。");
+                        } else if (!/^[\d-]*$/.test(value)) {
+                            showTelHomeError("数字とハイフン以外の文字が含まれています。");
+                        } else if (value.length > 13) {
+                            showTelHomeError("電話番号が長すぎます。正しい形式で入力してください。");
+                        } else if (!validateHomePhone(value) && value.includes('-')) {
+                            showTelHomeError("正しい電話番号の形式で入力してください。（例：03-1234-5678）");
+                        } else {
+                            hideTelHomeError();
+                        }
+                    });
+
+                    // フォーカスが外れた時のバリデーション
+                    telHomeInput?.addEventListener('blur', function () {
+                        const value = this.value.trim();
+                        if (value !== '' && !validateHomePhone(value)) {
+                            showTelHomeError("正しい電話番号の形式で入力してください。（例：03-1234-5678）");
+                        }
+                    });
                 });
             </script>
     
@@ -357,24 +400,67 @@
                     電話番号(携帯)
                 </p>
                 <div class="Form-Item-Input-Wrapper">
-                    <input type="text" id="tel_mobile" name="tel_mobile" value="" class="Form-Item-Input" placeholder="090-1234-5678" required="">				<small style="color:gray; display:block;">※ハイフン区切り</small>
+                    <input type="text" id="tel_mobile" name="tel_mobile" value="" class="Form-Item-Input" placeholder="090-1234-5678" required="">
+                    <small style="color:gray; display:block;">※ハイフン区切りの半角数字で入力してください</small>
+                    <div id="tel_mobile_error" class="error-message" style="display: none; color: red; font-size: 12px; margin-top: 5px;"></div>
                 </div>
             </div>
     
             <script>
-                // 電話番号の全角数字と全角ハイフンを半角に変換し、
-                // 合計13文字以上の入力を防ぐ
-                document.getElementById('tel_mobile')?.addEventListener('input', function () {
-                    // まずは全角→半角変換
-                    let newVal = this.value
-                        .replace(/[０-９]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xFEE0))
-                        .replace(/－/g, '-'); // 全角ハイフンを半角ハイフンに変換
-                    // 入力値が13文字以上の場合は、11文字目までに切り詰める
-                    if(newVal.length >= 14) {
-                        alert("電話番号は13文字まで入力可能です。");
-                        newVal = newVal.slice(0, 13);
+                document.addEventListener("DOMContentLoaded", function () {
+                    const telMobileInput = document.getElementById('tel_mobile');
+                    const telMobileError = document.getElementById('tel_mobile_error');
+
+                    // 携帯電話番号のフォーマットをチェック
+                    function validateMobilePhone(value) {
+                        // 携帯電話の正規表現：090-XXXX-XXXX, 080-XXXX-XXXX, 070-XXXX-XXXX
+                        const mobilePhoneRegex = /^0[789]0-\d{4}-\d{4}$/;
+                        return mobilePhoneRegex.test(value);
                     }
-                    this.value = newVal;
+
+                    // エラーメッセージ表示
+                    function showTelMobileError(message) {
+                        telMobileError.textContent = message;
+                        telMobileError.style.display = "block";
+                    }
+
+                    // エラーメッセージ非表示
+                    function hideTelMobileError() {
+                        telMobileError.style.display = "none";
+                    }
+
+                    // 電話番号(携帯)入力時のバリデーション
+                    telMobileInput?.addEventListener('input', function () {
+                        const value = this.value.trim();
+                        
+                        if (value === '') {
+                            hideTelMobileError();
+                            return;
+                        }
+
+                        // 全角数字や全角ハイフンが含まれている場合は警告
+                        if (/[０-９]/.test(value)) {
+                            showTelMobileError("全角数字が含まれています。半角数字で入力してください。");
+                        } else if (/－/.test(value)) {
+                            showTelMobileError("全角ハイフンが含まれています。半角ハイフンで入力してください。");
+                        } else if (!/^[\d-]*$/.test(value)) {
+                            showTelMobileError("数字とハイフン以外の文字が含まれています。");
+                        } else if (value.length > 13) {
+                            showTelMobileError("電話番号が長すぎます。正しい形式で入力してください。");
+                        } else if (!validateMobilePhone(value) && value.includes('-') && value.length >= 11) {
+                            showTelMobileError("正しい携帯電話番号の形式で入力してください。（例：090-1234-5678）");
+                        } else {
+                            hideTelMobileError();
+                        }
+                    });
+
+                    // フォーカスが外れた時のバリデーション
+                    telMobileInput?.addEventListener('blur', function () {
+                        const value = this.value.trim();
+                        if (value !== '' && !validateMobilePhone(value)) {
+                            showTelMobileError("正しい携帯電話番号の形式で入力してください。（例：090-1234-5678）");
+                        }
+                    });
                 });
             </script>
         </fieldset>
