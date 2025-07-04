@@ -612,8 +612,6 @@
           max-width: 100%;
         }
       }
-
-      
     </style>
 
     <!-- 統合されたJavaScript -->
@@ -621,7 +619,7 @@
       // バージョン情報
       const FORM_VERSION = "1.0.0";
       console.log("エントリーシートフォーム バージョン:", FORM_VERSION);
-      
+
       var controller_url = "apply";
 
       $(function () {
@@ -1162,6 +1160,58 @@
 
               // 新しく追加したフィールドのバリデーション設定
               function setupNewFieldValidation() {
+                // 名前（カナ）のバリデーション
+                const name1KanaInput = document.getElementById("name_1_kana");
+                const name2KanaInput = document.getElementById("name_2_kana");
+
+                if (name1KanaInput) {
+                  name1KanaInput.addEventListener("input", function () {
+                    const value = this.value.trim();
+                    if (value !== "" && !/^[ｦ-ﾟ\s]+$/.test(value)) {
+                      // エラーメッセージ要素がない場合は作成
+                      let errorElement = document.getElementById("name_1_kana_error");
+                      if (!errorElement) {
+                        errorElement = document.createElement("div");
+                        errorElement.id = "name_1_kana_error";
+                        errorElement.className = "error-message";
+                        errorElement.style.display = "none";
+                        errorElement.style.color = "red";
+                        errorElement.style.fontSize = "12px";
+                        errorElement.style.marginTop = "5px";
+                        this.parentNode.appendChild(errorElement);
+                      }
+                      showError(errorElement, "半角カタカナで入力してください。");
+                    } else {
+                      const errorElement = document.getElementById("name_1_kana_error");
+                      if (errorElement) hideError(errorElement);
+                    }
+                  });
+                }
+
+                if (name2KanaInput) {
+                  name2KanaInput.addEventListener("input", function () {
+                    const value = this.value.trim();
+                    if (value !== "" && !/^[ｦ-ﾟ\s]+$/.test(value)) {
+                      // エラーメッセージ要素がない場合は作成
+                      let errorElement = document.getElementById("name_2_kana_error");
+                      if (!errorElement) {
+                        errorElement = document.createElement("div");
+                        errorElement.id = "name_2_kana_error";
+                        errorElement.className = "error-message";
+                        errorElement.style.display = "none";
+                        errorElement.style.color = "red";
+                        errorElement.style.fontSize = "12px";
+                        errorElement.style.marginTop = "5px";
+                        this.parentNode.appendChild(errorElement);
+                      }
+                      showError(errorElement, "半角カタカナで入力してください。");
+                    } else {
+                      const errorElement = document.getElementById("name_2_kana_error");
+                      if (errorElement) hideError(errorElement);
+                    }
+                  });
+                }
+
                 // 銀行コードのバリデーション
                 const bankCodeInput = document.getElementById("bank_code");
                 const bankCodeError = document.getElementById("bank_code_error");
@@ -1253,8 +1303,6 @@
                   });
                 }
               }
-
-
 
               // エラーメッセージ表示・非表示のヘルパー関数
               function showError(errorElement, message) {
@@ -1863,7 +1911,14 @@
             <div class="Form-Item">
               <p class="Form-Item-Label">入学年月日<span class="required-label">必須</span></p>
               <div class="Form-Item-Input-Wrapper">
-                <input type="date" name="daigaku_nyugaku_bi" value="" class="Form-Item-Input" required="1" />
+                <input
+                  type="date"
+                  name="daigaku_nyugaku_bi"
+                  value=""
+                  class="Form-Item-Input"
+                  id="daigaku_nyugaku_bi"
+                  required="1"
+                />
               </div>
             </div>
 
@@ -2291,6 +2346,8 @@
         }
 
         return {
+          バージョン: FORM_VERSION,
+          作成日時: new Date().toLocaleString("ja-JP"),
           姓: document.getElementById("name_1")?.value || "",
           名: document.getElementById("name_2")?.value || "",
           姓フリガナ: document.getElementById("name_1_kana")?.value || "",
@@ -2322,7 +2379,6 @@
           口座名義人: document.getElementById("account_holder")?.value || "",
           口座名義人フリガナ: document.getElementById("account_holder_kana")?.value || "",
           合否判定日: document.getElementById("gohi_hantei_bi")?.value || "",
-          作成日時: new Date().toLocaleString("ja-JP"),
         };
       }
 
@@ -2356,10 +2412,9 @@
 
         // CSVコンテンツを作成（BOM付きUTF-8）
         let csvContent = "\uFEFF"; // BOM
-        csvContent += `"バージョン","${FORM_VERSION}"\n`; // バージョン番号を先頭行に追加
-        csvContent += `"作成日時","${new Date().toLocaleString("ja-JP")}"\n`; // 作成日時を2行目に追加
-        csvContent += "\n"; // 空行を挿入
+        // 1行目：見出し
         csvContent += headers.map((header) => `"${header}"`).join(",") + "\n";
+        // 2行目：値
         csvContent += values.map((value) => `"${value.toString().replace(/"/g, '""')}"`).join(",") + "\n";
 
         // ファイル名生成
