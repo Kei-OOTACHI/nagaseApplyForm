@@ -1,0 +1,2502 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- 外部CDN依存関係 -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <title>エントリーシート</title>
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+
+    <!-- 統合されたCSS -->
+    <style>
+      /* メインフォームコンテナ */
+      .Form {
+        margin-top: 80px;
+        margin-left: auto;
+        margin-right: auto;
+        max-width: 720px;
+        padding: 0 20px;
+        box-sizing: border-box;
+      }
+      @media screen and (max-width: 480px) {
+        .Form {
+          margin-top: 40px;
+          padding: 0 10px;
+        }
+      }
+
+      /* 各フォームアイテム */
+      .Form-Item {
+        border-top: 1px solid #ddd;
+        padding-top: 15px;
+        padding-bottom: 15px;
+        width: 100%;
+        display: flex;
+        margin-bottom: 0;
+        flex-wrap: wrap;
+        flex-direction: column;
+      }
+      @media screen and (max-width: 480px) {
+        .Form-Item {
+          padding-left: 16px;
+          padding-right: 16px;
+          padding-top: 18px;
+          padding-bottom: 18px;
+          flex-wrap: wrap;
+          flex-direction: column;
+        }
+      }
+
+      /* ラベル関連 */
+      .Form-Item-Label {
+        display: flex;
+        align-items: center;
+        flex: none;
+        letter-spacing: 0.05em;
+        font-weight: bold;
+        font-size: 18px;
+        margin-bottom: 12px;
+        flex-wrap: wrap;
+        gap: 8px;
+        line-height: 1.4;
+      }
+      @media screen and (max-width: 480px) {
+        .Form-Item-Label {
+          font-size: 16px;
+          margin-bottom: 10px;
+          gap: 6px;
+          line-height: 1.3;
+        }
+      }
+      .Form-Item-Label.isMsg {
+        margin-top: 8px;
+        margin-bottom: auto;
+      }
+      @media screen and (max-width: 480px) {
+        .Form-Item-Label.isMsg {
+          margin-top: 0;
+        }
+      }
+
+      /* 入力欄大枠 */
+      .Form-Item-Input-Wrapper {
+        margin-left: 0;
+        flex: 1;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+      }
+      @media screen and (max-width: 480px) {
+        .Form-Item-Input-Wrapper {
+          margin-left: 0;
+          margin-top: 0;
+          flex: inherit;
+        }
+      }
+
+      /* 入力欄 */
+      .Form-Item-Input {
+        border: 1px solid #ddd;
+        align-items: center;
+        border-radius: 6px;
+        padding-left: 1em;
+        padding-right: 1em;
+        height: 48px;
+        width: 100%;
+        background: #eaedf2;
+        font-size: 18px;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        box-sizing: border-box;
+      }
+
+      @media screen and (max-width: 480px) {
+        .Form-Item-Input {
+          height: 44px;
+          font-size: 16px;
+        }
+      }
+
+      /* エラーのスタイリング */
+      .Form-Item-Input.error {
+        border-color: #dc3545;
+        background-color: #f8d7da;
+        box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+      }
+
+      .error {
+        color: #dc3545;
+        font-size: 14px;
+        margin-top: 8px;
+        display: block;
+        line-height: 1.4;
+      }
+
+      select.Form-Item-Input {
+        padding-right: 0;
+      }
+      @media screen and (max-width: 480px) {
+        .Form-Item-Input {
+          height: 40px;
+          font-size: 15px;
+        }
+      }
+
+      .Form-Item-Right small {
+        margin-top: 4px;
+        color: gray;
+      }
+
+      .Form-Item small {
+        display: block;
+        margin-top: 6px;
+        color: #6c757d;
+        flex-basis: 100%;
+        font-size: 13px;
+        line-height: 1.3;
+      }
+
+      @media screen and (max-width: 480px) {
+        .Form-Item small {
+          font-size: 12px;
+          margin-top: 4px;
+        }
+      }
+
+      /* 右側コンテナ */
+      .Form-Item-Right {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-direction: column;
+        flex: 1;
+        align-items: flex-start;
+      }
+
+      /* テキストエリア */
+      .Form-Item-Textarea {
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding-left: 1em;
+        padding-right: 1em;
+        height: 216px;
+        width: 100%;
+        background: #eaedf2;
+        font-size: 18px;
+      }
+      @media screen and (max-width: 480px) {
+        .Form-Item-Textarea {
+          margin-top: 18px;
+          height: 200px;
+          font-size: 15px;
+        }
+      }
+
+      /* フォーム送信ボタン */
+      .Form-Btn {
+        border-radius: 6px;
+        margin-top: 8px;
+        margin-left: auto;
+        margin-right: auto;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        width: 200px;
+        display: block;
+        letter-spacing: 0.05em;
+        background: #008876;
+        color: #fff;
+        font-weight: bold;
+        font-size: 20px;
+      }
+      @media screen and (max-width: 480px) {
+        .Form-Btn {
+          margin-top: 8px;
+          padding-top: 8px;
+          padding-bottom: 8px;
+          width: 160px;
+          font-size: 16px;
+        }
+      }
+
+      /* ボタンのスタイル */
+      .button-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        margin-top: 30px;
+        margin-bottom: 30px;
+      }
+
+      button {
+        border: none;
+        border-radius: 6px;
+        margin: 0 auto 20px auto;
+        padding: 12px 24px;
+        display: inline-block;
+        letter-spacing: 0.05em;
+        background: #008876;
+        color: #fff;
+        font-weight: bold;
+        font-size: 18px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      button:hover {
+        background-color: #006b5a;
+        transform: translateY(-2px);
+      }
+      button:disabled {
+        background-color: #6c757d;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .submit-button {
+        border-radius: 6px;
+        margin: 0 auto 20px auto;
+        padding: 12px 24px;
+        display: inline-block;
+        letter-spacing: 0.05em;
+        background: #008876;
+        color: #fff;
+        font-weight: bold;
+        font-size: 18px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      .submit-button:hover {
+        background-color: #006b5a;
+        transform: translateY(-2px);
+      }
+      .back-button {
+        background-color: #6c757d;
+      }
+      .back-button:hover {
+        background-color: #5a6268;
+        transform: translateY(-2px);
+      }
+      @media screen and (max-width: 480px) {
+        .button {
+          padding: 10px 20px;
+          font-size: 16px;
+        }
+
+        .submit-button {
+          padding: 10px 20px;
+          font-size: 16px;
+        }
+      }
+
+      /* メッセージのスタイル */
+      #emailError,
+      #emailSuccess,
+      #otpError,
+      #otpSuccess {
+        margin-top: 10px;
+      }
+      #otpSection {
+        margin-top: 20px;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        background-color: #f8f9fa;
+      }
+
+      /* 入力チェックのスタイル */
+      input:focus,
+      select:focus,
+      textarea:focus {
+        outline: none;
+        border-color: #008876;
+        box-shadow: 0 0 0 3px rgba(0, 136, 118, 0.1);
+        background-color: #fff;
+      }
+      input.completed,
+      select.completed {
+        border-color: #28a745;
+        background-color: #d4edda;
+      }
+
+      /* タイトル */
+      h2 {
+        color: #333;
+        margin-bottom: 20px;
+        text-align: center;
+        font-size: 24px;
+      }
+
+      fieldset {
+        border: 2px solid #008876;
+        border-radius: 8px;
+        padding: 24px;
+        margin-bottom: 30px;
+        background-color: #f8f9fa;
+        overflow: hidden;
+        box-sizing: border-box;
+        width: 100%;
+      }
+
+      legend {
+        background-color: #008876;
+        color: white;
+        padding: 10px 16px;
+        border-radius: 4px;
+        font-weight: bold;
+        font-size: 16px;
+        margin-bottom: 8px;
+      }
+
+      @media screen and (max-width: 480px) {
+        fieldset {
+          padding: 16px;
+          margin-bottom: 24px;
+        }
+
+        legend {
+          font-size: 14px;
+          padding: 8px 12px;
+          margin-bottom: 6px;
+        }
+      }
+
+      /* 注意書きの装飾 */
+      .exclusion-note {
+        background-color: #fff3cd;
+        border: 1px solid #ffeaa7;
+        border-radius: 6px;
+        padding: 12px;
+        margin-bottom: 15px;
+        font-size: 14px;
+        color: #856404;
+      }
+
+      .exclusion-note-cbt {
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        border-radius: 6px;
+        padding: 12px;
+        margin-bottom: 15px;
+        font-size: 14px;
+        color: #721c24;
+      }
+
+      /* テーブル全体のスタイル */
+      .Table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+        background-color: white;
+      }
+
+      .Table th,
+      .Table td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+        vertical-align: middle;
+      }
+
+      .Table th {
+        background-color: #008876;
+        color: white;
+        font-weight: bold;
+        position: sticky;
+        top: 0;
+      }
+
+      .Table tbody tr:hover {
+        background-color: #f5f5f5;
+      }
+
+      @media screen and (max-width: 480px) {
+        .Table {
+          font-size: 14px;
+        }
+        .Table th,
+        .Table td {
+          padding: 8px 4px;
+        }
+      }
+
+      .form-check {
+        margin-bottom: 10px;
+      }
+
+      #exam-fieldsets-container {
+        margin-top: 15px;
+      }
+
+      #introducer_note {
+        margin-top: 5px;
+      }
+
+      /* 二次試験の行スタイル */
+      .Subject-Row {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 15px;
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
+      }
+
+      .Subject-Label {
+        flex: 0 0 120px;
+        font-weight: bold;
+        margin-right: 20px;
+        margin-bottom: 0;
+      }
+
+      .Subject-Right {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .Subject-Right .Form-Item-Input-Wrapper {
+        margin-left: 0;
+      }
+
+      .exam-fieldset {
+        margin-bottom: 20px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 15px;
+      }
+
+      .exam-subject-fieldset {
+        margin-bottom: 15px;
+        border: 1px solid #e9ecef;
+        border-radius: 6px;
+        padding: 10px;
+      }
+
+      .score-input {
+        margin-top: 5px;
+      }
+
+      @media screen and (max-width: 480px) {
+        fieldset {
+          padding: 15px;
+        }
+        legend {
+          font-size: 14px;
+          padding: 6px 12px;
+        }
+      }
+
+      /* 住所検索ボタンのスタイル */
+      #search_address_btn {
+        background-color: #008876;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 12px 16px;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        white-space: nowrap;
+        min-width: 100px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      #search_address_btn:hover {
+        background-color: #006b5a;
+        transform: translateY(-1px);
+      }
+
+      #search_address_btn:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      @media screen and (max-width: 480px) {
+        #search_address_btn {
+          padding: 10px 12px;
+          font-size: 13px;
+          min-width: 90px;
+          height: 44px;
+          margin-top: 8px;
+          width: 100%;
+        }
+      }
+
+      .error-message {
+        font-size: 12px;
+        margin-top: 5px;
+        display: block;
+      }
+
+      .Form-Item-Input-Wrapper {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .Form-Item-Input-Wrapper small {
+        flex-basis: 100%;
+        margin-top: 5px;
+      }
+
+      @media screen and (max-width: 480px) {
+        #search_address_btn {
+          padding: 6px 12px;
+          font-size: 12px;
+          margin-top: 5px;
+          flex-basis: 100%;
+        }
+
+        .Form-Item-Input-Wrapper {
+          flex-direction: column;
+          align-items: stretch;
+        }
+      }
+
+      /* 必須ラベルのスタイル */
+      .required-label {
+        color: #dc3545;
+        font-size: 12px;
+        font-weight: bold;
+        background-color: #fff;
+        border: 1px solid #dc3545;
+        border-radius: 3px;
+        padding: 2px 6px;
+        margin-left: 8px;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+
+      @media screen and (max-width: 480px) {
+        .required-label {
+          font-size: 11px;
+          padding: 1px 4px;
+          margin-left: 6px;
+        }
+      }
+
+      /* 氏名入力欄のレスポンシブ対応 */
+      .name-input-wrapper {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        max-width: 100%;
+      }
+
+      .name-input-field {
+        flex: 1 1 calc(50% - 5px);
+        min-width: 140px;
+        max-width: calc(50% - 5px);
+        box-sizing: border-box;
+      }
+
+      @media screen and (max-width: 480px) {
+        .name-input-wrapper {
+          flex-direction: column;
+          gap: 12px;
+        }
+
+        .name-input-field {
+          flex: 1 1 100%;
+          min-width: 100%;
+          max-width: 100%;
+        }
+      }
+
+      
+    </style>
+
+    <!-- 統合されたJavaScript -->
+    <script>
+      // バージョン情報
+      const FORM_VERSION = "1.0.0";
+      console.log("エントリーシートフォーム バージョン:", FORM_VERSION);
+      
+      var controller_url = "apply";
+
+      $(function () {
+        // 初期化処理
+        console.log("Form initialized");
+
+        // テーブル要素が存在する場合の処理
+        var sel_table = $("table.table-first-test");
+        if (sel_table.length > 0) {
+          sel_table.find("tbody tr select").each(function () {
+            $(this).on("change", function () {
+              renewFirstTestItem($(this));
+            });
+            renewFirstTestItem($(this));
+          });
+        }
+
+        var sel_table2 = $("table.table-second-test");
+        if (sel_table2.length > 0) {
+          sel_table2.find("tbody tr select").each(function () {
+            $(this).on("change", function () {
+              renewSecondTestItem($(this));
+              renewSecondTestListDisplay();
+            });
+            renewSecondTestItem($(this));
+            renewSecondTestListDisplay();
+          });
+        }
+
+        // フォームの初期化処理
+        initializeForm();
+      });
+
+      function initializeForm() {
+        // フォームバリデーションの初期化
+        console.log("Form validation initialized");
+
+        // 各種イベントリスナーの設定
+        setupEventListeners();
+      }
+
+      function setupEventListeners() {
+        // 必須フィールドのチェック
+        $("input[required], select[required]").on("blur", function () {
+          validateField($(this));
+        });
+      }
+
+      function validateField(field) {
+        var value = field.val();
+        var fieldName = field.attr("name");
+
+        if (!value || value === "") {
+          field.addClass("error");
+          return false;
+        } else {
+          field.removeClass("error");
+          return true;
+        }
+      }
+
+      function getApplyControllerUrl() {
+        var ret = controller_url || "apply";
+        return ret;
+      }
+
+      function goEntrySheet() {
+        var cu = getApplyControllerUrl();
+        submitTo(cu + "/entry_sheet");
+      }
+
+      function goEntryMail() {
+        var cu = getApplyControllerUrl();
+        submitTo(cu + "/entry_mail");
+      }
+
+      function entryMailSend() {
+        var cu = getApplyControllerUrl();
+        submitWithStatus("set", cu + "/entry_mail");
+      }
+
+      function confirmEntrySheet() {
+        // ローカル環境では確認画面の代わりにバリデーションを実行
+        console.log("Form validation started");
+
+        var isValid = true;
+        var errorMessages = [];
+
+        // 必須フィールドのチェック
+        $("input[required], select[required]").each(function () {
+          if (!validateField($(this))) {
+            isValid = false;
+            var fieldLabel = $(this).closest(".Form-Item").find(".Form-Item-Label").text();
+            errorMessages.push(fieldLabel + "は必須項目です。");
+          }
+        });
+
+        if (!isValid) {
+          alert("以下の項目を確認してください：\n" + errorMessages.join("\n"));
+          return false;
+        }
+
+        // ローカル環境では送信の代わりに確認メッセージを表示
+        alert("フォームの入力内容が確認されました。\n実際のWebサイトでは、ここで送信処理が行われます。");
+        console.log("Form data:", getFormData());
+      }
+
+      function getFormData() {
+        var formData = {};
+        $("#MainForm")
+          .serializeArray()
+          .forEach(function (item) {
+            formData[item.name] = item.value;
+          });
+        return formData;
+      }
+
+      function entry() {
+        var cu = getApplyControllerUrl();
+        submitTo(cu + "/entry");
+      }
+
+      function renewFirstTestItem(_sel_select) {
+        var sel_tr = _sel_select.closest("tr");
+        var sel_score = sel_tr.find("input");
+        if (_sel_select.val() && _sel_select.val() != "受験なし") {
+          sel_score.show();
+        } else {
+          sel_score.hide();
+        }
+      }
+
+      function renewSecondTestListDisplay() {
+        var sel_table = $("table.table-second-test");
+        if (sel_table.length === 0) return;
+
+        var i = 0;
+        sel_table.find("tbody tr").each(function () {
+          var sel_tr = $(this);
+          i++;
+          if (i < 10) {
+            return;
+          }
+
+          var sel_subject_main = sel_tr.find("td:nth-of-type(1) select");
+          var sel_next = sel_tr.next();
+
+          if (sel_subject_main.val()) {
+            sel_next.show();
+          } else {
+            var is_next_value_inputted = false;
+            sel_next.find("select,input[type=text]").each(function () {
+              if ($(this).val()) {
+                is_next_value_inputted = true;
+              }
+            });
+            if (is_next_value_inputted) {
+              sel_next.show();
+            } else {
+              sel_next.hide();
+            }
+          }
+        });
+      }
+
+      function renewSecondTestItem(_sel_select) {
+        var sel_tr = _sel_select.closest("tr");
+        var sel_subject_main = sel_tr.find("td:nth-of-type(1) select");
+        var sel_subject_sub = sel_tr.find("td:nth-of-type(2) select");
+        var sel_score = sel_tr.find("input");
+
+        var subject_main = sel_subject_main.val();
+        var subject_sub = sel_subject_sub.val();
+        var is_subject_sub_included = false;
+
+        if (subject_main && subject_main != "受験なし") {
+          sel_subject_sub.show();
+
+          sel_subject_sub.find("option").each(function () {
+            var option_value = $(this).val();
+            var regex = new RegExp("^" + subject_main, "gi");
+            if (option_value.match(regex)) {
+              $(this).show();
+              if (option_value == subject_sub) {
+                is_subject_sub_included = true;
+              }
+            } else {
+              $(this).hide();
+            }
+          });
+
+          if (!is_subject_sub_included) {
+            sel_subject_sub.val("");
+          }
+        } else {
+          sel_subject_sub.hide();
+        }
+
+        if (sel_subject_sub.is(":visible")) {
+          sel_score.show();
+        } else {
+          sel_score.hide();
+        }
+      }
+
+      function renewSchoolStatusFormAll() {
+        for (var i = 0; i < 3; i++) {
+          renewSchoolStatusForm(i);
+        }
+      }
+
+      function renewSchoolStatusForm(_index) {
+        var stage_school_array = N("stage_school_" + _index);
+        if (!stage_school_array || stage_school_array.length === 0) return;
+
+        var stage_school;
+        for (var i = 0; i < 3; i++) {
+          if (stage_school_array[i] && stage_school_array[i].checked) {
+            stage_school = i;
+          }
+        }
+
+        var grade_school_display = "none";
+        var date_graduation_display = "none";
+        var date_dropping_out_display = "none";
+
+        switch (stage_school) {
+          case 0:
+            grade_school_display = "";
+            date_graduation_display = "";
+            break;
+          case 1:
+            date_graduation_display = "";
+            break;
+          case 2:
+            date_dropping_out_display = "";
+            break;
+        }
+
+        var gradeElement = E("block_grade_school_" + _index);
+        var graduationElement = E("block_date_graduation_" + _index);
+        var droppingElement = E("block_date_dropping_out_" + _index);
+
+        if (gradeElement) gradeElement.style.display = grade_school_display;
+        if (graduationElement) graduationElement.style.display = date_graduation_display;
+        if (droppingElement) droppingElement.style.display = date_dropping_out_display;
+      }
+
+      function E(_id) {
+        return document.getElementById(_id);
+      }
+
+      function N(_name) {
+        return document.getElementsByName(_name);
+      }
+
+      function checkBlank(value, str) {
+        if (value == "") {
+          alert(str + "を入力してください。");
+          return false;
+        }
+        return true;
+      }
+
+      function submitTo(_action) {
+        // ローカル環境では実際の送信は行わない
+        console.log("Form would be submitted to:", _action);
+        console.log("Form data:", getFormData());
+        alert("ローカル環境のため、実際の送信は行われません。\n送信先: " + _action);
+      }
+
+      function submitWithStatus(_status, _action) {
+        // ローカル環境では実際の送信は行わない
+        document.getElementById("status").value = _status;
+        console.log("Form would be submitted with status:", _status, "to:", _action);
+        console.log("Form data:", getFormData());
+        alert("ローカル環境のため、実際の送信は行われません。\n送信先: " + _action + "\nステータス: " + _status);
+      }
+
+      function $id(_name) {
+        return document.getElementById(_name);
+      }
+    </script>
+  </head>
+  <body cz-shortcut-listen="true">
+    <form id="MainForm" name="MainForm" method="post" enctype="multipart/form-data" action="">
+      <input type="hidden" id="status" name="status" value="" />
+      <input type="hidden" id="is_open" name="is_open" value="1" />
+      <input type="hidden" id="ticket" name="ticket" value="" />
+      <input
+        type="text"
+        name="dummy_text_to_avoid_submitting_by_pushing_enter_key"
+        style="position: absolute; visibility: hidden"
+      />
+
+      <div class="main-content">
+        <script>
+          const first_test_data = [];
+          const second_test_data = [];
+          const validationErrors = [];
+        </script>
+
+        <div class="Form">
+          <!-- hiden-field等 -->
+          <input
+            name="dummy_text_to_avoid_submitting_by_pushing_enter_key"
+            style="position: absolute; visibility: hidden"
+            type="text"
+          />
+
+          <fieldset>
+            <legend>あなたについて</legend>
+            <!-- 氏名(漢字) -->
+            <div class="Form-Item">
+              <p class="Form-Item-Label">氏名(漢字)<span class="required-label">必須</span></p>
+              <div class="Form-Item-Input-Wrapper name-input-wrapper">
+                <!-- 姓 -->
+                <div class="name-input-field">
+                  <input
+                    type="text"
+                    id="name_1"
+                    name="name_1"
+                    value=""
+                    class="Form-Item-Input"
+                    placeholder="東進"
+                    autocomplete="family-name"
+                    required=""
+                  />
+                  <small style="color: gray; font-size: 12px; margin-top: 2px; display: block">姓</small>
+                </div>
+                <!-- 名 -->
+                <div class="name-input-field">
+                  <input
+                    type="text"
+                    id="name_2"
+                    name="name_2"
+                    value=""
+                    class="Form-Item-Input"
+                    placeholder="太郎"
+                    autocomplete="given-name"
+                    required=""
+                  />
+                  <small style="color: gray; font-size: 12px; margin-top: 2px; display: block">名</small>
+                </div>
+              </div>
+            </div>
+
+            <!-- 氏名(カナ) -->
+            <div class="Form-Item">
+              <p class="Form-Item-Label">氏名(カナ)<span class="required-label">必須</span></p>
+              <div class="Form-Item-Input-Wrapper name-input-wrapper">
+                <!-- セイ -->
+                <div class="name-input-field">
+                  <input
+                    type="text"
+                    id="name_1_kana"
+                    name="name_1_kana"
+                    value=""
+                    class="Form-Item-Input"
+                    placeholder="ﾄｳｼﾝ"
+                    pattern="[ｦ-ﾟ\s]+"
+                    title="半角カタカナで入力してください"
+                    required=""
+                  />
+                  <small style="color: gray; font-size: 12px; margin-top: 2px; display: block">ｾｲ</small>
+                </div>
+                <!-- メイ -->
+                <div class="name-input-field">
+                  <input
+                    type="text"
+                    id="name_2_kana"
+                    name="name_2_kana"
+                    value=""
+                    class="Form-Item-Input"
+                    placeholder="ﾀﾛｳ"
+                    pattern="[ｦ-ﾟ\s]+"
+                    title="半角カタカナで入力してください"
+                    required=""
+                  />
+                  <small style="color: gray; font-size: 12px; margin-top: 2px; display: block">ﾒｲ</small>
+                </div>
+              </div>
+            </div>
+
+            <script>
+              function toHalfWidthKana(str) {
+                // 1. ひらがなを全角カタカナに変換する
+                //   （Unicode上で「ひらがな」(3040-309F)を「カタカナ」(30A0-30FF)へシフト）
+                str = str.replace(/[\u3041-\u3096]/g, function (match) {
+                  // ひらがなのコードポイントをカタカナのコードポイントにシフト
+                  const code = match.charCodeAt(0) + 0x60;
+                  return String.fromCharCode(code);
+                });
+
+                // 2. 全角カタカナを半角カタカナに変換するマッピング
+                const kanaMap = {
+                  ガ: "ｶﾞ",
+                  ギ: "ｷﾞ",
+                  グ: "ｸﾞ",
+                  ゲ: "ｹﾞ",
+                  ゴ: "ｺﾞ",
+                  ザ: "ｻﾞ",
+                  ジ: "ｼﾞ",
+                  ズ: "ｽﾞ",
+                  ゼ: "ｾﾞ",
+                  ゾ: "ｿﾞ",
+                  ダ: "ﾀﾞ",
+                  ヂ: "ﾁﾞ",
+                  ヅ: "ﾂﾞ",
+                  デ: "ﾃﾞ",
+                  ド: "ﾄﾞ",
+                  バ: "ﾊﾞ",
+                  ビ: "ﾋﾞ",
+                  ブ: "ﾌﾞ",
+                  ベ: "ﾍﾞ",
+                  ボ: "ﾎﾞ",
+                  パ: "ﾊﾟ",
+                  ピ: "ﾋﾟ",
+                  プ: "ﾌﾟ",
+                  ペ: "ﾍﾟ",
+                  ポ: "ﾎﾟ",
+                  ヴ: "ｳﾞ",
+                  ッ: "ｯ",
+                  ャ: "ｬ",
+                  ュ: "ｭ",
+                  ョ: "ｮ",
+                  ァ: "ｧ",
+                  ィ: "ｨ",
+                  ゥ: "ｩ",
+                  ェ: "ｪ",
+                  ォ: "ｫ",
+                  ー: "ｰ",
+                  "。": "｡",
+                  "、": "､",
+                  "「": "｢",
+                  "」": "｣",
+                  ヲ: "ｦ",
+                  ン: "ﾝ",
+                  カ: "ｶ",
+                  キ: "ｷ",
+                  ク: "ｸ",
+                  ケ: "ｹ",
+                  コ: "ｺ",
+                  サ: "ｻ",
+                  シ: "ｼ",
+                  ス: "ｽ",
+                  セ: "ｾ",
+                  ソ: "ｿ",
+                  タ: "ﾀ",
+                  チ: "ﾁ",
+                  ツ: "ﾂ",
+                  テ: "ﾃ",
+                  ト: "ﾄ",
+                  ナ: "ﾅ",
+                  ニ: "ﾆ",
+                  ヌ: "ﾇ",
+                  ネ: "ﾈ",
+                  ノ: "ﾉ",
+                  ハ: "ﾊ",
+                  ヒ: "ﾋ",
+                  フ: "ﾌ",
+                  ヘ: "ﾍ",
+                  ホ: "ﾎ",
+                  マ: "ﾏ",
+                  ミ: "ﾐ",
+                  ム: "ﾑ",
+                  メ: "ﾒ",
+                  モ: "ﾓ",
+                  ヤ: "ﾔ",
+                  ユ: "ﾕ",
+                  ヨ: "ﾖ",
+                  ラ: "ﾗ",
+                  リ: "ﾘ",
+                  ル: "ﾙ",
+                  レ: "ﾚ",
+                  ロ: "ﾛ",
+                  ワ: "ﾜ",
+                  ヰ: "ｲ",
+                  ヱ: "ｴ",
+                  ヮ: "ﾜ",
+                  ア: "ｱ",
+                  イ: "ｲ",
+                  ウ: "ｳ",
+                  エ: "ｴ",
+                  オ: "ｵ",
+                };
+
+                // 3. 全角カタカナを半角カタカナに置換
+                return str.replace(/[\u30A1-\u30FF]/g, function (match) {
+                  return kanaMap[match] || match; // 対応する変換があれば変換
+                });
+              }
+
+              // IME対応のフリガナ入力処理を初期化
+              document.addEventListener("DOMContentLoaded", function () {
+                // フリガナフィールドのIME対応処理
+                const kanaFields = ["name_1_kana", "name_2_kana", "address_str_kana", "account_holder_kana"];
+
+                kanaFields.forEach(function (fieldId) {
+                  const field = document.getElementById(fieldId);
+                  if (field) {
+                    let isComposing = false;
+
+                    // IME変換開始
+                    field.addEventListener("compositionstart", function () {
+                      isComposing = true;
+                    });
+
+                    // IME変換終了時に変換処理を実行
+                    field.addEventListener("compositionend", function (e) {
+                      isComposing = false;
+                      this.value = toHalfWidthKana(this.value);
+                    });
+
+                    // 通常の入力（IME使用以外）の場合
+                    field.addEventListener("input", function (e) {
+                      if (!isComposing) {
+                        this.value = toHalfWidthKana(this.value);
+                      }
+                    });
+
+                    // フォーカスが外れた時にも変換処理を実行（安全のため）
+                    field.addEventListener("blur", function () {
+                      this.value = toHalfWidthKana(this.value);
+                    });
+                  }
+                });
+
+                // 新規追加項目のバリデーション
+                setupNewFieldValidation();
+
+                // 電話番号の相互チェック
+                setupPhoneValidation();
+
+                // 口座名義人と氏名の一致チェック
+                setupAccountHolderValidation();
+              });
+
+              // 新しく追加したフィールドのバリデーション設定
+              function setupNewFieldValidation() {
+                // 銀行コードのバリデーション
+                const bankCodeInput = document.getElementById("bank_code");
+                const bankCodeError = document.getElementById("bank_code_error");
+
+                if (bankCodeInput) {
+                  bankCodeInput.addEventListener("input", function () {
+                    const value = this.value.trim();
+                    if (value !== "" && !/^\d{4}$/.test(value)) {
+                      showError(bankCodeError, "銀行コードは4桁の半角数字で入力してください。");
+                    } else {
+                      hideError(bankCodeError);
+                    }
+                  });
+                }
+
+                // 支店コードのバリデーション
+                const branchCodeInput = document.getElementById("branch_code");
+                const branchCodeError = document.getElementById("branch_code_error");
+
+                if (branchCodeInput) {
+                  branchCodeInput.addEventListener("input", function () {
+                    const value = this.value.trim();
+                    if (value !== "" && !/^\d{3}$/.test(value)) {
+                      showError(branchCodeError, "支店コードは3桁の半角数字で入力してください。");
+                    } else {
+                      hideError(branchCodeError);
+                    }
+                  });
+                }
+
+                // 口座番号のバリデーション
+                const accountNumberInput = document.getElementById("account_number");
+                const accountNumberError = document.getElementById("account_number_error");
+
+                if (accountNumberInput) {
+                  accountNumberInput.addEventListener("input", function () {
+                    const value = this.value.trim();
+                    if (value !== "" && !/^\d{1,8}$/.test(value)) {
+                      showError(accountNumberError, "口座番号は1-8桁の半角数字で入力してください。");
+                    } else {
+                      hideError(accountNumberError);
+                    }
+                  });
+                }
+
+                // メールアドレスのバリデーション
+                const emailInput = document.getElementById("email_address");
+                const emailError = document.getElementById("email_error");
+
+                if (emailInput) {
+                  emailInput.addEventListener("input", function () {
+                    const value = this.value.trim();
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (value !== "" && !emailRegex.test(value)) {
+                      showError(emailError, "正しいメールアドレスの形式で入力してください。");
+                    } else {
+                      hideError(emailError);
+                    }
+                  });
+                }
+
+                // 住所フリガナのバリデーション
+                const addressKanaInput = document.getElementById("address_str_kana");
+                const addressKanaError = document.getElementById("address_kana_error");
+
+                if (addressKanaInput) {
+                  addressKanaInput.addEventListener("input", function () {
+                    const value = this.value.trim();
+                    if (value !== "" && !/^[ｦ-ﾟ\s]+$/.test(value)) {
+                      showError(addressKanaError, "半角カタカナで入力してください。");
+                    } else {
+                      hideError(addressKanaError);
+                    }
+                  });
+                }
+
+                // 口座名義人フリガナのバリデーション
+                const accountHolderKanaInput = document.getElementById("account_holder_kana");
+                const accountHolderKanaError = document.getElementById("account_holder_kana_error");
+
+                if (accountHolderKanaInput) {
+                  accountHolderKanaInput.addEventListener("input", function () {
+                    const value = this.value.trim();
+                    if (value !== "" && !/^[ｦ-ﾟ\s]+$/.test(value)) {
+                      showError(accountHolderKanaError, "半角カタカナで入力してください。");
+                    } else {
+                      hideError(accountHolderKanaError);
+                    }
+                  });
+                }
+              }
+
+
+
+              // エラーメッセージ表示・非表示のヘルパー関数
+              function showError(errorElement, message) {
+                if (errorElement) {
+                  errorElement.textContent = message;
+                  errorElement.style.display = "block";
+                }
+              }
+
+              function hideError(errorElement) {
+                if (errorElement) {
+                  errorElement.style.display = "none";
+                }
+              }
+
+              // 電話番号の相互チェック機能
+              function setupPhoneValidation() {
+                const telHomeInput = document.getElementById("tel_home");
+                const telMobileInput = document.getElementById("tel_mobile");
+
+                function validatePhoneRequirement() {
+                  const homeValue = telHomeInput?.value.trim() || "";
+                  const mobileValue = telMobileInput?.value.trim() || "";
+
+                  // 自宅と携帯のどちらも空の場合はエラー
+                  if (!homeValue && !mobileValue) {
+                    if (telHomeInput) {
+                      showError(
+                        document.getElementById("tel_home_error"),
+                        "自宅または携帯電話番号のいずれかは必須です。"
+                      );
+                    }
+                    if (telMobileInput) {
+                      showError(
+                        document.getElementById("tel_mobile_error"),
+                        "自宅または携帯電話番号のいずれかは必須です。"
+                      );
+                    }
+                    return false;
+                  } else {
+                    // どちらかが入力されている場合はエラーをクリア
+                    if (telHomeInput && !homeValue) {
+                      hideError(document.getElementById("tel_home_error"));
+                    }
+                    if (telMobileInput && !mobileValue) {
+                      hideError(document.getElementById("tel_mobile_error"));
+                    }
+                    return true;
+                  }
+                }
+
+                // 電話番号フィールドにイベントリスナーを追加
+                if (telHomeInput) {
+                  telHomeInput.addEventListener("blur", validatePhoneRequirement);
+                }
+                if (telMobileInput) {
+                  telMobileInput.addEventListener("blur", validatePhoneRequirement);
+                }
+              }
+
+              // 口座名義人と氏名の一致チェック機能
+              function setupAccountHolderValidation() {
+                const accountHolderInput = document.getElementById("account_holder");
+                const accountHolderKanaInput = document.getElementById("account_holder_kana");
+                const name1Input = document.getElementById("name_1");
+                const name2Input = document.getElementById("name_2");
+                const name1KanaInput = document.getElementById("name_1_kana");
+                const name2KanaInput = document.getElementById("name_2_kana");
+
+                function validateAccountHolderMatch() {
+                  // 氏名（漢字）の一致チェック
+                  if (accountHolderInput && name1Input && name2Input) {
+                    const accountHolder = accountHolderInput.value.trim();
+                    const fullName = name1Input.value.trim() + name2Input.value.trim();
+
+                    if (accountHolder && fullName && accountHolder !== fullName) {
+                      showError(
+                        document.getElementById("account_holder_error"),
+                        "口座名義人は氏名（漢字）と一致させてください。"
+                      );
+                      return false;
+                    } else if (accountHolder === fullName) {
+                      hideError(document.getElementById("account_holder_error"));
+                    }
+                  }
+
+                  // 氏名（カナ）の一致チェック
+                  if (accountHolderKanaInput && name1KanaInput && name2KanaInput) {
+                    const accountHolderKana = accountHolderKanaInput.value.trim();
+                    const fullNameKana = name1KanaInput.value.trim() + name2KanaInput.value.trim();
+
+                    if (accountHolderKana && fullNameKana && accountHolderKana !== fullNameKana) {
+                      showError(
+                        document.getElementById("account_holder_kana_error"),
+                        "口座名義人フリガナは氏名（カナ）と一致させてください。"
+                      );
+                      return false;
+                    } else if (accountHolderKana === fullNameKana) {
+                      hideError(document.getElementById("account_holder_kana_error"));
+                    }
+                  }
+
+                  return true;
+                }
+
+                // 関連フィールドにイベントリスナーを追加
+                [
+                  accountHolderInput,
+                  accountHolderKanaInput,
+                  name1Input,
+                  name2Input,
+                  name1KanaInput,
+                  name2KanaInput,
+                ].forEach((input) => {
+                  if (input) {
+                    input.addEventListener("blur", validateAccountHolderMatch);
+                    input.addEventListener("input", validateAccountHolderMatch);
+                  }
+                });
+              }
+            </script>
+
+            <!-- 性別 -->
+            <div class="Form-Item">
+              <p class="Form-Item-Label">性別<span class="required-label">必須</span></p>
+              <div class="Form-Item-Input-Wrapper">
+                <select name="id_sex" class="Form-Item-Input" id="id_sex">
+                  <option value="" selected="selected">--選択してください--</option>
+                  <option value="1">男性</option>
+                  <option value="2">女性</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- 生年月日 -->
+            <div class="Form-Item">
+              <p class="Form-Item-Label">生年月日<span class="required-label">必須</span></p>
+              <div class="Form-Item-Input-Wrapper">
+                <input
+                  type="date"
+                  name="birthday"
+                  value=""
+                  id="birthday"
+                  class="Form-Item-Input"
+                  autocomplete="bday"
+                  required="1"
+                />
+              </div>
+            </div>
+
+            <!-- 郵便番号入力 -->
+            <div class="Form-Item">
+              <p class="Form-Item-Label">郵便番号<span class="required-label">必須</span></p>
+              <div class="Form-Item-Input-Wrapper">
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-start">
+                  <div style="flex: 1; min-width: 200px">
+                    <input
+                      type="text"
+                      id="address_num"
+                      name="address_num"
+                      value=""
+                      class="Form-Item-Input"
+                      maxlength="7"
+                      placeholder="1130033"
+                      autocomplete="postal-code"
+                      wide="auto"
+                      required=""
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    id="search_address_btn"
+                    class="Form-Button"
+                    style="padding: 12px 16px; font-size: 14px; white-space: nowrap; min-width: 100px"
+                  >
+                    住所検索
+                  </button>
+                </div>
+                <small style="margin-top: 8px; display: block">
+                  ※郵便番号はハイフンなしの半角数字7桁で入力してください
+                </small>
+                <div
+                  id="postal_code_error"
+                  class="error-message"
+                  style="display: none; color: red; font-size: 12px; margin-top: 5px"
+                ></div>
+              </div>
+            </div>
+
+            <script>
+              document.addEventListener("DOMContentLoaded", function () {
+                const addressNumInput = document.getElementById("address_num");
+                const searchBtn = document.getElementById("search_address_btn");
+                const errorDiv = document.getElementById("postal_code_error");
+
+                // 郵便番号検索処理を関数化
+                function searchPostalCode() {
+                  const postalCode = addressNumInput.value.trim();
+
+                  // エラーメッセージをクリア
+                  hidePostalCodeError();
+
+                  // 郵便番号のフォーマットチェック（半角数字7桁）
+                  if (!/^\d{7}$/.test(postalCode)) {
+                    showPostalCodeError("郵便番号は半角数字7桁で入力してください。");
+                    return;
+                  }
+
+                  // 郵便番号検索APIを使用
+                  const url = `https://zipcloud.ibsnet.co.jp/api/search?zipcode=${postalCode}`;
+                  searchBtn.textContent = "検索中...";
+                  searchBtn.disabled = true;
+
+                  fetch(url)
+                    .then((response) => response.json())
+                    .then((data) => {
+                      // APIが正常に動作している場合（statusが200）のみ、結果チェック
+                      if (data.status === 200 && data.results && data.results.length > 0) {
+                        const result = data.results[0];
+                        document.getElementById(
+                          "address_str"
+                        ).value = `${result.address1}${result.address2}${result.address3}`;
+                        showPostalCodeError("住所が自動入力されました。", "green");
+                      } else {
+                        // 結果が存在しない場合、もしくは status が 200 以外の場合はエラー表示
+                        showPostalCodeError(data.message || "該当する住所が見つかりませんでした。");
+                        document.getElementById("address_str").value = "";
+                      }
+                    })
+                    .catch((error) => {
+                      console.error("エラーが発生しました:", error);
+                      showPostalCodeError("住所検索に失敗しました。時間をおいて再度お試しください。");
+                    })
+                    .finally(() => {
+                      searchBtn.textContent = "住所検索";
+                      searchBtn.disabled = false;
+                    });
+                }
+
+                // エラーメッセージ表示
+                function showPostalCodeError(message, color = "red") {
+                  errorDiv.textContent = message;
+                  errorDiv.style.color = color;
+                  errorDiv.style.display = "block";
+                }
+
+                // エラーメッセージ非表示
+                function hidePostalCodeError() {
+                  errorDiv.style.display = "none";
+                }
+
+                // 郵便番号入力時のバリデーション（自動変換なし）
+                addressNumInput.addEventListener("input", function () {
+                  const value = this.value;
+
+                  // 全角数字や不正な文字が含まれている場合は警告
+                  if (/[０-９]/.test(value)) {
+                    showPostalCodeError("全角数字が含まれています。半角数字で入力してください。");
+                  } else if (/[^\d]/.test(value)) {
+                    showPostalCodeError("数字以外の文字が含まれています。半角数字のみで入力してください。");
+                  } else if (value.length > 0 && value.length < 7) {
+                    showPostalCodeError("郵便番号は7桁で入力してください。");
+                  } else if (value.length === 7) {
+                    hidePostalCodeError();
+                  } else {
+                    hidePostalCodeError();
+                  }
+                });
+
+                // フォーカスが外れた時のバリデーション
+                addressNumInput.addEventListener("blur", function () {
+                  const value = this.value.trim();
+                  if (value.length > 0 && !/^\d{7}$/.test(value)) {
+                    showPostalCodeError("郵便番号は半角数字7桁で入力してください。");
+                  }
+                });
+
+                // 住所検索ボタンのクリックイベント
+                searchBtn.addEventListener("click", searchPostalCode);
+
+                // Enterキーでも検索実行
+                addressNumInput.addEventListener("keypress", function (e) {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    searchPostalCode();
+                  }
+                });
+              });
+            </script>
+
+            <!-- 住所入力 -->
+            <div class="Form-Item">
+              <p class="Form-Item-Label">住所<span class="required-label">必須</span></p>
+              <div class="Form-Item-Input-Wrapper">
+                <input
+                  type="text"
+                  id="address_str"
+                  name="address_str"
+                  value=""
+                  class="Form-Item-Input"
+                  placeholder="住所検索ボタンで自動入力、または手動で入力してください"
+                />
+              </div>
+            </div>
+
+            <!-- 建物名入力 -->
+            <div class="Form-Item">
+              <p class="Form-Item-Label">建物名</p>
+              <div class="Form-Item-Input-Wrapper">
+                <input
+                  type="text"
+                  id="address_str_building"
+                  name="address_str_building"
+                  value=""
+                  class="Form-Item-Input"
+                  placeholder="ナガセ本郷ビル７階"
+                />
+              </div>
+            </div>
+
+            <script>
+              document.addEventListener("DOMContentLoaded", function () {
+                function toFullWidth(str) {
+                  return str.replace(/[0-9-]/g, function (s) {
+                    return String.fromCharCode(s.charCodeAt(0) + 65248);
+                  });
+                }
+
+                function convertInputToFullWidth(event) {
+                  event.target.value = toFullWidth(event.target.value);
+                }
+
+                document.getElementById("address_str").addEventListener("input", convertInputToFullWidth);
+                document.getElementById("address_str_building").addEventListener("input", convertInputToFullWidth);
+              });
+            </script>
+
+            <!-- 電話番号(自宅) -->
+            <div class="Form-Item">
+              <p class="Form-Item-Label">電話番号(自宅)<span class="required-label">いずれか必須</span></p>
+              <div class="Form-Item-Input-Wrapper">
+                <input
+                  type="text"
+                  id="tel_home"
+                  name="tel_home"
+                  value=""
+                  class="Form-Item-Input"
+                  placeholder="03-1234-5678"
+                />
+                <small>※ハイフン区切りの半角数字で入力してください</small>
+                <div
+                  id="tel_home_error"
+                  class="error-message"
+                  style="display: none; color: red; font-size: 12px; margin-top: 5px"
+                ></div>
+              </div>
+            </div>
+
+            <script>
+              document.addEventListener("DOMContentLoaded", function () {
+                const telHomeInput = document.getElementById("tel_home");
+                const telHomeError = document.getElementById("tel_home_error");
+
+                // 電話番号のフォーマットをチェック（固定電話用）
+                function validateHomePhone(value) {
+                  // 固定電話の正規表現：0X-XXXX-XXXX または 0XX-XXX-XXXX
+                  const homePhoneRegex = /^0\d{1,3}-\d{1,4}-\d{4}$/;
+                  return homePhoneRegex.test(value);
+                }
+
+                // エラーメッセージ表示
+                function showTelHomeError(message) {
+                  telHomeError.textContent = message;
+                  telHomeError.style.display = "block";
+                }
+
+                // エラーメッセージ非表示
+                function hideTelHomeError() {
+                  telHomeError.style.display = "none";
+                }
+
+                // 電話番号(自宅)入力時のバリデーション
+                telHomeInput?.addEventListener("input", function () {
+                  const value = this.value.trim();
+
+                  if (value === "") {
+                    hideTelHomeError();
+                    return;
+                  }
+
+                  // 全角数字や全角ハイフンが含まれている場合は警告
+                  if (/[０-９]/.test(value)) {
+                    showTelHomeError("全角数字が含まれています。半角数字で入力してください。");
+                  } else if (/－/.test(value)) {
+                    showTelHomeError("全角ハイフンが含まれています。半角ハイフンで入力してください。");
+                  } else if (!/^[\d-]*$/.test(value)) {
+                    showTelHomeError("数字とハイフン以外の文字が含まれています。");
+                  } else if (value.length > 13) {
+                    showTelHomeError("電話番号が長すぎます。正しい形式で入力してください。");
+                  } else if (!validateHomePhone(value) && value.includes("-")) {
+                    showTelHomeError("正しい電話番号の形式で入力してください。（例：03-1234-5678）");
+                  } else {
+                    hideTelHomeError();
+                  }
+                });
+
+                // フォーカスが外れた時のバリデーション
+                telHomeInput?.addEventListener("blur", function () {
+                  const value = this.value.trim();
+                  if (value !== "" && !validateHomePhone(value)) {
+                    showTelHomeError("正しい電話番号の形式で入力してください。（例：03-1234-5678）");
+                  }
+                });
+              });
+            </script>
+
+            <!-- 電話番号(携帯) -->
+            <div class="Form-Item">
+              <p class="Form-Item-Label">電話番号(携帯)<span class="required-label">いずれか必須</span></p>
+              <div class="Form-Item-Input-Wrapper">
+                <input
+                  type="text"
+                  id="tel_mobile"
+                  name="tel_mobile"
+                  value=""
+                  class="Form-Item-Input"
+                  placeholder="090-1234-5678"
+                  required=""
+                />
+                <small style="color: gray; display: block">※ハイフン区切りの半角数字で入力してください</small>
+                <div
+                  id="tel_mobile_error"
+                  class="error-message"
+                  style="display: none; color: red; font-size: 12px; margin-top: 5px"
+                ></div>
+              </div>
+            </div>
+
+            <script>
+              document.addEventListener("DOMContentLoaded", function () {
+                const telMobileInput = document.getElementById("tel_mobile");
+                const telMobileError = document.getElementById("tel_mobile_error");
+
+                // 携帯電話番号のフォーマットをチェック
+                function validateMobilePhone(value) {
+                  // 携帯電話の正規表現：090-XXXX-XXXX, 080-XXXX-XXXX, 070-XXXX-XXXX
+                  const mobilePhoneRegex = /^0[789]0-\d{4}-\d{4}$/;
+                  return mobilePhoneRegex.test(value);
+                }
+
+                // エラーメッセージ表示
+                function showTelMobileError(message) {
+                  telMobileError.textContent = message;
+                  telMobileError.style.display = "block";
+                }
+
+                // エラーメッセージ非表示
+                function hideTelMobileError() {
+                  telMobileError.style.display = "none";
+                }
+
+                // 電話番号(携帯)入力時のバリデーション
+                telMobileInput?.addEventListener("input", function () {
+                  const value = this.value.trim();
+
+                  if (value === "") {
+                    hideTelMobileError();
+                    return;
+                  }
+
+                  // 全角数字や全角ハイフンが含まれている場合は警告
+                  if (/[０-９]/.test(value)) {
+                    showTelMobileError("全角数字が含まれています。半角数字で入力してください。");
+                  } else if (/－/.test(value)) {
+                    showTelMobileError("全角ハイフンが含まれています。半角ハイフンで入力してください。");
+                  } else if (!/^[\d-]*$/.test(value)) {
+                    showTelMobileError("数字とハイフン以外の文字が含まれています。");
+                  } else if (value.length > 13) {
+                    showTelMobileError("電話番号が長すぎます。正しい形式で入力してください。");
+                  } else if (!validateMobilePhone(value) && value.includes("-") && value.length >= 11) {
+                    showTelMobileError("正しい携帯電話番号の形式で入力してください。（例：090-1234-5678）");
+                  } else {
+                    hideTelMobileError();
+                  }
+                });
+
+                // フォーカスが外れた時のバリデーション
+                telMobileInput?.addEventListener("blur", function () {
+                  const value = this.value.trim();
+                  if (value !== "" && !validateMobilePhone(value)) {
+                    showTelMobileError("正しい携帯電話番号の形式で入力してください。（例：090-1234-5678）");
+                  }
+                });
+              });
+            </script>
+
+            <!-- 住所フリガナ -->
+            <div class="Form-Item">
+              <p class="Form-Item-Label">住所フリガナ<span class="required-label">必須</span></p>
+              <div class="Form-Item-Input-Wrapper">
+                <input
+                  type="text"
+                  id="address_str_kana"
+                  name="address_str_kana"
+                  value=""
+                  class="Form-Item-Input"
+                  placeholder="ﾄｳｷｮｳﾄﾁﾖﾀﾞｸﾎﾝｺﾞｳ"
+                  pattern="[ｦ-ﾟ\s]+"
+                  title="半角カタカナで入力してください"
+                  required=""
+                />
+                <small>※半角カタカナで入力してください</small>
+                <div
+                  id="address_kana_error"
+                  class="error-message"
+                  style="display: none; color: red; font-size: 12px; margin-top: 5px"
+                ></div>
+              </div>
+            </div>
+
+            <!-- メールアドレス -->
+            <div class="Form-Item">
+              <p class="Form-Item-Label">メールアドレス<span class="required-label">必須</span></p>
+              <div class="Form-Item-Input-Wrapper">
+                <input
+                  type="email"
+                  id="email_address"
+                  name="email_address"
+                  value=""
+                  class="Form-Item-Input"
+                  placeholder="example@domain.com"
+                  autocomplete="email"
+                  required=""
+                />
+                <small>※正しいメールアドレスの形式で入力してください</small>
+                <div
+                  id="email_error"
+                  class="error-message"
+                  style="display: none; color: red; font-size: 12px; margin-top: 5px"
+                ></div>
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>大学について</legend>
+            <div class="exclusion-note">
+              短期大学・専門学校・高卒の方は大学に「なし」と入力、入学年月日には高校卒業年月日を入力してください。<br />
+              大学に入学予定の方は、現在入学予定の大学と入学予定年月日をお答えください。<br />
+              既に大学を卒業された方は、出身大学を一つお答えください。<br />
+            </div>
+            <!-- 大学名 -->
+            <div class="Form-Item">
+              <p class="Form-Item-Label">大学<span class="required-label">必須</span></p>
+              <div class="Form-Item-Input-Wrapper">
+                <input
+                  type="text"
+                  id="daigaku"
+                  name="daigaku"
+                  value=""
+                  class="Form-Item-Input"
+                  placeholder="東京大学"
+                  required=""
+                />
+                <small>※最後に「大学」と付けて入力してください。</small>
+              </div>
+            </div>
+
+            <!-- 学部 -->
+            <div class="Form-Item">
+              <p class="Form-Item-Label">学部<span class="required-label">必須</span></p>
+              <div class="Form-Item-Input-Wrapper">
+                <input
+                  type="text"
+                  id="gakubu"
+                  name="gakubu"
+                  value=""
+                  class="Form-Item-Input"
+                  placeholder="理学部"
+                  required=""
+                />
+                <small>※最後に「学部」と付けて入力してください。</small>
+              </div>
+            </div>
+
+            <!-- 学科 -->
+            <div class="Form-Item">
+              <p class="Form-Item-Label">学科<span class="required-label">必須</span></p>
+              <div class="Form-Item-Input-Wrapper">
+                <input
+                  type="text"
+                  id="gakka"
+                  name="gakka"
+                  value=""
+                  class="Form-Item-Input"
+                  placeholder="数学科"
+                  required=""
+                />
+                <small
+                  >※最後に「学科」と付けて入力してください。<br />学科がない場合は「なし」と入力してください。</small
+                >
+              </div>
+            </div>
+
+            <!-- 大学入学月日 -->
+            <div class="Form-Item">
+              <p class="Form-Item-Label">入学年月日<span class="required-label">必須</span></p>
+              <div class="Form-Item-Input-Wrapper">
+                <input type="date" name="daigaku_nyugaku_bi" value="" class="Form-Item-Input" required="1" />
+              </div>
+            </div>
+
+            <!-- 大学院名 -->
+            <div class="Form-Item">
+              <p class="Form-Item-Label">大学院</p>
+              <div class="Form-Item-Input-Wrapper">
+                <input
+                  type="text"
+                  id="daigakuin"
+                  name="daigakuin"
+                  value=""
+                  class="Form-Item-Input"
+                  placeholder="東京大学大学院"
+                />
+                <small>※最後に「大学大学院」と付けて入力してください。</small>
+              </div>
+            </div>
+
+            <!-- 研究科 -->
+            <div class="Form-Item">
+              <p class="Form-Item-Label">研究科</p>
+              <div class="Form-Item-Input-Wrapper">
+                <input
+                  type="text"
+                  id="kenkyuka"
+                  name="kenkyuka"
+                  value=""
+                  class="Form-Item-Input"
+                  placeholder="理学系研究科"
+                />
+                <small>※最後に「研究科」と付けて入力してください。</small>
+              </div>
+            </div>
+
+            <!-- 専攻 -->
+            <div class="Form-Item">
+              <p class="Form-Item-Label">専攻</p>
+              <div class="Form-Item-Input-Wrapper">
+                <input
+                  type="text"
+                  id="senkou"
+                  name="senkou"
+                  value=""
+                  class="Form-Item-Input"
+                  placeholder="物理学専攻"
+                />
+                <small>※最後に「専攻」と付けて入力してください。</small>
+              </div>
+            </div>
+          </fieldset>
+
+          <!-- 大学受験時の東進在籍歴（複数選択可） -->
+          <div class="Form-Item">
+            <p class="Form-Item-Label">東進在籍歴 (複数選択可)<span class="required-label">必須</span></p>
+            <!-- ここでチェックボックス群を縦に並べるコンテナ -->
+            <div class="Form-Item-Right">
+              <div class="form-check">
+                <input
+                  type="checkbox"
+                  name="daigaku_juken_toshin_zaisekireki_1"
+                  value="1"
+                  id="daigaku_juken_toshin_zaisekireki_1"
+                  style=""
+                  class="form-check-input"
+                />
+                <label for="daigaku_juken_toshin_zaisekireki_1">東進ハイスクール</label>&nbsp;
+              </div>
+              <div class="form-check">
+                <input
+                  type="checkbox"
+                  name="daigaku_juken_toshin_zaisekireki_2"
+                  value="1"
+                  id="daigaku_juken_toshin_zaisekireki_2"
+                  style=""
+                  class="form-check-input"
+                />
+                <label for="daigaku_juken_toshin_zaisekireki_2">東進衛星予備校</label>&nbsp;
+              </div>
+              <div class="form-check">
+                <input
+                  type="checkbox"
+                  name="daigaku_juken_toshin_zaisekireki_3"
+                  value="1"
+                  id="daigaku_juken_toshin_zaisekireki_3"
+                  style=""
+                  class="form-check-input"
+                />
+                <label for="daigaku_juken_toshin_zaisekireki_3">東大特進</label>&nbsp;
+              </div>
+              <div class="form-check">
+                <input
+                  type="checkbox"
+                  name="daigaku_juken_toshin_zaisekireki_9"
+                  value="1"
+                  id="daigaku_juken_toshin_zaisekireki_9"
+                  style=""
+                  class="form-check-input"
+                />
+                <label for="daigaku_juken_toshin_zaisekireki_9">在籍なし</label>&nbsp;
+              </div>
+              <small style="color: gray"> ※複数の選択肢にチェックを入れることができます。 </small>
+            </div>
+          </div>
+
+          <!-- 出身高校 -->
+          <div class="Form-Item">
+            <p class="Form-Item-Label">出身高校<span class="required-label">必須</span></p>
+            <div class="Form-Item-Input-Wrapper">
+              <input
+                type="text"
+                id="koukou_name"
+                name="koukou_name"
+                value=""
+                class="Form-Item-Input"
+                placeholder="〇〇高校"
+                required=""
+              />
+            </div>
+          </div>
+
+          <fieldset>
+            <legend>給与受取口座</legend>
+            <!-- 銀行コード -->
+            <div class="Form-Item">
+              <p class="Form-Item-Label">銀行コード<span class="required-label">必須</span></p>
+              <div class="Form-Item-Input-Wrapper">
+                <input
+                  type="text"
+                  id="bank_code"
+                  name="bank_code"
+                  value=""
+                  class="Form-Item-Input"
+                  maxlength="4"
+                  placeholder="0001"
+                  pattern="[0-9]{4}"
+                  title="4桁の数字で入力してください"
+                  required=""
+                />
+                <small>※4桁の半角数字で入力してください</small>
+                <div
+                  id="bank_code_error"
+                  class="error-message"
+                  style="display: none; color: red; font-size: 12px; margin-top: 5px"
+                ></div>
+              </div>
+            </div>
+
+            <!-- 銀行名 -->
+            <div class="Form-Item">
+              <p class="Form-Item-Label">銀行名<span class="required-label">必須</span></p>
+              <div class="Form-Item-Input-Wrapper">
+                <input
+                  type="text"
+                  id="bank_name"
+                  name="bank_name"
+                  value=""
+                  class="Form-Item-Input"
+                  placeholder="みずほ銀行"
+                  required=""
+                />
+                <small>※「銀行」「信用金庫」等を含めて入力してください</small>
+              </div>
+            </div>
+
+            <!-- 支店コード -->
+            <div class="Form-Item">
+              <p class="Form-Item-Label">支店コード<span class="required-label">必須</span></p>
+              <div class="Form-Item-Input-Wrapper">
+                <input
+                  type="text"
+                  id="branch_code"
+                  name="branch_code"
+                  value=""
+                  class="Form-Item-Input"
+                  maxlength="3"
+                  placeholder="001"
+                  pattern="[0-9]{3}"
+                  title="3桁の数字で入力してください"
+                  required=""
+                />
+                <small>※3桁の半角数字で入力してください</small>
+                <div
+                  id="branch_code_error"
+                  class="error-message"
+                  style="display: none; color: red; font-size: 12px; margin-top: 5px"
+                ></div>
+              </div>
+            </div>
+
+            <!-- 支店名 -->
+            <div class="Form-Item">
+              <p class="Form-Item-Label">支店名<span class="required-label">必須</span></p>
+              <div class="Form-Item-Input-Wrapper">
+                <input
+                  type="text"
+                  id="branch_name"
+                  name="branch_name"
+                  value=""
+                  class="Form-Item-Input"
+                  placeholder="東京支店"
+                  required=""
+                />
+                <small>※「支店」「出張所」等を含めて入力してください</small>
+              </div>
+            </div>
+
+            <!-- 口座種別 -->
+            <div class="Form-Item">
+              <p class="Form-Item-Label">口座種別<span class="required-label">必須</span></p>
+              <div class="Form-Item-Input-Wrapper">
+                <select name="account_type" class="Form-Item-Input" id="account_type" required="">
+                  <option value="" selected="selected">--選択してください--</option>
+                  <option value="1">普通預金</option>
+                  <option value="2">当座預金</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- 口座番号 -->
+            <div class="Form-Item">
+              <p class="Form-Item-Label">口座番号<span class="required-label">必須</span></p>
+              <div class="Form-Item-Input-Wrapper">
+                <input
+                  type="text"
+                  id="account_number"
+                  name="account_number"
+                  value=""
+                  class="Form-Item-Input"
+                  maxlength="8"
+                  placeholder="1234567"
+                  pattern="[0-9]{1,8}"
+                  title="1-8桁の数字で入力してください"
+                  required=""
+                />
+                <small>※半角数字で入力してください（普通預金：最大7桁、当座預金：最大8桁）</small>
+                <div
+                  id="account_number_error"
+                  class="error-message"
+                  style="display: none; color: red; font-size: 12px; margin-top: 5px"
+                ></div>
+              </div>
+            </div>
+
+            <!-- 口座名義人 -->
+            <div class="Form-Item">
+              <p class="Form-Item-Label">口座名義人<span class="required-label">必須</span></p>
+              <div class="Form-Item-Input-Wrapper">
+                <input
+                  type="text"
+                  id="account_holder"
+                  name="account_holder"
+                  value=""
+                  class="Form-Item-Input"
+                  placeholder="東進太郎"
+                  required=""
+                />
+                <small
+                  >※銀行通帳に印字されている名義人名を正確に入力してください（氏名（漢字）と一致させてください）<br />
+                  ※必ず被雇用者本人名義の口座を入力してください。</small
+                >
+                <div
+                  id="account_holder_error"
+                  class="error-message"
+                  style="display: none; color: red; font-size: 12px; margin-top: 5px"
+                ></div>
+              </div>
+            </div>
+
+            <!-- 口座名義人フリガナ -->
+            <div class="Form-Item">
+              <p class="Form-Item-Label">口座名義人フリガナ<span class="required-label">必須</span></p>
+              <div class="Form-Item-Input-Wrapper">
+                <input
+                  type="text"
+                  id="account_holder_kana"
+                  name="account_holder_kana"
+                  value=""
+                  class="Form-Item-Input"
+                  placeholder="ﾄｳｼﾝﾀﾛｳ"
+                  pattern="[ｦ-ﾟ\s]+"
+                  title="半角カタカナで入力してください"
+                  required=""
+                />
+                <small>※半角カタカナで入力してください（氏名（カナ）と一致させてください）</small>
+                <div
+                  id="account_holder_kana_error"
+                  class="error-message"
+                  style="display: none; color: red; font-size: 12px; margin-top: 5px"
+                ></div>
+              </div>
+            </div>
+          </fieldset>
+
+          <!-- 合否判定日 -->
+          <div class="Form-Item">
+            <p class="Form-Item-Label">合否判定日<span class="required-label">必須</span></p>
+            <div class="Form-Item-Input-Wrapper">
+              <input
+                type="date"
+                name="gohi_hantei_bi"
+                value=""
+                class="Form-Item-Input"
+                id="gohi_hantei_bi"
+                required=""
+              />
+              <small>※最終的な合否が決定された日を入力してください</small>
+            </div>
+          </div>
+
+          <!-- 確認ボタン -->
+          <div class="button-container">
+            <button class="submit-button" type="button" data-theme="e" onclick="Javascript:showConfirmation()">
+              確認する
+            </button>
+          </div>
+        </div>
+
+        <!-- 確認画面 -->
+        <div id="confirmationScreen" style="display: none">
+          <h2 style="text-align: center; color: #333; border-bottom: 2px solid #ccc; padding-bottom: 10px">
+            入力内容確認
+          </h2>
+
+          <div
+            class="confirmation-content"
+            style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0"
+          >
+            <div id="confirmationData"></div>
+          </div>
+
+          <div class="button-container" style="text-align: center; margin-top: 20px">
+            <button
+              class="submit-button"
+              type="button"
+              style="background: #6c757d; margin-right: 10px"
+              onclick="Javascript:backToInput()"
+            >
+              戻る
+            </button>
+            <button class="submit-button" type="button" data-theme="e" onclick="Javascript:downloadCSV()">
+              csvとして出力
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- page end -->
+      <div id="footer"></div>
+    </form>
+
+    <script>
+      // 確認画面表示機能
+      function showConfirmation() {
+        // まずバリデーションを実行
+        let isValid = true;
+        let errorMessages = [];
+
+        // 必須フィールドのチェック
+        $("input[required], select[required]").each(function () {
+          if (!validateField($(this))) {
+            isValid = false;
+            var fieldLabel = $(this).closest(".Form-Item").find(".Form-Item-Label").text();
+            errorMessages.push(fieldLabel + "は必須項目です。");
+          }
+        });
+
+        if (!isValid) {
+          alert("以下の項目を確認してください：\n" + errorMessages.join("\n"));
+          return false;
+        }
+
+        // 入力内容を収集
+        const formData = collectFormData();
+
+        // 確認画面のHTMLを生成
+        const confirmationHTML = generateConfirmationHTML(formData);
+
+        // 確認画面に表示
+        document.getElementById("confirmationData").innerHTML = confirmationHTML;
+
+        // 画面切り替え
+        document.querySelector(".Form").style.display = "none";
+        document.getElementById("confirmationScreen").style.display = "block";
+      }
+
+      // 入力画面に戻る
+      function backToInput() {
+        document.getElementById("confirmationScreen").style.display = "none";
+        document.querySelector(".Form").style.display = "block";
+      }
+
+      // フォームデータ収集
+      function collectFormData() {
+        // 東進在籍歴のチェックボックス値を取得
+        const toshinZaiseki = [];
+        if (document.getElementById("daigaku_juken_toshin_zaisekireki_1")?.checked)
+          toshinZaiseki.push("東進ハイスクール");
+        if (document.getElementById("daigaku_juken_toshin_zaisekireki_2")?.checked)
+          toshinZaiseki.push("東進衛星予備校");
+        if (document.getElementById("daigaku_juken_toshin_zaisekireki_3")?.checked) toshinZaiseki.push("東大特進");
+        if (document.getElementById("daigaku_juken_toshin_zaisekireki_9")?.checked) toshinZaiseki.push("在籍なし");
+
+        // 口座種別の値を文字列に変換
+        function getAccountType(value) {
+          switch (value) {
+            case "1":
+              return "普通預金";
+            case "2":
+              return "当座預金";
+            default:
+              return "";
+          }
+        }
+
+        // 性別の値を文字列に変換
+        function getSex(value) {
+          switch (value) {
+            case "1":
+              return "男性";
+            case "2":
+              return "女性";
+            default:
+              return "";
+          }
+        }
+
+        return {
+          姓: document.getElementById("name_1")?.value || "",
+          名: document.getElementById("name_2")?.value || "",
+          姓フリガナ: document.getElementById("name_1_kana")?.value || "",
+          名フリガナ: document.getElementById("name_2_kana")?.value || "",
+          性別: getSex(document.getElementById("id_sex")?.value),
+          生年月日: document.getElementById("birthday")?.value || "",
+          郵便番号: document.getElementById("address_num")?.value || "",
+          住所: document.getElementById("address_str")?.value || "",
+          住所フリガナ: document.getElementById("address_str_kana")?.value || "",
+          建物名: document.getElementById("address_str_building")?.value || "",
+          "電話番号(自宅)": document.getElementById("tel_home")?.value || "",
+          "電話番号(携帯)": document.getElementById("tel_mobile")?.value || "",
+          メールアドレス: document.getElementById("email_address")?.value || "",
+          大学: document.getElementById("daigaku")?.value || "",
+          学部: document.getElementById("gakubu")?.value || "",
+          学科: document.getElementById("gakka")?.value || "",
+          入学年月日: document.getElementById("daigaku_nyugaku_bi")?.value || "",
+          大学院: document.getElementById("daigakuin")?.value || "",
+          研究科: document.getElementById("kenkyuka")?.value || "",
+          専攻: document.getElementById("senkou")?.value || "",
+          東進在籍歴: toshinZaiseki.join(", "),
+          出身高校: document.getElementById("koukou_name")?.value || "",
+          銀行コード: document.getElementById("bank_code")?.value || "",
+          銀行名: document.getElementById("bank_name")?.value || "",
+          支店コード: document.getElementById("branch_code")?.value || "",
+          支店名: document.getElementById("branch_name")?.value || "",
+          口座種別: getAccountType(document.getElementById("account_type")?.value),
+          口座番号: document.getElementById("account_number")?.value || "",
+          口座名義人: document.getElementById("account_holder")?.value || "",
+          口座名義人フリガナ: document.getElementById("account_holder_kana")?.value || "",
+          合否判定日: document.getElementById("gohi_hantei_bi")?.value || "",
+          作成日時: new Date().toLocaleString("ja-JP"),
+        };
+      }
+
+      // 確認画面HTML生成
+      function generateConfirmationHTML(data) {
+        let html = '<table style="width: 100%; border-collapse: collapse;">';
+
+        for (const [key, value] of Object.entries(data)) {
+          if (value && value.trim() !== "") {
+            html += `
+                    <tr style="border-bottom: 1px solid #ddd;">
+                        <td style="padding: 8px; font-weight: bold; background: #f1f1f1; width: 30%;">${key}</td>
+                        <td style="padding: 8px;">${value}</td>
+                    </tr>
+                `;
+          }
+        }
+
+        html += "</table>";
+        return html;
+      }
+
+      // CSVダウンロード機能
+      async function downloadCSV() {
+        // フォームデータを収集
+        const formData = collectFormData();
+
+        // CSVヘッダーとデータを作成
+        const headers = Object.keys(formData);
+        const values = Object.values(formData);
+
+        // CSVコンテンツを作成（BOM付きUTF-8）
+        let csvContent = "\uFEFF"; // BOM
+        csvContent += `"バージョン","${FORM_VERSION}"\n`; // バージョン番号を先頭行に追加
+        csvContent += `"作成日時","${new Date().toLocaleString("ja-JP")}"\n`; // 作成日時を2行目に追加
+        csvContent += "\n"; // 空行を挿入
+        csvContent += headers.map((header) => `"${header}"`).join(",") + "\n";
+        csvContent += values.map((value) => `"${value.toString().replace(/"/g, '""')}"`).join(",") + "\n";
+
+        // ファイル名生成
+        const lastName = formData["姓"] || "unnamed";
+        const firstName = formData["名"] || "";
+        const name = lastName + firstName;
+        const timestamp = new Date()
+          .toISOString()
+          .slice(0, 16)
+          .replace(/[-:T]/g, "")
+          .replace(/(\d{8})(\d{4})/, "$1_$2");
+        const fileName = `${name}_エントリーシート_${timestamp}.csv`;
+
+        try {
+          // 従来のダウンロード方法
+          const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+          const link = document.createElement("a");
+
+          if (link.download !== undefined) {
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", fileName);
+            link.style.visibility = "hidden";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+
+            alert("CSVファイルがダウンロードされました。\nファイル名: " + fileName);
+          } else {
+            alert("ダウンロード機能が利用できません。");
+          }
+        } catch (error) {
+          alert("CSVファイル作成中にエラーが発生しました：" + error.message);
+        }
+      }
+
+      // 電話番号の相互チェック
+      function setupPhoneValidation() {
+        const telHomeInput = document.getElementById("tel_home");
+        const telMobileInput = document.getElementById("tel_mobile");
+
+        function validatePhoneRequirement() {
+          const homeValue = telHomeInput?.value.trim() || "";
+          const mobileValue = telMobileInput?.value.trim() || "";
+
+          // 自宅と携帯のどちらも空の場合はエラー
+          if (!homeValue && !mobileValue) {
+            if (telHomeInput) {
+              showError(document.getElementById("tel_home_error"), "自宅または携帯電話番号のいずれかは必須です。");
+            }
+            if (telMobileInput) {
+              showError(document.getElementById("tel_mobile_error"), "自宅または携帯電話番号のいずれかは必須です。");
+            }
+            return false;
+          } else {
+            // どちらかが入力されている場合はエラーをクリア
+            if (telHomeInput && !homeValue) {
+              hideError(document.getElementById("tel_home_error"));
+            }
+            if (telMobileInput && !mobileValue) {
+              hideError(document.getElementById("tel_mobile_error"));
+            }
+            return true;
+          }
+        }
+
+        // 電話番号フィールドにイベントリスナーを追加
+        if (telHomeInput) {
+          telHomeInput.addEventListener("blur", validatePhoneRequirement);
+        }
+        if (telMobileInput) {
+          telMobileInput.addEventListener("blur", validatePhoneRequirement);
+        }
+      }
+
+      // 口座名義人と氏名の一致チェック
+      function setupAccountHolderValidation() {
+        const accountHolderInput = document.getElementById("account_holder");
+        const accountHolderKanaInput = document.getElementById("account_holder_kana");
+        const name1Input = document.getElementById("name_1");
+        const name2Input = document.getElementById("name_2");
+        const name1KanaInput = document.getElementById("name_1_kana");
+        const name2KanaInput = document.getElementById("name_2_kana");
+
+        function validateAccountHolderMatch() {
+          // 氏名（漢字）の一致チェック
+          if (accountHolderInput && name1Input && name2Input) {
+            const accountHolder = accountHolderInput.value.trim();
+            const fullName = name1Input.value.trim() + name2Input.value.trim();
+
+            if (accountHolder && fullName && accountHolder !== fullName) {
+              showError(
+                document.getElementById("account_holder_error"),
+                "口座名義人は氏名（漢字）と一致させてください。"
+              );
+              return false;
+            } else if (accountHolder === fullName) {
+              hideError(document.getElementById("account_holder_error"));
+            }
+          }
+
+          // 氏名（カナ）の一致チェック
+          if (accountHolderKanaInput && name1KanaInput && name2KanaInput) {
+            const accountHolderKana = accountHolderKanaInput.value.trim();
+            const fullNameKana = name1KanaInput.value.trim() + name2KanaInput.value.trim();
+
+            if (accountHolderKana && fullNameKana && accountHolderKana !== fullNameKana) {
+              showError(
+                document.getElementById("account_holder_kana_error"),
+                "口座名義人フリガナは氏名（カナ）と一致させてください。"
+              );
+              return false;
+            } else if (accountHolderKana === fullNameKana) {
+              hideError(document.getElementById("account_holder_kana_error"));
+            }
+          }
+
+          return true;
+        }
+
+        // 関連フィールドにイベントリスナーを追加
+        [accountHolderInput, accountHolderKanaInput, name1Input, name2Input, name1KanaInput, name2KanaInput].forEach(
+          (input) => {
+            if (input) {
+              input.addEventListener("blur", validateAccountHolderMatch);
+              input.addEventListener("input", validateAccountHolderMatch);
+            }
+          }
+        );
+      }
+
+      // 電話番号の相互チェック
+      setupPhoneValidation();
+
+      // 口座名義人と氏名の一致チェック
+      setupAccountHolderValidation();
+    </script>
+  </body>
+</html>
