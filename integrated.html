@@ -490,6 +490,51 @@
         }
       }
 
+      /* バリデーションエラー表示セクション */
+      .validation-errors {
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        border-radius: 6px;
+        padding: 16px;
+        margin: 20px 0;
+        color: #721c24;
+      }
+
+      .validation-errors-header {
+        margin-bottom: 12px;
+        font-size: 16px;
+        font-weight: bold;
+      }
+
+      .validation-errors-list {
+        margin-top: 8px;
+      }
+
+      .validation-errors-list ul {
+        margin: 8px 0;
+        padding-left: 20px;
+      }
+
+      .validation-errors-list li {
+        margin: 4px 0;
+        line-height: 1.5;
+      }
+
+      @media screen and (max-width: 480px) {
+        .validation-errors {
+          padding: 12px;
+          margin: 16px 0;
+        }
+
+        .validation-errors-header {
+          font-size: 14px;
+        }
+
+        .validation-errors-list {
+          font-size: 14px;
+        }
+      }
+
       /* 住所検索ボタンのスタイル */
       #search_address_btn {
         background-color: #008876;
@@ -1180,10 +1225,10 @@
                         errorElement.style.marginTop = "5px";
                         this.parentNode.appendChild(errorElement);
                       }
-                      showError(errorElement, "半角カタカナで入力してください。");
+                      showError(errorElement, "半角カタカナで入力してください。", this);
                     } else {
                       const errorElement = document.getElementById("name_1_kana_error");
-                      if (errorElement) hideError(errorElement);
+                      if (errorElement) hideError(errorElement, this);
                     }
                   });
                 }
@@ -1204,10 +1249,10 @@
                         errorElement.style.marginTop = "5px";
                         this.parentNode.appendChild(errorElement);
                       }
-                      showError(errorElement, "半角カタカナで入力してください。");
+                      showError(errorElement, "半角カタカナで入力してください。", this);
                     } else {
                       const errorElement = document.getElementById("name_2_kana_error");
-                      if (errorElement) hideError(errorElement);
+                      if (errorElement) hideError(errorElement, this);
                     }
                   });
                 }
@@ -1220,9 +1265,9 @@
                   bankCodeInput.addEventListener("input", function () {
                     const value = this.value.trim();
                     if (value !== "" && !/^\d{4}$/.test(value)) {
-                      showError(bankCodeError, "銀行コードは4桁の半角数字で入力してください。");
+                      showError(bankCodeError, "銀行コードは4桁の半角数字で入力してください。", this);
                     } else {
-                      hideError(bankCodeError);
+                      hideError(bankCodeError, this);
                     }
                   });
                 }
@@ -1235,9 +1280,9 @@
                   branchCodeInput.addEventListener("input", function () {
                     const value = this.value.trim();
                     if (value !== "" && !/^\d{3}$/.test(value)) {
-                      showError(branchCodeError, "支店コードは3桁の半角数字で入力してください。");
+                      showError(branchCodeError, "支店コードは3桁の半角数字で入力してください。", this);
                     } else {
-                      hideError(branchCodeError);
+                      hideError(branchCodeError, this);
                     }
                   });
                 }
@@ -1250,9 +1295,9 @@
                   accountNumberInput.addEventListener("input", function () {
                     const value = this.value.trim();
                     if (value !== "" && !/^\d{1,8}$/.test(value)) {
-                      showError(accountNumberError, "口座番号は1-8桁の半角数字で入力してください。");
+                      showError(accountNumberError, "口座番号は1-8桁の半角数字で入力してください。", this);
                     } else {
-                      hideError(accountNumberError);
+                      hideError(accountNumberError, this);
                     }
                   });
                 }
@@ -1266,9 +1311,9 @@
                     const value = this.value.trim();
                     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                     if (value !== "" && !emailRegex.test(value)) {
-                      showError(emailError, "正しいメールアドレスの形式で入力してください。");
+                      showError(emailError, "正しいメールアドレスの形式で入力してください。", this);
                     } else {
-                      hideError(emailError);
+                      hideError(emailError, this);
                     }
                   });
                 }
@@ -1281,9 +1326,9 @@
                   addressKanaInput.addEventListener("input", function () {
                     const value = this.value.trim();
                     if (value !== "" && !/^[ｦ-ﾟ\s]+$/.test(value)) {
-                      showError(addressKanaError, "半角カタカナで入力してください。");
+                      showError(addressKanaError, "半角カタカナで入力してください。", this);
                     } else {
-                      hideError(addressKanaError);
+                      hideError(addressKanaError, this);
                     }
                   });
                 }
@@ -1296,25 +1341,33 @@
                   accountHolderKanaInput.addEventListener("input", function () {
                     const value = this.value.trim();
                     if (value !== "" && !/^[ｦ-ﾟ\s]+$/.test(value)) {
-                      showError(accountHolderKanaError, "半角カタカナで入力してください。");
+                      showError(accountHolderKanaError, "半角カタカナで入力してください。", this);
                     } else {
-                      hideError(accountHolderKanaError);
+                      hideError(accountHolderKanaError, this);
                     }
                   });
                 }
               }
 
               // エラーメッセージ表示・非表示のヘルパー関数
-              function showError(errorElement, message) {
+              function showError(errorElement, message, inputElement = null) {
                 if (errorElement) {
                   errorElement.textContent = message;
                   errorElement.style.display = "block";
                 }
+                // 入力欄にエラークラスを追加
+                if (inputElement) {
+                  inputElement.classList.add("error");
+                }
               }
 
-              function hideError(errorElement) {
+              function hideError(errorElement, inputElement = null) {
                 if (errorElement) {
                   errorElement.style.display = "none";
+                }
+                // 入力欄からエラークラスを削除
+                if (inputElement) {
+                  inputElement.classList.remove("error");
                 }
               }
 
@@ -1332,23 +1385,25 @@
                     if (telHomeInput) {
                       showError(
                         document.getElementById("tel_home_error"),
-                        "自宅または携帯電話番号のいずれかは必須です。"
+                        "自宅または携帯電話番号のいずれかは必須です。",
+                        telHomeInput
                       );
                     }
                     if (telMobileInput) {
                       showError(
                         document.getElementById("tel_mobile_error"),
-                        "自宅または携帯電話番号のいずれかは必須です。"
+                        "自宅または携帯電話番号のいずれかは必須です。",
+                        telMobileInput
                       );
                     }
                     return false;
                   } else {
                     // どちらかが入力されている場合はエラーをクリア
                     if (telHomeInput && !homeValue) {
-                      hideError(document.getElementById("tel_home_error"));
+                      hideError(document.getElementById("tel_home_error"), telHomeInput);
                     }
                     if (telMobileInput && !mobileValue) {
-                      hideError(document.getElementById("tel_mobile_error"));
+                      hideError(document.getElementById("tel_mobile_error"), telMobileInput);
                     }
                     return true;
                   }
@@ -1373,37 +1428,39 @@
                 const name2KanaInput = document.getElementById("name_2_kana");
 
                 function validateAccountHolderMatch() {
-                  // 氏名（漢字）の一致チェック
-                  if (accountHolderInput && name1Input && name2Input) {
-                    const accountHolder = accountHolderInput.value.trim();
-                    const fullName = name1Input.value.trim() + name2Input.value.trim();
+                            // 氏名（漢字）の一致チェック
+          if (accountHolderInput && name1Input && name2Input) {
+            const accountHolder = accountHolderInput.value.trim();
+            const fullName = name1Input.value.trim() + name2Input.value.trim();
 
-                    if (accountHolder && fullName && accountHolder !== fullName) {
-                      showError(
-                        document.getElementById("account_holder_error"),
-                        "口座名義人は氏名（漢字）と一致させてください。"
-                      );
-                      return false;
-                    } else if (accountHolder === fullName) {
-                      hideError(document.getElementById("account_holder_error"));
-                    }
-                  }
+            if (accountHolder && fullName && accountHolder !== fullName) {
+              showError(
+                document.getElementById("account_holder_error"),
+                "口座名義人は氏名（漢字）と一致させてください。",
+                accountHolderInput
+              );
+              return false;
+            } else if (accountHolder === fullName) {
+              hideError(document.getElementById("account_holder_error"), accountHolderInput);
+            }
+          }
 
-                  // 氏名（カナ）の一致チェック
-                  if (accountHolderKanaInput && name1KanaInput && name2KanaInput) {
-                    const accountHolderKana = accountHolderKanaInput.value.trim();
-                    const fullNameKana = name1KanaInput.value.trim() + name2KanaInput.value.trim();
+                            // 氏名（カナ）の一致チェック
+          if (accountHolderKanaInput && name1KanaInput && name2KanaInput) {
+            const accountHolderKana = accountHolderKanaInput.value.trim();
+            const fullNameKana = name1KanaInput.value.trim() + name2KanaInput.value.trim();
 
-                    if (accountHolderKana && fullNameKana && accountHolderKana !== fullNameKana) {
-                      showError(
-                        document.getElementById("account_holder_kana_error"),
-                        "口座名義人フリガナは氏名（カナ）と一致させてください。"
-                      );
-                      return false;
-                    } else if (accountHolderKana === fullNameKana) {
-                      hideError(document.getElementById("account_holder_kana_error"));
-                    }
-                  }
+            if (accountHolderKana && fullNameKana && accountHolderKana !== fullNameKana) {
+              showError(
+                document.getElementById("account_holder_kana_error"),
+                "口座名義人フリガナは氏名（カナ）と一致させてください。",
+                accountHolderKanaInput
+              );
+              return false;
+            } else if (accountHolderKana === fullNameKana) {
+              hideError(document.getElementById("account_holder_kana_error"), accountHolderKanaInput);
+            }
+          }
 
                   return true;
                 }
@@ -1508,6 +1565,7 @@
                   // 郵便番号のフォーマットチェック（半角数字7桁）
                   if (!/^\d{7}$/.test(postalCode)) {
                     showPostalCodeError("郵便番号は半角数字7桁で入力してください。");
+                    addressNumInput.classList.add("error");
                     return;
                   }
 
@@ -1526,15 +1584,18 @@
                           "address_str"
                         ).value = `${result.address1}${result.address2}${result.address3}`;
                         showPostalCodeError("住所が自動入力されました。", "green");
+                        addressNumInput.classList.remove("error");
                       } else {
                         // 結果が存在しない場合、もしくは status が 200 以外の場合はエラー表示
                         showPostalCodeError(data.message || "該当する住所が見つかりませんでした。");
                         document.getElementById("address_str").value = "";
+                        addressNumInput.classList.add("error");
                       }
                     })
                     .catch((error) => {
                       console.error("エラーが発生しました:", error);
                       showPostalCodeError("住所検索に失敗しました。時間をおいて再度お試しください。");
+                      addressNumInput.classList.add("error");
                     })
                     .finally(() => {
                       searchBtn.textContent = "住所検索";
@@ -1561,14 +1622,19 @@
                   // 全角数字や不正な文字が含まれている場合は警告
                   if (/[０-９]/.test(value)) {
                     showPostalCodeError("全角数字が含まれています。半角数字で入力してください。");
+                    this.classList.add("error");
                   } else if (/[^\d]/.test(value)) {
                     showPostalCodeError("数字以外の文字が含まれています。半角数字のみで入力してください。");
+                    this.classList.add("error");
                   } else if (value.length > 0 && value.length < 7) {
                     showPostalCodeError("郵便番号は7桁で入力してください。");
+                    this.classList.add("error");
                   } else if (value.length === 7) {
                     hidePostalCodeError();
+                    this.classList.remove("error");
                   } else {
                     hidePostalCodeError();
+                    this.classList.remove("error");
                   }
                 });
 
@@ -1577,6 +1643,7 @@
                   const value = this.value.trim();
                   if (value.length > 0 && !/^\d{7}$/.test(value)) {
                     showPostalCodeError("郵便番号は半角数字7桁で入力してください。");
+                    this.classList.add("error");
                   }
                 });
 
@@ -1690,22 +1757,29 @@
 
                   if (value === "") {
                     hideTelHomeError();
+                    this.classList.remove("error");
                     return;
                   }
 
                   // 全角数字や全角ハイフンが含まれている場合は警告
                   if (/[０-９]/.test(value)) {
                     showTelHomeError("全角数字が含まれています。半角数字で入力してください。");
+                    this.classList.add("error");
                   } else if (/－/.test(value)) {
                     showTelHomeError("全角ハイフンが含まれています。半角ハイフンで入力してください。");
+                    this.classList.add("error");
                   } else if (!/^[\d-]*$/.test(value)) {
                     showTelHomeError("数字とハイフン以外の文字が含まれています。");
+                    this.classList.add("error");
                   } else if (value.length > 13) {
                     showTelHomeError("電話番号が長すぎます。正しい形式で入力してください。");
+                    this.classList.add("error");
                   } else if (!validateHomePhone(value) && value.includes("-")) {
                     showTelHomeError("正しい電話番号の形式で入力してください。（例：03-1234-5678）");
+                    this.classList.add("error");
                   } else {
                     hideTelHomeError();
+                    this.classList.remove("error");
                   }
                 });
 
@@ -1714,6 +1788,7 @@
                   const value = this.value.trim();
                   if (value !== "" && !validateHomePhone(value)) {
                     showTelHomeError("正しい電話番号の形式で入力してください。（例：03-1234-5678）");
+                    this.classList.add("error");
                   }
                 });
               });
@@ -1770,22 +1845,29 @@
 
                   if (value === "") {
                     hideTelMobileError();
+                    this.classList.remove("error");
                     return;
                   }
 
                   // 全角数字や全角ハイフンが含まれている場合は警告
                   if (/[０-９]/.test(value)) {
                     showTelMobileError("全角数字が含まれています。半角数字で入力してください。");
+                    this.classList.add("error");
                   } else if (/－/.test(value)) {
                     showTelMobileError("全角ハイフンが含まれています。半角ハイフンで入力してください。");
+                    this.classList.add("error");
                   } else if (!/^[\d-]*$/.test(value)) {
                     showTelMobileError("数字とハイフン以外の文字が含まれています。");
+                    this.classList.add("error");
                   } else if (value.length > 13) {
                     showTelMobileError("電話番号が長すぎます。正しい形式で入力してください。");
+                    this.classList.add("error");
                   } else if (!validateMobilePhone(value) && value.includes("-") && value.length >= 11) {
                     showTelMobileError("正しい携帯電話番号の形式で入力してください。（例：090-1234-5678）");
+                    this.classList.add("error");
                   } else {
                     hideTelMobileError();
+                    this.classList.remove("error");
                   }
                 });
 
@@ -1794,6 +1876,7 @@
                   const value = this.value.trim();
                   if (value !== "" && !validateMobilePhone(value)) {
                     showTelMobileError("正しい携帯電話番号の形式で入力してください。（例：090-1234-5678）");
+                    this.classList.add("error");
                   }
                 });
               });
@@ -2229,6 +2312,14 @@
             </div>
           </div>
 
+          <!-- バリデーションエラー表示セクション -->
+          <div id="validation-errors" class="validation-errors" style="display: none;">
+            <div class="validation-errors-header">
+              <strong>⚠️ 入力内容に問題があります</strong>
+            </div>
+            <div id="validation-errors-list" class="validation-errors-list"></div>
+          </div>
+
           <!-- 確認ボタン -->
           <div class="button-container">
             <button class="submit-button" type="button" data-theme="e" onclick="Javascript:showConfirmation()">
@@ -2293,9 +2384,12 @@
         }
 
         if (!isValid) {
-          alert("以下の項目を確認してください：\n" + errorMessages.join("\n"));
+          showValidationErrors(errorMessages);
           return false;
         }
+
+        // バリデーションエラーセクションを非表示
+        hideValidationErrors();
 
         // 入力内容を収集
         const formData = collectFormData();
@@ -2315,6 +2409,30 @@
       function backToInput() {
         document.getElementById("confirmationScreen").style.display = "none";
         document.querySelector(".Form").style.display = "block";
+      }
+
+      // バリデーションエラーを表示
+      function showValidationErrors(errors) {
+        const errorContainer = document.getElementById("validation-errors");
+        const errorList = document.getElementById("validation-errors-list");
+        
+        let errorHTML = "<ul>";
+        errors.forEach(function(error) {
+          errorHTML += "<li>" + error + "</li>";
+        });
+        errorHTML += "</ul>";
+        
+        errorList.innerHTML = errorHTML;
+        errorContainer.style.display = "block";
+        
+        // エラーセクションまでスクロール
+        errorContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+
+      // バリデーションエラーを非表示
+      function hideValidationErrors() {
+        const errorContainer = document.getElementById("validation-errors");
+        errorContainer.style.display = "none";
       }
 
       // すべてのバリデーションエラーをチェック
@@ -2564,19 +2682,19 @@
           // 自宅と携帯のどちらも空の場合はエラー
           if (!homeValue && !mobileValue) {
             if (telHomeInput) {
-              showError(document.getElementById("tel_home_error"), "自宅または携帯電話番号のいずれかは必須です。");
+              showError(document.getElementById("tel_home_error"), "自宅または携帯電話番号のいずれかは必須です。", telHomeInput);
             }
             if (telMobileInput) {
-              showError(document.getElementById("tel_mobile_error"), "自宅または携帯電話番号のいずれかは必須です。");
+              showError(document.getElementById("tel_mobile_error"), "自宅または携帯電話番号のいずれかは必須です。", telMobileInput);
             }
             return false;
           } else {
             // どちらかが入力されている場合はエラーをクリア
             if (telHomeInput && !homeValue) {
-              hideError(document.getElementById("tel_home_error"));
+              hideError(document.getElementById("tel_home_error"), telHomeInput);
             }
             if (telMobileInput && !mobileValue) {
-              hideError(document.getElementById("tel_mobile_error"));
+              hideError(document.getElementById("tel_mobile_error"), telMobileInput);
             }
             return true;
           }
@@ -2609,11 +2727,12 @@
             if (accountHolder && fullName && accountHolder !== fullName) {
               showError(
                 document.getElementById("account_holder_error"),
-                "口座名義人は氏名（漢字）と一致させてください。"
+                "口座名義人は氏名（漢字）と一致させてください。",
+                accountHolderInput
               );
               return false;
             } else if (accountHolder === fullName) {
-              hideError(document.getElementById("account_holder_error"));
+              hideError(document.getElementById("account_holder_error"), accountHolderInput);
             }
           }
 
@@ -2625,11 +2744,12 @@
             if (accountHolderKana && fullNameKana && accountHolderKana !== fullNameKana) {
               showError(
                 document.getElementById("account_holder_kana_error"),
-                "口座名義人フリガナは氏名（カナ）と一致させてください。"
+                "口座名義人フリガナは氏名（カナ）と一致させてください。",
+                accountHolderKanaInput
               );
               return false;
             } else if (accountHolderKana === fullNameKana) {
-              hideError(document.getElementById("account_holder_kana_error"));
+              hideError(document.getElementById("account_holder_kana_error"), accountHolderKanaInput);
             }
           }
 
