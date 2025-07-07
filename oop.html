@@ -934,9 +934,11 @@
             return ValidationResult.success();
           }
 
-          const fullName = name1Element.value.trim() + name2Element.value.trim();
+          // 全角・半角スペースを除去して比較
+          const fullName = (name1Element.value.trim() + name2Element.value.trim()).replace(/[\s　]/g, '');
+          const normalizedValue = value.trim().replace(/[\s　]/g, '');
 
-          return value.trim() === fullName ? ValidationResult.success() : ValidationResult.error(this.errorMessage);
+          return normalizedValue === fullName ? ValidationResult.success() : ValidationResult.error(this.errorMessage);
         }
       }
 
@@ -962,9 +964,11 @@
             return ValidationResult.success();
           }
 
-          const fullNameKana = name1KanaElement.value.trim() + name2KanaElement.value.trim();
+          // 全角・半角スペースを除去して比較
+          const fullNameKana = (name1KanaElement.value.trim() + name2KanaElement.value.trim()).replace(/[\s　]/g, '');
+          const normalizedValue = value.trim().replace(/[\s　]/g, '');
 
-          return value.trim() === fullNameKana ? ValidationResult.success() : ValidationResult.error(this.errorMessage);
+          return normalizedValue === fullNameKana ? ValidationResult.success() : ValidationResult.error(this.errorMessage);
         }
       }
 
