@@ -1552,6 +1552,9 @@
             let html = '<table style="width: 100%; border-collapse: collapse;">';
             
             for (const [key, value] of Object.entries(data)) {
+                // バージョン情報は確認画面では非表示
+                if (key === 'バージョン') continue;
+                
                 if (value && value.trim() !== '') {
                     html += `
                         <tr style="border-bottom: 1px solid #ddd;">
@@ -1586,8 +1589,8 @@
             const lastName = formData['姓'] || 'unnamed';
             const firstName = formData['名'] || '';
             const name = lastName + firstName;
-            const timestamp = new Date().toISOString().slice(0, 16).replace(/[-:T]/g, '').replace(/(\d{8})(\d{4})/, '$1_$2');
-            const fileName = `${name}_エントリーシート_${timestamp}.csv`;
+            const gohiHanteiDate = formData['合否判定日'] || '';
+            const fileName = `${gohiHanteiDate}合判_${name}_応募者情報提出シート.csv`;
             
             try {
                 // 従来のダウンロード方法
