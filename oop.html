@@ -1841,6 +1841,15 @@
           return value;
         }
 
+        // 日付をyyyy/mm/dd形式に変換するヘルパー関数
+        function formatDate(value) {
+          if (!value || value.trim() === "") {
+            return "";
+          }
+          // YYYY-MM-DD形式をYYYY/MM/DD形式に変換
+          return value.replace(/-/g, "/");
+        }
+
         return {
           バージョン: FORM_VERSION,
           作成日時: new Date().toLocaleString("ja-JP"),
@@ -1849,7 +1858,7 @@
           姓フリガナ: trimValue(document.getElementById("name_1_kana")?.value || ""),
           名フリガナ: trimValue(document.getElementById("name_2_kana")?.value || ""),
           性別: getSex(document.getElementById("id_sex")?.value),
-          生年月日: document.getElementById("birthday")?.value || "",
+          生年月日: formatDate(document.getElementById("birthday")?.value || ""),
           郵便番号: trimValue(document.getElementById("address_num")?.value || ""),
           住所: trimValue(document.getElementById("address_str")?.value || ""),
           建物名: trimValue(document.getElementById("address_str_building")?.value || ""),
@@ -1860,11 +1869,11 @@
           大学: trimValue(document.getElementById("daigaku")?.value || ""),
           学部: trimValue(document.getElementById("gakubu")?.value || ""),
           学科: trimValue(document.getElementById("gakka")?.value || ""),
-          入学年月日: document.getElementById("daigaku_nyugaku_bi")?.value || "",
+          入学年月日: formatDate(document.getElementById("daigaku_nyugaku_bi")?.value || ""),
           大学院: trimValue(document.getElementById("daigakuin")?.value || ""),
           研究科: trimValue(document.getElementById("kenkyuka")?.value || ""),
           専攻: trimValue(document.getElementById("senkou")?.value || ""),
-          東進在籍歴: toshinZaiseki.join(", "),
+          東進在籍歴: toshinZaiseki.join("、"),
           出身高校: trimValue(document.getElementById("koukou_name")?.value || ""),
           銀行コード: trimValue(document.getElementById("bank_code")?.value || ""),
           銀行名: trimValue(document.getElementById("bank_name")?.value || ""),
@@ -1874,7 +1883,7 @@
           口座番号: trimValue(document.getElementById("account_number")?.value || ""),
           口座名義人: trimValue(document.getElementById("account_holder")?.value || ""),
           口座名義人フリガナ: trimValue(document.getElementById("account_holder_kana")?.value || ""),
-          合否判定日: document.getElementById("gohi_hantei_bi")?.value || "",
+          合否判定日: formatDate(document.getElementById("gohi_hantei_bi")?.value || ""),
         };
       }
 
