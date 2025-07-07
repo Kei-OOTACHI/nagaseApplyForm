@@ -554,7 +554,7 @@
               color: #856404;
             "
           >
-            必ず被雇用者本人名義の口座を入力してください。
+            必ず応募者本人名義の口座を入力してください。
           </div>
           <!-- 銀行コード -->
           <div class="Form-Item">
@@ -1626,7 +1626,13 @@
           .addField(
             new FormField("address_str", "住所").addValidator(new RequiredValidator()).addInputTransformer(toFullWidth)
           )
-          .addField(new FormField("address_str_building", "建物名").addInputTransformer(toFullWidth)) // 必須ではない
+          .addField(new FormField("address_str_building", "建物名").addInputTransformer(toFullWidth))    // 必須ではない    
+          .addField(
+            new FormField("address_str_kana", "住所建物名フリガナ")
+              .addValidator(new RequiredValidator())
+              .addValidator(new RegexValidator(VALIDATION_PATTERNS.KANA.regex, VALIDATION_PATTERNS.KANA.message))
+              .addInputTransformer(toHalfWidthKana)
+          )
 
           // 電話番号
           .addField(
@@ -1646,13 +1652,7 @@
               .addInputTransformer(toHalfWidthNumber)
           )
 
-          // 住所建物名フリガナとメールアドレス
-          .addField(
-            new FormField("address_str_kana", "住所建物名フリガナ")
-              .addValidator(new RequiredValidator())
-              .addValidator(new RegexValidator(VALIDATION_PATTERNS.KANA.regex, VALIDATION_PATTERNS.KANA.message))
-              .addInputTransformer(toHalfWidthKana)
-          )
+          // メールアドレス
           .addField(
             new FormField("email_address", "メールアドレス")
               .addValidator(new RequiredValidator())
@@ -1852,8 +1852,8 @@
           生年月日: document.getElementById("birthday")?.value || "",
           郵便番号: trimValue(document.getElementById("address_num")?.value || ""),
           住所: trimValue(document.getElementById("address_str")?.value || ""),
-          住所建物名フリガナ: trimValue(document.getElementById("address_str_kana")?.value || ""),
           建物名: trimValue(document.getElementById("address_str_building")?.value || ""),
+          住所建物名フリガナ: trimValue(document.getElementById("address_str_kana")?.value || ""),
           "電話番号(自宅)": trimValue(document.getElementById("tel_home")?.value || ""),
           "電話番号(携帯)": trimValue(document.getElementById("tel_mobile")?.value || ""),
           メールアドレス: trimValue(document.getElementById("email_address")?.value || ""),
