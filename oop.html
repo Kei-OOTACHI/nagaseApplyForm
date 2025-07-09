@@ -76,6 +76,36 @@
         box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
       }
 
+      /* ラジオボタンとチェックボックスのサイズ調整 */
+      input[type="radio"] {
+        width: 16px;
+        height: 16px;
+        transform: scale(1.3);
+        margin-right: 15px;
+      }
+
+      input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+        transform: scale(1.2);
+        margin-right: 10px;
+      }
+
+      /* ラジオボタンとチェックボックスのエラー表示 */
+      input[type="radio"].error,
+      input[type="checkbox"].error {
+        outline: 2px solid #dc3545;
+        outline-offset: 2px;
+      }
+
+      /* ラジオボタンとチェックボックスのラベル */
+      input[type="radio"] + label,
+      input[type="checkbox"] + label {
+        margin-left: 8px;
+        cursor: pointer;
+        line-height: 1.4;
+      }
+
       .error-message {
         color: #dc3545;
         font-size: 12px;
@@ -166,6 +196,133 @@
       .name-input-field {
         flex: 1 1 calc(50% - 5px);
         min-width: 140px;
+      }
+
+      /* 注意書きボックス */
+      .info-box {
+        background-color: #fff3cd;
+        border: 1px solid #ffeaa7;
+        border-radius: 6px;
+        padding: 12px;
+        margin-bottom: 15px;
+        font-size: 14px;
+        color: #856404;
+      }
+
+      /* 郵便番号検索ボタン */
+      .postal-search-container {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: flex-start;
+      }
+
+      .postal-input-container {
+        flex: 1;
+        min-width: 200px;
+      }
+
+      .search-address-btn {
+        padding: 12px 16px;
+        font-size: 14px;
+        white-space: nowrap;
+        min-width: 100px;
+        height: 48px;
+        border: none;
+        border-radius: 6px;
+        background-color: #009380;
+        color: white;
+        cursor: pointer;
+      }
+
+      /* ラジオボタンとチェックボックスのコンテナ */
+      .radio-container {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .checkbox-container {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      /* 確認画面 */
+      .confirmation-header {
+        text-align: center;
+        color: #333;
+        border-bottom: 2px solid #ccc;
+        padding-bottom: 10px;
+      }
+
+      .confirmation-content {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+      }
+
+      .confirmation-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .confirmation-table tr {
+        border-bottom: 1px solid #ddd;
+      }
+
+      .confirmation-table td:first-child {
+        padding: 8px;
+        font-weight: bold;
+        background: #f1f1f1;
+        width: 30%;
+      }
+
+      .confirmation-table td:last-child {
+        padding: 8px;
+      }
+
+      /* 通知ボックス */
+      .notification-box {
+        border-radius: 6px;
+        padding: 15px;
+        margin: 20px 0;
+        text-align: center;
+      }
+
+      .notification-success {
+        background-color: #d4edda;
+        border: 1px solid #c3e6cb;
+        color: #155724;
+      }
+
+      .notification-error {
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        color: #721c24;
+      }
+
+      .notification-title {
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      .notification-filename {
+        font-size: 14px;
+        margin-bottom: 5px;
+      }
+
+      .notification-details {
+        font-size: 12px;
+        color: #666;
+        line-height: 1.4;
+      }
+
+      /* ボタンコンテナ */
+      .button-container {
+        text-align: center;
+        margin-top: 20px;
       }
 
       @media screen and (max-width: 480px) {
@@ -276,8 +433,8 @@
           <div class="Form-Item">
             <p class="Form-Item-Label">郵便番号<span class="required-label">必須</span></p>
             <div class="Form-Item-Input-Wrapper">
-              <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-start">
-                <div style="flex: 1; min-width: 200px">
+              <div class="postal-search-container">
+                <div class="postal-input-container">
                   <input
                     type="text"
                     id="address_num"
@@ -288,24 +445,7 @@
                     required
                   />
                 </div>
-                <button
-                  type="button"
-                  id="search_address_btn"
-                  style="
-                    padding: 12px 16px;
-                    font-size: 14px;
-                    white-space: nowrap;
-                    min-width: 100px;
-                    height: 48px;
-                    border: none;
-                    border-radius: 6px;
-                    background-color: #009380;
-                    color: white;
-                    cursor: pointer;
-                  "
-                >
-                  住所検索
-                </button>
+                <button type="button" id="search_address_btn" class="search-address-btn">住所検索</button>
               </div>
               <small>※郵便番号はハイフンなしの半角数字7桁で入力してください</small>
               <div class="error-message" id="address_num_error"></div>
@@ -394,21 +534,36 @@
           </div>
         </fieldset>
 
+        <!-- 学歴について -->
+        <div class="Form-Item">
+          <p class="Form-Item-Label">最終学歴<span class="required-label">必須</span></p>
+          <div class="Form-Item-Input-Wrapper">
+            <div class="radio-container">
+              <div>
+                <input type="radio" id="education_level_1" name="education_level" value="1" required />
+                <label for="education_level_1">大学・大学院を卒業または在学中、大学に入学予定</label>
+              </div>
+              <div>
+                <input type="radio" id="education_level_2" name="education_level" value="2" required />
+                <label for="education_level_2">短期大学・専門学校を卒業または在学中</label>
+              </div>
+              <div>
+                <input type="radio" id="education_level_3" name="education_level" value="3" required />
+                <label for="education_level_3">高校を卒業または在学中（大学・短大・専門学校には入学予定なし）</label>
+              </div>
+              <div>
+                <input type="radio" id="education_level_4" name="education_level" value="4" required />
+                <label for="education_level_4">中学校卒業（高校以上には進学していない）</label>
+              </div>
+            </div>
+            <div class="error-message" id="education_level_error"></div>
+          </div>
+        </div>
+
         <!-- 大学について -->
         <fieldset>
           <legend>大学について</legend>
-          <div
-            style="
-              background-color: #fff3cd;
-              border: 1px solid #ffeaa7;
-              border-radius: 6px;
-              padding: 12px;
-              margin-bottom: 15px;
-              font-size: 14px;
-              color: #856404;
-            "
-          >
-            短期大学・専門学校・高卒の方は、大学・学部・学科に「なし」を入力、入学年月日に「0001/01/01」を入力してください。<br />
+          <div class="info-box">
             大学に入学予定の方は、現在入学予定の大学と入学予定年月日をお答えください。<br />
             既に大学を卒業された方は、出身大学を一つお答えください。<br />
           </div>
@@ -482,7 +637,7 @@
         <div class="Form-Item">
           <p class="Form-Item-Label">東進在籍歴 (複数選択可)<span class="required-label">必須</span></p>
           <div class="Form-Item-Input-Wrapper">
-            <div style="display: flex; flex-direction: column; gap: 8px">
+            <div class="checkbox-container">
               <div>
                 <input
                   type="checkbox"
@@ -543,19 +698,7 @@
         <!-- 給与受取口座について -->
         <fieldset>
           <legend>給与受取口座について</legend>
-          <div
-            style="
-              background-color: #fff3cd;
-              border: 1px solid #ffeaa7;
-              border-radius: 6px;
-              padding: 12px;
-              margin-bottom: 15px;
-              font-size: 14px;
-              color: #856404;
-            "
-          >
-            必ず応募者本人名義の口座を入力してください。
-          </div>
+          <div class="info-box">必ず応募者本人名義の口座を入力してください。</div>
           <!-- 銀行コード -->
           <div class="Form-Item">
             <p class="Form-Item-Label">銀行コード<span class="required-label">必須</span></p>
@@ -714,9 +857,7 @@
 
       <!-- 確認画面 -->
       <div id="confirmationScreen" style="display: none">
-        <h2 style="text-align: center; color: #333; border-bottom: 2px solid #ccc; padding-bottom: 10px">
-          入力内容確認
-        </h2>
+        <h2 class="confirmation-header">入力内容確認</h2>
 
         <div
           class="confirmation-content"
@@ -726,43 +867,19 @@
         </div>
 
         <!-- ダウンロード通知 -->
-        <div
-          id="download-notification"
-          style="
-            display: none;
-            background-color: #d4edda;
-            border: 1px solid #c3e6cb;
-            border-radius: 6px;
-            padding: 15px;
-            margin: 20px 0;
-            color: #155724;
-            text-align: center;
-          "
-        >
-          <div style="font-weight: bold; margin-bottom: 5px">✅ ダウンロード完了</div>
-          <div id="download-filename" style="font-size: 14px; margin-bottom: 5px"></div>
-          <div style="font-size: 12px; color: #666">
+        <div id="download-notification" class="notification-box notification-success" style="display: none">
+          <div class="notification-title">✅ ダウンロード完了</div>
+          <div id="download-filename" class="notification-filename"></div>
+          <div class="notification-details">
             ファイルはお使いのブラウザのデフォルトダウンロードフォルダ（通常はDownloadsフォルダ）に保存されました。
           </div>
         </div>
 
         <!-- ダウンロード失敗通知 -->
-        <div
-          id="download-error-notification"
-          style="
-            display: none;
-            background-color: #f8d7da;
-            border: 1px solid #f5c6cb;
-            border-radius: 6px;
-            padding: 15px;
-            margin: 20px 0;
-            color: #721c24;
-            text-align: center;
-          "
-        >
-          <div style="font-weight: bold; margin-bottom: 5px">❌ ダウンロード失敗</div>
-          <div id="download-error-message" style="font-size: 14px; margin-bottom: 10px"></div>
-          <div style="font-size: 12px; color: #666; line-height: 1.4">
+        <div id="download-error-notification" class="notification-box notification-error" style="display: none">
+          <div class="notification-title">❌ ダウンロード失敗</div>
+          <div id="download-error-message" class="notification-filename" style="margin-bottom: 10px"></div>
+          <div class="notification-details">
             以下をご確認ください：<br />
             • ブラウザのダウンロード設定<br />
             • ダウンロード先フォルダの書き込み権限<br />
@@ -770,13 +887,8 @@
           </div>
         </div>
 
-        <div style="text-align: center; margin-top: 20px">
-          <button
-            type="button"
-            id="back-button"
-            class="submit-button back-button"
-            style="background: #6c757d; margin-right: 10px"
-          >
+        <div class="button-container">
+          <button type="button" id="back-button" class="submit-button back-button" style="margin-right: 10px">
             戻る
           </button>
           <button type="button" id="csv-button" class="submit-button">CSVとして出力</button>
@@ -935,8 +1047,8 @@
           }
 
           // 全角・半角スペースを除去して比較
-          const fullName = (name1Element.value.trim() + name2Element.value.trim()).replace(/[\s　]/g, '');
-          const normalizedValue = value.trim().replace(/[\s　]/g, '');
+          const fullName = (name1Element.value.trim() + name2Element.value.trim()).replace(/[\s　]/g, "");
+          const normalizedValue = value.trim().replace(/[\s　]/g, "");
 
           return normalizedValue === fullName ? ValidationResult.success() : ValidationResult.error(this.errorMessage);
         }
@@ -965,10 +1077,12 @@
           }
 
           // 全角・半角スペースを除去して比較
-          const fullNameKana = (name1KanaElement.value.trim() + name2KanaElement.value.trim()).replace(/[\s　]/g, '');
-          const normalizedValue = value.trim().replace(/[\s　]/g, '');
+          const fullNameKana = (name1KanaElement.value.trim() + name2KanaElement.value.trim()).replace(/[\s　]/g, "");
+          const normalizedValue = value.trim().replace(/[\s　]/g, "");
 
-          return normalizedValue === fullNameKana ? ValidationResult.success() : ValidationResult.error(this.errorMessage);
+          return normalizedValue === fullNameKana
+            ? ValidationResult.success()
+            : ValidationResult.error(this.errorMessage);
         }
       }
 
@@ -1261,6 +1375,116 @@
       }
 
       /**
+       * ラジオボタン必須バリデーター
+       */
+      class RadioRequiredValidator extends Validator {
+        constructor(radioName) {
+          super("いずれかの選択肢を選択してください。");
+          this.radioName = radioName;
+        }
+
+        validate(value) {
+          // 同じnameのラジオボタンのいずれかが選択されているかチェック
+          const radios = document.querySelectorAll(`input[name="${this.radioName}"]`);
+          const hasChecked = Array.from(radios).some((radio) => radio.checked);
+
+          return hasChecked ? ValidationResult.success() : ValidationResult.error(this.errorMessage);
+        }
+      }
+
+      /**
+       * ラジオボタン群を管理するクラス
+       */
+      class RadioField {
+        constructor(radioName, label) {
+          this.radioName = radioName;
+          this.label = label;
+          this.radioElements = Array.from(document.querySelectorAll(`input[name="${radioName}"]`));
+          this.errorElement = document.getElementById(radioName + "_error");
+          this.validators = [];
+
+          this.setupEventListeners();
+        }
+
+        addValidator(validator) {
+          this.validators.push(validator);
+          return this;
+        }
+
+        setupEventListeners() {
+          console.log(`RadioField (${this.radioName}) のイベントリスナーを設定中...`);
+          this.radioElements.forEach((radio) => {
+            radio.addEventListener("change", () => {
+              console.log(`ラジオボタン (${this.radioName}) が変更されました`);
+              this.validateRealtime();
+
+              // 学歴選択の場合は表示制御を実行
+              if (this.radioName === "education_level") {
+                console.log("学歴選択が変更されたため、updateFormVisibility を実行");
+                updateFormVisibility();
+              }
+            });
+          });
+        }
+
+        validateRealtime() {
+          for (const validator of this.validators) {
+            const result = validator.validate("");
+            if (!result.isValid) {
+              this.showError(result.message);
+              return;
+            }
+          }
+          this.hideError();
+        }
+
+        validate() {
+          for (const validator of this.validators) {
+            const result = validator.validate("");
+            if (!result.isValid) {
+              this.showError(result.message);
+              return ValidationResult.error(`${this.label}: ${result.message}`);
+            }
+          }
+          this.hideError();
+          return ValidationResult.success();
+        }
+
+        showError(message) {
+          this.radioElements.forEach((radio) => {
+            radio.classList.add("error");
+          });
+          if (this.errorElement) {
+            this.errorElement.textContent = message;
+            this.errorElement.style.display = "block";
+          }
+        }
+
+        hideError() {
+          this.radioElements.forEach((radio) => {
+            radio.classList.remove("error");
+          });
+          if (this.errorElement) {
+            this.errorElement.style.display = "none";
+          }
+        }
+
+        getValue() {
+          const checkedRadio = this.radioElements.find((radio) => radio.checked);
+          if (checkedRadio) {
+            const label = document.querySelector(`label[for="${checkedRadio.id}"]`);
+            return label ? label.textContent : checkedRadio.value;
+          }
+          return "";
+        }
+
+        getValueCode() {
+          const checkedRadio = this.radioElements.find((radio) => radio.checked);
+          return checkedRadio ? checkedRadio.value : "";
+        }
+      }
+
+      /**
        * チェックボックス群を管理するクラス
        */
       class CheckboxField {
@@ -1349,6 +1573,7 @@
           this.formElement = document.getElementById(formId);
           this.fields = new Map();
           this.checkboxFields = new Map();
+          this.radioFields = new Map();
           this.validationErrorsElement = document.getElementById("validation-errors");
           this.validationErrorsListElement = document.getElementById("validation-errors-list");
         }
@@ -1359,6 +1584,8 @@
         addField(field) {
           if (field instanceof CheckboxField) {
             this.checkboxFields.set(field.label, field);
+          } else if (field instanceof RadioField) {
+            this.radioFields.set(field.label, field);
           } else {
             this.fields.set(field.elementId, field);
           }
@@ -1370,6 +1597,14 @@
          */
         addCheckboxField(field) {
           this.checkboxFields.set(field.label, field);
+          return this;
+        }
+
+        /**
+         * ラジオボタンフィールドを追加
+         */
+        addRadioField(field) {
+          this.radioFields.set(field.label, field);
           return this;
         }
 
@@ -1389,6 +1624,14 @@
 
           // チェックボックスフィールドのバリデーション
           for (const [label, field] of this.checkboxFields) {
+            const result = field.validate();
+            if (!result.isValid) {
+              errors.push(result.message);
+            }
+          }
+
+          // ラジオボタンフィールドのバリデーション
+          for (const [label, field] of this.radioFields) {
             const result = field.validate();
             if (!result.isValid) {
               errors.push(result.message);
@@ -1448,6 +1691,11 @@
             data[label] = field.getValue();
           }
 
+          // ラジオボタンフィールドのデータ取得
+          for (const [label, field] of this.radioFields) {
+            data[label] = field.getValue();
+          }
+
           return data;
         }
 
@@ -1467,6 +1715,7 @@
           }
 
           // チェックボックスフィールドは設定処理をスキップ（複雑なため）
+          // ラジオボタンフィールドも設定処理をスキップ（複雑なため）
         }
       }
 
@@ -1626,7 +1875,7 @@
           .addField(
             new FormField("address_str", "住所").addValidator(new RequiredValidator()).addInputTransformer(toFullWidth)
           )
-          .addField(new FormField("address_str_building", "建物名").addInputTransformer(toFullWidth))    // 必須ではない    
+          .addField(new FormField("address_str_building", "建物名").addInputTransformer(toFullWidth)) // 必須ではない
           .addField(
             new FormField("address_str_kana", "住所建物名フリガナ")
               .addValidator(new RequiredValidator())
@@ -1657,6 +1906,11 @@
             new FormField("email_address", "メールアドレス")
               .addValidator(new RequiredValidator())
               .addValidator(new RegexValidator(VALIDATION_PATTERNS.EMAIL.regex, VALIDATION_PATTERNS.EMAIL.message))
+          )
+
+          // 学歴情報
+          .addField(
+            new RadioField("education_level", "最終学歴").addValidator(new RadioRequiredValidator("education_level"))
           )
 
           // 大学情報
@@ -1757,11 +2011,189 @@
           downloadCSV(formManager);
         });
 
+        // 学歴選択のラジオボタンにイベントリスナーを追加（補強）
+        const educationRadios = document.querySelectorAll('input[name="education_level"]');
+        console.log(`教育レベルのラジオボタンを ${educationRadios.length} 個発見しました`);
+        educationRadios.forEach((radio, index) => {
+          console.log(`ラジオボタン ${index + 1} (ID: ${radio.id}) にイベントリスナーを追加`);
+          radio.addEventListener("change", function () {
+            console.log(`補強イベントリスナーから updateFormVisibility を実行 (選択: ${this.value})`);
+            updateFormVisibility();
+          });
+        });
+
+        // 初期表示状態を設定
+        console.log("初期表示状態を設定中...");
+        updateFormVisibility();
+
         console.log("フォームが初期化されました");
       });
 
       // バージョン情報
       const FORM_VERSION = "1.0.0";
+
+      // ===== 学歴に応じた表示制御 =====
+
+      /**
+       * 学歴選択に応じてフォームセクションの表示を制御
+       */
+      function updateFormVisibility() {
+        console.log("updateFormVisibility が呼ばれました");
+
+        const educationLevel = document.querySelector('input[name="education_level"]:checked')?.value;
+        console.log("選択された学歴レベル:", educationLevel);
+
+        // 大学についてのfieldsetを検索
+        const allFieldsets = document.querySelectorAll("fieldset");
+        let universityFieldset = null;
+        for (const fieldset of allFieldsets) {
+          const legend = fieldset.querySelector("legend");
+          if (legend && legend.textContent.includes("大学について")) {
+            universityFieldset = fieldset;
+            break;
+          }
+        }
+
+        // 出身高校のフィールドを検索
+        const allFormItems = document.querySelectorAll(".Form-Item");
+        let highSchoolField = null;
+        for (const item of allFormItems) {
+          const label = item.querySelector(".Form-Item-Label");
+          if (label && label.textContent.includes("出身高校")) {
+            highSchoolField = item;
+            break;
+          }
+        }
+
+        console.log("universityFieldset:", universityFieldset);
+        console.log("highSchoolField:", highSchoolField);
+
+        switch (educationLevel) {
+          case "1": // 大学
+            console.log("大学選択 - すべて表示");
+            // すべて表示
+            if (universityFieldset) {
+              universityFieldset.style.display = "block";
+              clearUniversityFields();
+            }
+            if (highSchoolField) {
+              highSchoolField.style.display = "block";
+              clearHighSchoolField();
+            }
+            break;
+
+          case "2": // 短大・専門
+          case "3": // 高校
+            console.log("短大・専門または高校選択 - 大学セクション非表示");
+            // 大学セクションのみ非表示
+            if (universityFieldset) {
+              universityFieldset.style.display = "none";
+              fillUniversityFields();
+            }
+            if (highSchoolField) {
+              highSchoolField.style.display = "block";
+              clearHighSchoolField();
+            }
+            break;
+
+          case "4": // 中学
+            console.log("中学選択 - 大学セクションと出身高校を非表示");
+            // 大学セクションと出身高校を非表示
+            if (universityFieldset) {
+              universityFieldset.style.display = "none";
+              fillUniversityFields();
+            }
+            if (highSchoolField) {
+              highSchoolField.style.display = "none";
+              fillHighSchoolField();
+            }
+            break;
+
+          default:
+            console.log("選択なし - すべて表示");
+            // 選択なしの場合はすべて表示
+            if (universityFieldset) {
+              universityFieldset.style.display = "block";
+              clearUniversityFields();
+            }
+            if (highSchoolField) {
+              highSchoolField.style.display = "block";
+              clearHighSchoolField();
+            }
+            break;
+        }
+      }
+
+      /**
+       * 大学関連フィールドに「なし」と「0001/01/01」を自動入力
+       */
+      function fillUniversityFields() {
+        console.log("大学フィールドに自動入力実行");
+        const textFields = ["daigaku", "gakubu", "gakka", "daigakuin", "kenkyuka", "senkou"];
+        const dateFields = ["daigaku_nyugaku_bi"];
+
+        textFields.forEach((fieldId) => {
+          const element = document.getElementById(fieldId);
+          if (element) {
+            element.value = "なし";
+            console.log(`${fieldId} に "なし" を入力`);
+          } else {
+            console.log(`${fieldId} 要素が見つかりません`);
+          }
+        });
+
+        dateFields.forEach((fieldId) => {
+          const element = document.getElementById(fieldId);
+          if (element) {
+            element.value = "0001-01-01";
+            console.log(`${fieldId} に "0001-01-01" を入力`);
+          } else {
+            console.log(`${fieldId} 要素が見つかりません`);
+          }
+        });
+      }
+
+      /**
+       * 大学関連フィールドをクリア
+       */
+      function clearUniversityFields() {
+        console.log("大学フィールドをクリア実行");
+        const allFields = ["daigaku", "gakubu", "gakka", "daigaku_nyugaku_bi", "daigakuin", "kenkyuka", "senkou"];
+
+        allFields.forEach((fieldId) => {
+          const element = document.getElementById(fieldId);
+          if (element) {
+            element.value = "";
+            console.log(`${fieldId} をクリア`);
+          }
+        });
+      }
+
+      /**
+       * 出身高校フィールドに「なし」を自動入力
+       */
+      function fillHighSchoolField() {
+        console.log("出身高校フィールドに自動入力実行");
+        const element = document.getElementById("koukou_name");
+        if (element) {
+          element.value = "なし";
+          console.log('koukou_name に "なし" を入力');
+        } else {
+          console.log("koukou_name 要素が見つかりません");
+        }
+      }
+
+      /**
+       * 出身高校フィールドをクリア
+       */
+      function clearHighSchoolField() {
+        console.log("出身高校フィールドをクリア実行");
+        const element = document.getElementById("koukou_name");
+        if (element) {
+          element.value = "";
+          console.log("koukou_name をクリア");
+        }
+      }
 
       // 確認画面表示機能
       function showConfirmation(formManager) {
@@ -1832,6 +2264,22 @@
           }
         }
 
+        // 学歴の値を文字列に変換
+        function getEducationLevel(value) {
+          switch (value) {
+            case "1":
+              return "1.大学・大学院・大学生・大学院生・大学入学予定";
+            case "2":
+              return "2.短大・専門学校";
+            case "3":
+              return "3.高等学校卒業・高校生";
+            case "4":
+              return "4.中学校卒業";
+            default:
+              return "";
+          }
+        }
+
         // 値のトリム処理を行うヘルパー関数
         function trimValue(value) {
           if (typeof value === "string") {
@@ -1866,6 +2314,7 @@
           "電話番号(自宅)": trimValue(document.getElementById("tel_home")?.value || ""),
           "電話番号(携帯)": trimValue(document.getElementById("tel_mobile")?.value || ""),
           メールアドレス: trimValue(document.getElementById("email_address")?.value || ""),
+          最終学歴: getEducationLevel(document.querySelector('input[name="education_level"]:checked')?.value),
           大学: trimValue(document.getElementById("daigaku")?.value || ""),
           学部: trimValue(document.getElementById("gakubu")?.value || ""),
           学科: trimValue(document.getElementById("gakka")?.value || ""),
@@ -1889,17 +2338,37 @@
 
       // 確認画面HTML生成
       function generateConfirmationHTML(data) {
-        let html = '<table style="width: 100%; border-collapse: collapse;">';
+        let html = '<table class="confirmation-table">';
+
+        // 学歴に応じて表示する項目を決定
+        const educationLevel = document.querySelector('input[name="education_level"]:checked')?.value;
+        const hiddenUniversityFields = ["大学", "学部", "学科", "入学年月日", "大学院", "研究科", "専攻"];
+        const hiddenHighSchoolFields = ["出身高校"];
 
         for (const [key, value] of Object.entries(data)) {
           // バージョン情報は確認画面では非表示
           if (key === "バージョン") continue;
 
-          if (value && value.trim() !== "") {
+          // 学歴に応じて非表示にする項目をスキップ
+          let shouldHide = false;
+
+          if (educationLevel === "2" || educationLevel === "3") {
+            // 短大・専門、高校の場合：大学関連項目を非表示
+            if (hiddenUniversityFields.includes(key)) {
+              shouldHide = true;
+            }
+          } else if (educationLevel === "4") {
+            // 中学の場合：大学関連項目と出身高校を非表示
+            if (hiddenUniversityFields.includes(key) || hiddenHighSchoolFields.includes(key)) {
+              shouldHide = true;
+            }
+          }
+
+          if (!shouldHide && value && value.trim() !== "") {
             html += `
-                        <tr style="border-bottom: 1px solid #ddd;">
-                            <td style="padding: 8px; font-weight: bold; background: #f1f1f1; width: 30%;">${key}</td>
-                            <td style="padding: 8px;">${value}</td>
+                        <tr>
+                            <td>${key}</td>
+                            <td>${value}</td>
                         </tr>
                     `;
           }
