@@ -394,6 +394,12 @@
         color: #155724;
       }
 
+      .notification-info {
+        background-color: #d1ecf1;
+        border: 1px solid #bee5eb;
+        color: #0c5460;
+      }
+
       .notification-error {
         background-color: #f8d7da;
         border: 1px solid #f5c6cb;
@@ -964,23 +970,26 @@
         </div>
 
         <!-- ダウンロード通知 -->
-        <div id="download-notification" class="notification-box notification-success" style="display: none">
-          <div class="notification-title">✅ ダウンロード完了</div>
+        <div id="download-notification" class="notification-box notification-info" style="display: none">
+          <div class="notification-title">🔄 ダウンロード処理実行</div>
           <div id="download-filename" class="notification-filename"></div>
           <div class="notification-details">
-            ファイルはお使いのブラウザのデフォルトダウンロードフォルダ（通常はDownloadsフォルダ）に保存されました。
+            csvファイルのダウンロード処理が実行されました。<br>
+            ダウンロードの可否、ダウンロードしたファイルの保存先は、ブラウザの設定やデバイスの環境によって異なります。<br>
+            ダウンロードが完了しない場合は、ブラウザのダウンロード設定をご確認ください。
           </div>
         </div>
 
         <!-- ダウンロード失敗通知 -->
         <div id="download-error-notification" class="notification-box notification-error" style="display: none">
-          <div class="notification-title">❌ ダウンロード失敗</div>
+          <div class="notification-title">❌ ダウンロード処理エラー</div>
           <div id="download-error-message" class="notification-filename" style="margin-bottom: 10px"></div>
           <div class="notification-details">
-            以下をご確認ください：<br />
+            ダウンロード処理の実行に失敗しました。以下をご確認ください：<br />
             • ブラウザのダウンロード設定<br />
             • ダウンロード先フォルダの書き込み権限<br />
             • ブラウザの拡張機能やセキュリティ設定<br />
+            • デバイスの空き容量<br />
           </div>
         </div>
 
@@ -2499,7 +2508,7 @@
         const fileName = `${gohiHanteiDate}合判_${name}_応募者情報提出シート.csv`;
 
         try {
-          // 従来のダウンロード方法
+          // ダウンロード処理実行
           const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
           const link = document.createElement("a");
 
@@ -2513,21 +2522,22 @@
             document.body.removeChild(link);
             URL.revokeObjectURL(url);
 
-            showDownloadNotification(fileName);
+            // ダウンロード処理が実行されたことを通知
+            showDownloadAttemptNotification(fileName);
           } else {
-            showDownloadErrorNotification("ダウンロード機能が利用できません。");
+            showDownloadErrorNotification("お使いのブラウザではダウンロード機能がサポートされていません。");
           }
         } catch (error) {
           showDownloadErrorNotification("CSVファイル作成中にエラーが発生しました：" + error.message);
         }
       }
 
-      // ダウンロード通知を表示
-      function showDownloadNotification(fileName) {
+      // ダウンロード処理実行通知を表示
+      function showDownloadAttemptNotification(fileName) {
         const notification = document.getElementById("download-notification");
         const filenameDiv = document.getElementById("download-filename");
 
-        // 失敗通知を非表示にする
+        // エラー通知を非表示にする
         const errorNotification = document.getElementById("download-error-notification");
         if (errorNotification) {
           errorNotification.style.display = "none";
@@ -2540,6 +2550,11 @@
           // 通知が見えるようにスクロール
           notification.scrollIntoView({ behavior: "smooth", block: "center" });
         }
+      }
+
+      // ダウンロード通知を表示（後方互換性のため）
+      function showDownloadNotification(fileName) {
+        showDownloadAttemptNotification(fileName);
       }
 
       // ダウンロード通知を非表示
