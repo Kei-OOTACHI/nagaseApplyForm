@@ -37,11 +37,8 @@
     kenkyuka: "理学系研究科",
     senkou: "数学専攻",
     
-    // 東進在籍歴（複数選択）
-    daigaku_juken_toshin_zaisekireki_1: true,  // 東進ハイスクール
-    daigaku_juken_toshin_zaisekireki_2: false, // 東進衛星予備校
-    daigaku_juken_toshin_zaisekireki_3: false, // 東大特進
-    daigaku_juken_toshin_zaisekireki_9: true, // 在籍なし
+    // 東進在籍歴（ラジオボタン）
+    toshin_zaisekireki: "1", // 1: 在籍歴あり, 2: 在籍歴なし
     
     // 出身高校
     koukou_name: "東京都立〇〇高校",
@@ -54,10 +51,7 @@
     account_type: "1", // 1: 普通預金, 2: 当座預金
     account_number: "1234567",
     account_holder: "東進太郎",
-    account_holder_kana: "ﾄｳｼﾝﾀﾛｳ",
-    
-    // 合否判定日
-    gohi_hantei_bi: "2025-07-20"
+    account_holder_kana: "ﾄｳｼﾝﾀﾛｳ"
   };
 
   // CSVデータを格納する変数
@@ -145,13 +139,12 @@
     // 性別の変換
     const sexMap = { "男性": "1", "女性": "2" };
     
-    // 東進在籍歴のマッピング
-    const toshiMap = {
-      "東進ハイスクール": "daigaku_juken_toshin_zaisekireki_1",
-      "東進衛星予備校": "daigaku_juken_toshin_zaisekireki_2", 
-      "東大特進": "daigaku_juken_toshin_zaisekireki_3",
-      "在籍なし": "daigaku_juken_toshin_zaisekireki_9"
-    };
+    // 東進在籍歴の変換
+    function getToshinZaisekirekiValue(value) {
+      if (value === "1") return "1"; // 在籍歴あり
+      if (value === "2") return "2"; // 在籍歴なし
+      return "1"; // デフォルトは在籍歴あり
+    }
     
     return {
       // 基本情報
@@ -165,7 +158,7 @@
       // 住所情報
       address_num: csvRow["郵便番号"] || "",
       address_str: csvRow["住所"] || "",
-      address_str_building: csvRow["建物名"] || "",
+      address_str_building: csvRow["建物名・部屋番号"] || "",
       address_str_kana: csvRow["住所建物名フリガナ"] || "",
       
       // 連絡先
@@ -178,18 +171,15 @@
       
       // 大学情報
       daigaku: csvRow["大学"] || "なし",
-      gakubu: csvRow["学部"] || "なし", 
+      gakubu: csvRow["学部・学類・科類等"] || "なし", 
       gakka: csvRow["学科"] || "なし",
       daigaku_nyugaku_bi: csvRow["入学年月日"] || "0001/01/01",
       daigakuin: csvRow["大学院"] || "なし",
       kenkyuka: csvRow["研究科"] || "なし",
       senkou: csvRow["専攻"] || "なし",
       
-      // 東進在籍歴
-      daigaku_juken_toshin_zaisekireki_1: csvRow["東進ハイスクール"] === "1",
-      daigaku_juken_toshin_zaisekireki_2: csvRow["東進衛星予備校"] === "1",
-      daigaku_juken_toshin_zaisekireki_3: csvRow["東大特進"] === "1",
-      daigaku_juken_toshin_zaisekireki_9: csvRow["在籍なし"] === "1",
+      // 東進在籍歴（ラジオボタン）
+      toshin_zaisekireki: getToshinZaisekirekiValue(csvRow["東進在籍歴"]),
       
       // 出身高校
       koukou_name: csvRow["出身高校"] || "",
@@ -202,10 +192,7 @@
       account_type: csvRow["口座種別"] || "1",
       account_number: csvRow["口座番号"] || "",
       account_holder: csvRow["口座名義人"] || "",
-      account_holder_kana: csvRow["口座名義人フリガナ"] || "",
-      
-      // 合否判定日
-      gohi_hantei_bi: csvRow["合否判定日"] || ""
+      account_holder_kana: csvRow["口座名義人フリガナ"] || ""
     };
   }
 
@@ -254,9 +241,9 @@
     // 通常の入力フィールドを処理
     for (const [fieldId, value] of Object.entries(dataToUse)) {
       // ラジオボタンの特別処理
-      if (fieldId === 'education_level') {
+      if (fieldId === 'education_level' || fieldId === 'toshin_zaisekireki') {
         try {
-          const radioButton = document.querySelector(`input[name="education_level"][value="${value}"]`);
+          const radioButton = document.querySelector(`input[name="${fieldId}"][value="${value}"]`);
           if (radioButton) {
             radioButton.checked = true;
             console.log(`✅ ラジオボタン ${fieldId}: 値 ${value} を選択`);
@@ -277,17 +264,11 @@
       
       const element = document.getElementById(fieldId);
       
-      if (element) {
+              if (element) {
         try {
-          if (element.type === 'checkbox') {
-            // チェックボックスの場合
-            element.checked = value;
-            console.log(`✅ チェックボックス ${fieldId}: ${value ? 'チェック' : '未チェック'}`);
-          } else {
-            // 通常の入力フィールドの場合
-            element.value = value;
-            console.log(`✅ 入力フィールド ${fieldId}: ${value}`);
-          }
+          // 通常の入力フィールドの場合
+          element.value = value;
+          console.log(`✅ 入力フィールド ${fieldId}: ${value}`);
           filledCount++;
           
           // 入力イベントを発火（バリデーション用）
@@ -343,13 +324,13 @@
   function clearForm() {
     console.log("🧹 フォームをクリアします...");
     
-    // 全ての入力フィールドをクリア
+    // 全ての入力フィールドをクリア（ラジオボタン、テキスト、セレクト）
     const inputs = document.querySelectorAll('input, select, textarea');
     let clearedCount = 0;
     
     inputs.forEach(input => {
       try {
-        if (input.type === 'checkbox' || input.type === 'radio') {
+        if (input.type === 'radio') {
           input.checked = false;
         } else {
           input.value = '';
@@ -379,8 +360,10 @@
     
     inputs.forEach(input => {
       if (input.id) {
-        if (input.type === 'checkbox' || input.type === 'radio') {
-          formData[input.id] = input.checked;
+        if (input.type === 'radio') {
+          if (input.checked) {
+            formData[input.name] = input.value;
+          }
         } else {
           formData[input.id] = input.value;
         }

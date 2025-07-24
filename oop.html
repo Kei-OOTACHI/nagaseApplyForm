@@ -5,8 +5,102 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>株式会社ナガセ 応募者情報提出シート 作成用フォーム</title>
 
-    <!-- 外部CDN依存関係 -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- 外部CDN依存関係を削除しました（オフライン対応） -->
+
+    <!-- ブラウザー検出とJavaScript制限チェック -->
+    <script>
+      // ブラウザー検出とJavaScript制限チェック
+      function checkBrowserCompatibility() {
+        const warnings = [];
+
+        // User-Agent文字列を取得
+        const userAgent = navigator.userAgent;
+
+        // Internet Explorer の検出
+        if (userAgent.indexOf("MSIE") !== -1 || userAgent.indexOf("Trident") !== -1) {
+          warnings.push("Internet Explorerは非対応です。Google Chromeなどの最新のブラウザーをご利用ください。");
+        }
+
+        // 古いEdge の検出（Chromiumベース以前）
+        if (userAgent.indexOf("Edge/") !== -1 && userAgent.indexOf("Edg/") === -1) {
+          warnings.push("古いバージョンのMicrosoft Edgeは非対応です。最新版のGoogle Chromeをご利用ください。");
+        }
+
+        // 古いFirefox の検出（バージョン60未満）
+        const firefoxMatch = userAgent.match(/Firefox\/(\d+)/);
+        if (firefoxMatch && parseInt(firefoxMatch[1]) < 60) {
+          warnings.push("古いバージョンのFirefoxは非対応です。最新版のGoogle Chromeをご利用ください。");
+        }
+
+        // 古いSafari の検出（バージョン12未満）
+        const safariMatch = userAgent.match(/Version\/(\d+)/);
+        if (safariMatch && parseInt(safariMatch[1]) < 12) {
+          warnings.push("古いバージョンのSafariは非対応です。最新版のGoogle Chromeをご利用ください。");
+        }
+
+        // JavaScriptが無効になっている場合の検出
+        if (typeof window === "undefined" || typeof document === "undefined") {
+          warnings.push("JavaScriptが無効になっています。ブラウザーの設定でJavaScriptを有効にしてください。");
+        }
+
+        // モダンなJavaScript機能のサポートチェック
+        if (typeof Promise === "undefined") {
+          warnings.push(
+            "お使いのブラウザーはモダンなJavaScript機能をサポートしていません。Google Chromeなどの最新のブラウザーをご利用ください。"
+          );
+        }
+
+        if (typeof fetch === "undefined") {
+          warnings.push(
+            "お使いのブラウザーはネットワーク機能をサポートしていません。Google Chromeなどの最新のブラウザーをご利用ください。"
+          );
+        }
+
+        return warnings;
+      }
+
+      // ページ読み込み時にブラウザー互換性をチェック
+      window.addEventListener("load", function () {
+        const warnings = checkBrowserCompatibility();
+
+        if (warnings.length > 0) {
+          // 警告メッセージを表示
+          const warningDiv = document.getElementById("browser-warning");
+          if (warningDiv) {
+            let warningHTML = '<div class="browser-warning-content">';
+            warningHTML += "<h3>⚠️ ブラウザー互換性の問題</h3>";
+            warningHTML +=
+              "<p>お使いのブラウザーまたは設定により、このフォームが正常に動作しない可能性があります：</p>";
+            warningHTML += "<ul>";
+            warnings.forEach((warning) => {
+              warningHTML += `<li>${warning}</li>`;
+            });
+            warningHTML += "</ul>";
+            warningHTML += '<div class="browser-warning-actions">';
+            warningHTML += "<p><strong>推奨ブラウザー：</strong></p>";
+            warningHTML += "<ul>";
+            warningHTML += "<li>Google Chrome（最新版）</li>";
+            warningHTML += "<li>Microsoft Edge（最新版）</li>";
+            warningHTML += "</ul>";
+            warningHTML +=
+              '<button type="button" onclick="hideBrowserWarning()" class="warning-close-btn">この警告を閉じる</button>';
+            warningHTML += "</div>";
+            warningHTML += "</div>";
+
+            warningDiv.innerHTML = warningHTML;
+            warningDiv.style.display = "block";
+          }
+        }
+      });
+
+      // 警告を閉じる関数
+      function hideBrowserWarning() {
+        const warningDiv = document.getElementById("browser-warning");
+        if (warningDiv) {
+          warningDiv.style.display = "none";
+        }
+      }
+    </script>
 
     <!-- 統合されたCSS -->
     <style>
@@ -129,7 +223,7 @@
       /* カスタムインジケーターのベース */
       input[type="radio"] + label::before,
       input[type="checkbox"] + label::before {
-        content: '';
+        content: "";
         position: absolute;
         left: 12px;
         width: 18px;
@@ -158,7 +252,7 @@
 
       /* ラジオボタン選択時の内側の点 */
       input[type="radio"]:checked + label::after {
-        content: '';
+        content: "";
         position: absolute;
         left: 16.9px;
         top: 50%;
@@ -171,7 +265,7 @@
 
       /* チェックボックス選択時のチェックマーク */
       input[type="checkbox"]:checked + label::after {
-        content: '✓';
+        content: "✓";
         position: absolute;
         left: 16px;
         top: 50%;
@@ -428,6 +522,82 @@
         margin-top: 20px;
       }
 
+      /* ブラウザー警告メッセージ */
+      .browser-warning {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background-color: #fff3cd;
+        border: 2px solid #ffc107;
+        border-top: none;
+        z-index: 10000;
+        display: none;
+        max-height: 80vh;
+        overflow-y: auto;
+      }
+
+      .browser-warning-content {
+        padding: 20px;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      .browser-warning-content h3 {
+        color: #856404;
+        margin-top: 0;
+        margin-bottom: 15px;
+        font-size: 18px;
+      }
+
+      .browser-warning-content p {
+        color: #856404;
+        margin-bottom: 10px;
+        line-height: 1.5;
+      }
+
+      .browser-warning-content ul {
+        color: #856404;
+        margin-bottom: 15px;
+        padding-left: 20px;
+      }
+
+      .browser-warning-content li {
+        margin-bottom: 5px;
+        line-height: 1.4;
+      }
+
+      .browser-warning-actions {
+        background-color: #fff;
+        border: 1px solid #ffc107;
+        border-radius: 6px;
+        padding: 15px;
+        margin-top: 15px;
+      }
+
+      .browser-warning-actions p {
+        margin-bottom: 8px;
+      }
+
+      .browser-warning-actions ul {
+        margin-bottom: 15px;
+      }
+
+      .warning-close-btn {
+        background-color: #6c757d;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background-color 0.3s ease;
+      }
+
+      .warning-close-btn:hover {
+        background-color: #5a6268;
+      }
+
       @media screen and (max-width: 480px) {
         .Form {
           margin-top: 40px;
@@ -454,11 +624,40 @@
     </style>
   </head>
   <body>
+    <!-- ブラウザー警告メッセージ -->
+    <div id="browser-warning" class="browser-warning"></div>
+
     <form id="MainForm" name="MainForm">
       <!-- ヘッダー -->
       <div class="Form-Header">
         <h1>株式会社ナガセ <br />応募者情報提出シート 作成用フォーム</h1>
       </div>
+
+      <!-- JavaScriptが無効な場合のフォールバックメッセージ -->
+      <noscript>
+        <div
+          style="
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 6px;
+            padding: 20px;
+            margin: 20px;
+            color: #721c24;
+            text-align: center;
+          "
+        >
+          <h3>⚠️ JavaScriptが無効になっています</h3>
+          <p>このフォームは正常に動作するためにJavaScriptが必要です。</p>
+          <p>ブラウザーの設定でJavaScriptを有効にしてください。</p>
+          <p><strong>推奨ブラウザー：</strong></p>
+          <ul style="list-style: none; padding: 0">
+            <li>Google Chrome（最新版）</li>
+            <li>Microsoft Edge（最新版）</li>
+            <li>Firefox（最新版）</li>
+            <li>Safari（最新版）</li>
+          </ul>
+        </div>
+      </noscript>
 
       <!-- フォーム -->
       <div class="Form">
@@ -473,10 +672,12 @@
               <div class="name-input-field">
                 <input type="text" id="name_1" name="name_1" class="Form-Item-Input" placeholder="東進" required />
                 <small style="color: gray">姓</small>
+                <div class="error-message" id="name_1_error"></div>
               </div>
               <div class="name-input-field">
                 <input type="text" id="name_2" name="name_2" class="Form-Item-Input" placeholder="太郎" required />
                 <small style="color: gray">名</small>
+                <div class="error-message" id="name_2_error"></div>
               </div>
             </div>
           </div>
@@ -521,6 +722,7 @@
                 <option value="1">男性</option>
                 <option value="2">女性</option>
               </select>
+              <div class="error-message" id="id_sex_error"></div>
             </div>
           </div>
 
@@ -529,6 +731,7 @@
             <p class="Form-Item-Label">生年月日<span class="required-label">必須</span></p>
             <div class="Form-Item-Input-Wrapper">
               <input type="date" id="birthday" name="birthday" class="Form-Item-Input" required />
+              <div class="error-message" id="birthday_error"></div>
             </div>
           </div>
 
@@ -543,7 +746,7 @@
                     id="address_num"
                     name="address_num"
                     class="Form-Item-Input"
-                    placeholder="1130033"
+                    placeholder="1800003"
                     maxlength="7"
                     required
                   />
@@ -559,20 +762,28 @@
           <div class="Form-Item">
             <p class="Form-Item-Label">住所<span class="required-label">必須</span></p>
             <div class="Form-Item-Input-Wrapper">
-              <input type="text" id="address_str" name="address_str" class="Form-Item-Input" required />
+              <input
+                type="text"
+                id="address_str"
+                name="address_str"
+                class="Form-Item-Input"
+                placeholder="東京都武蔵野市吉祥寺南町１丁目２９−２"
+                required
+              />
+              <div class="error-message" id="address_str_error"></div>
             </div>
           </div>
 
-          <!-- 建物名 -->
+          <!-- 建物名・部屋番号 -->
           <div class="Form-Item">
-            <p class="Form-Item-Label">建物名</p>
+            <p class="Form-Item-Label">建物名・部屋番号</p>
             <div class="Form-Item-Input-Wrapper">
               <input
                 type="text"
                 id="address_str_building"
                 name="address_str_building"
                 class="Form-Item-Input"
-                placeholder="ナガセ本郷ビル７階"
+                placeholder="ナガセ吉祥寺南町ビル２０１号室"
               />
             </div>
           </div>
@@ -586,7 +797,7 @@
                 id="address_str_kana"
                 name="address_str_kana"
                 class="Form-Item-Input"
-                placeholder="ﾄｳｷｮｳﾄﾁﾖﾀﾞｸﾎﾝｺﾞｳ"
+                placeholder="ﾄｳｷｮｳﾄﾑｻｼﾉｼｷﾁｼﾞｮｳｼﾞﾐﾅﾐﾏﾁﾅｶﾞｾｷﾁｼﾞｮｳｼﾞﾐﾅﾐﾏﾁﾋﾞﾙ"
                 required
               />
               <small>※半角カタカナで入力してください</small>
@@ -598,7 +809,7 @@
           <div class="Form-Item">
             <p class="Form-Item-Label">電話番号(自宅)<span class="required-label">いずれか必須</span></p>
             <div class="Form-Item-Input-Wrapper">
-              <input type="text" id="tel_home" name="tel_home" class="Form-Item-Input" placeholder="03-1234-5678" />
+              <input type="text" id="tel_home" name="tel_home" class="Form-Item-Input" placeholder="0422-45-7011" />
               <small>※ハイフン区切りの半角数字で入力してください</small>
               <div class="error-message" id="tel_home_error"></div>
             </div>
@@ -677,15 +888,24 @@
             <div class="Form-Item-Input-Wrapper">
               <input type="text" id="daigaku" name="daigaku" class="Form-Item-Input" placeholder="東京大学" required />
               <small>※最後に「大学」と付けて入力してください。</small>
+              <div class="error-message" id="daigaku_error"></div>
             </div>
           </div>
 
           <!-- 学部 -->
           <div class="Form-Item">
-            <p class="Form-Item-Label">学部<span class="required-label">必須</span></p>
+            <p class="Form-Item-Label">学部・学類・科類等<span class="required-label">必須</span></p>
             <div class="Form-Item-Input-Wrapper">
-              <input type="text" id="gakubu" name="gakubu" class="Form-Item-Input" placeholder="理学部" required />
-              <small>※最後に「学部」と付けて入力してください。</small>
+              <input
+                type="text"
+                id="gakubu"
+                name="gakubu"
+                class="Form-Item-Input"
+                placeholder="理学部または理科一類"
+                required
+              />
+              <small>※学部・学類・科類等の名称をそのまま入力してください。（例：理学部、理科一類、文学部等）</small>
+              <div class="error-message" id="gakubu_error"></div>
             </div>
           </div>
 
@@ -697,6 +917,7 @@
               <small
                 >※最後に「学科」と付けて入力してください。<br />※学科がない場合は「なし」と入力してください。</small
               >
+              <div class="error-message" id="gakka_error"></div>
             </div>
           </div>
 
@@ -705,6 +926,7 @@
             <p class="Form-Item-Label">入学年月日<span class="required-label">必須</span></p>
             <div class="Form-Item-Input-Wrapper">
               <input type="date" id="daigaku_nyugaku_bi" name="daigaku_nyugaku_bi" class="Form-Item-Input" required />
+              <div class="error-message" id="daigaku_nyugaku_bi_error"></div>
             </div>
           </div>
 
@@ -736,53 +958,6 @@
           </div>
         </fieldset>
 
-        <!-- 東進在籍歴 -->
-        <div class="Form-Item">
-          <p class="Form-Item-Label">東進在籍歴 (複数選択可)<span class="required-label">必須</span></p>
-          <div class="Form-Item-Input-Wrapper">
-            <div class="checkbox-container">
-              <div>
-                <input
-                  type="checkbox"
-                  id="daigaku_juken_toshin_zaisekireki_1"
-                  name="daigaku_juken_toshin_zaisekireki_1"
-                  value="1"
-                />
-                <label for="daigaku_juken_toshin_zaisekireki_1">東進ハイスクール</label>
-              </div>
-              <div>
-                <input
-                  type="checkbox"
-                  id="daigaku_juken_toshin_zaisekireki_2"
-                  name="daigaku_juken_toshin_zaisekireki_2"
-                  value="1"
-                />
-                <label for="daigaku_juken_toshin_zaisekireki_2">東進衛星予備校</label>
-              </div>
-              <div>
-                <input
-                  type="checkbox"
-                  id="daigaku_juken_toshin_zaisekireki_3"
-                  name="daigaku_juken_toshin_zaisekireki_3"
-                  value="1"
-                />
-                <label for="daigaku_juken_toshin_zaisekireki_3">東大特進</label>
-              </div>
-              <div>
-                <input
-                  type="checkbox"
-                  id="daigaku_juken_toshin_zaisekireki_9"
-                  name="daigaku_juken_toshin_zaisekireki_9"
-                  value="1"
-                />
-                <label for="daigaku_juken_toshin_zaisekireki_9">在籍なし</label>
-              </div>
-            </div>
-            <small style="color: gray">※複数の選択肢にチェックを入れることができます。</small>
-            <div class="error-message" id="toshin_zaisekireki_error"></div>
-          </div>
-        </div>
-
         <!-- 出身高校 -->
         <div class="Form-Item">
           <p class="Form-Item-Label">出身高校<span class="required-label">必須</span></p>
@@ -795,6 +970,27 @@
               placeholder="〇〇高校"
               required
             />
+            <div class="error-message" id="koukou_name_error"></div>
+          </div>
+        </div>
+
+        <!-- 東進在籍歴 -->
+        <div class="Form-Item">
+          <p class="Form-Item-Label">東進在籍歴<span class="required-label">必須</span></p>
+          <div class="Form-Item-Input-Wrapper">
+            <div class="radio-container">
+              <div>
+                <input type="radio" id="toshin_zaisekireki_1" name="toshin_zaisekireki" value="1" required />
+                <label for="toshin_zaisekireki_1"
+                  >東進ハイスクール・東進衛星予備校・東大特進のいずれかに在籍歴がある</label
+                >
+              </div>
+              <div>
+                <input type="radio" id="toshin_zaisekireki_2" name="toshin_zaisekireki" value="2" required />
+                <label for="toshin_zaisekireki_2">在籍歴はない</label>
+              </div>
+            </div>
+            <div class="error-message" id="toshin_zaisekireki_error"></div>
           </div>
         </div>
 
@@ -833,6 +1029,7 @@
                 required
               />
               <small>※「銀行」「信用金庫」等を含めて入力してください</small>
+              <div class="error-message" id="bank_name_error"></div>
             </div>
           </div>
 
@@ -867,6 +1064,7 @@
                 required
               />
               <small>※「支店」「出張所」等を含めて入力してください</small>
+              <div class="error-message" id="branch_name_error"></div>
             </div>
           </div>
 
@@ -879,6 +1077,7 @@
                 <option value="1">普通預金</option>
                 <option value="2">当座預金</option>
               </select>
+              <div class="error-message" id="account_type_error"></div>
             </div>
           </div>
 
@@ -912,9 +1111,7 @@
                 placeholder="東進太郎"
                 required
               />
-              <small
-                >※銀行通帳に印字されている名義人名を正確に入力してください<br />※氏名（漢字）と一致させてください</small
-              >
+              <small>※必ず応募者本人名義の口座を入力してください</small>
               <div class="error-message" id="account_holder_error"></div>
             </div>
           </div>
@@ -931,20 +1128,11 @@
                 placeholder="ﾄｳｼﾝﾀﾛｳ"
                 required
               />
-              <small>※半角カタカナで入力してください<br />※氏名（カナ）と一致させてください</small>
+              <small>※必ず応募者本人名義の口座を入力してください<br />※半角カタカナで入力してください</small>
               <div class="error-message" id="account_holder_kana_error"></div>
             </div>
           </div>
         </fieldset>
-
-        <!-- 合否判定日 -->
-        <div class="Form-Item">
-          <p class="Form-Item-Label">合否判定日<span class="required-label">必須</span></p>
-          <div class="Form-Item-Input-Wrapper">
-            <input type="date" id="gohi_hantei_bi" name="gohi_hantei_bi" class="Form-Item-Input" required />
-            <small>※最終的な合否が決定された日を入力してください</small>
-          </div>
-        </div>
 
         <!-- バリデーションエラー表示セクション -->
         <div id="validation-errors" class="validation-errors">
@@ -974,9 +1162,12 @@
           <div class="notification-title">🔄 ダウンロード処理実行</div>
           <div id="download-filename" class="notification-filename"></div>
           <div class="notification-details">
-            csvファイルのダウンロード処理が実行されました。<br>
-            ダウンロードの可否、ダウンロードしたファイルの保存先は、ブラウザの設定やデバイスの環境によって異なります。<br>
-            ダウンロードが完了しない場合は、ブラウザのダウンロード設定をご確認ください。
+            csvファイルのダウンロード処理が実行されました。<br />
+            ダウンロードの可否、ダウンロードしたファイルの保存先は、ブラウザの設定やデバイスの環境によって異なります。<br />
+            ダウンロードが完了しない場合は、ブラウザのダウンロード設定をご確認ください。<br />
+            <span style="color: red; font-weight: bold; font-size: 14px">
+              ⚠️ ダウンロードしたファイルを開いたり編集したりせずに、そのまま採用担当者にお送りください。
+            </span>
           </div>
         </div>
 
@@ -1003,1592 +1194,1624 @@
     </form>
 
     <script>
-      // ===== オブジェクト指向バリデーションシステム =====
+            // ===== オブジェクト指向バリデーションシステム =====
 
-      /**
-       * バリデーション結果を表すクラス
-       */
-      class ValidationResult {
-        constructor(isValid, message = "") {
-          this.isValid = isValid;
-          this.message = message;
-        }
-
-        static success() {
-          return new ValidationResult(true);
-        }
-
-        static error(message) {
-          return new ValidationResult(false, message);
-        }
-      }
-
-      /**
-       * バリデーターの基底クラス
-       */
-      class Validator {
-        constructor(errorMessage) {
-          this.errorMessage = errorMessage;
-        }
-
-        /**
-         * バリデーション実行（サブクラスでオーバーライド）
-         * @param {string} value - 入力値
-         * @returns {ValidationResult} - バリデーション結果
-         */
-        validate(value) {
-          throw new Error("validate method must be implemented");
-        }
-      }
-
-      /**
-       * 必須バリデーター
-       */
-      class RequiredValidator extends Validator {
-        constructor() {
-          super("この項目は必須です。");
-        }
-
-        validate(value) {
-          return value && value.trim() !== "" ? ValidationResult.success() : ValidationResult.error(this.errorMessage);
-        }
-      }
-
-      /**
-       * 正規表現バリデーター
-       */
-      class RegexValidator extends Validator {
-        constructor(pattern, errorMessage) {
-          super(errorMessage);
-          this.pattern = pattern;
-        }
-
-        validate(value) {
-          if (!value || value.trim() === "") {
-            return ValidationResult.success(); // 空の場合は必須チェックに任せる
-          }
-
-          return this.pattern.test(value.trim())
-            ? ValidationResult.success()
-            : ValidationResult.error(this.errorMessage);
-        }
-      }
-
-      // ===== バリデーションパターン定数 =====
-      const VALIDATION_PATTERNS = {
-        KANA: {
-          regex: /^[ｦ-ﾟ\s]+$/,
-          message: "半角カタカナで入力してください。",
-        },
-        POSTAL_CODE: {
-          regex: /^\d{7}$/,
-          message: "郵便番号は半角数字7桁で入力してください。",
-        },
-        MOBILE_PHONE: {
-          regex: /^0[789]0-\d{4}-\d{4}$/,
-          message: "正しい携帯電話番号の形式で入力してください。（例：090-1234-5678）",
-        },
-        EMAIL: {
-          regex: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-          message: "正しいメールアドレスの形式で入力してください。",
-        },
-        HOME_PHONE: {
-          regex: /^0\d{1,3}-\d{1,4}-\d{4}$/,
-          message: "正しい電話番号の形式で入力してください。（例：03-1234-5678）",
-        },
-        BANK_CODE: {
-          regex: /^\d{4}$/,
-          message: "銀行コードは4桁の半角数字で入力してください。",
-        },
-        BRANCH_CODE: {
-          regex: /^\d{3}$/,
-          message: "支店コードは3桁の半角数字で入力してください。",
-        },
-        ACCOUNT_NUMBER: {
-          regex: /^\d{1,8}$/,
-          message: "口座番号は1-8桁の半角数字で入力してください。",
-        },
-      };
-
-      /**
-       * チェックボックス必須バリデーター
-       */
-      class CheckboxRequiredValidator extends Validator {
-        constructor(checkboxIds) {
-          super("いずれかの選択肢を選択してください。");
-          this.checkboxIds = checkboxIds;
-        }
-
-        validate(value) {
-          // checkboxIdsのいずれかがチェックされているかチェック
-          const hasChecked = this.checkboxIds.some((id) => {
-            const checkbox = document.getElementById(id);
-            return checkbox && checkbox.checked;
-          });
-
-          return hasChecked ? ValidationResult.success() : ValidationResult.error(this.errorMessage);
-        }
-      }
-
-      /**
-       * 口座名義人の一致バリデーター（漢字）
-       */
-      class AccountHolderMatchValidator extends Validator {
-        constructor(name1Id, name2Id) {
-          super("口座名義人は氏名（漢字）と一致させてください。");
-          this.name1Id = name1Id;
-          this.name2Id = name2Id;
-        }
-
-        validate(value) {
-          if (!value || value.trim() === "") {
-            return ValidationResult.success(); // 空の場合は必須チェックに任せる
-          }
-
-          const name1Element = document.getElementById(this.name1Id);
-          const name2Element = document.getElementById(this.name2Id);
-
-          if (!name1Element || !name2Element) {
-            return ValidationResult.success();
-          }
-
-          // 全角・半角スペースを除去して比較
-          const fullName = (name1Element.value.trim() + name2Element.value.trim()).replace(/[\s　]/g, "");
-          const normalizedValue = value.trim().replace(/[\s　]/g, "");
-
-          return normalizedValue === fullName ? ValidationResult.success() : ValidationResult.error(this.errorMessage);
-        }
-      }
-
-      /**
-       * 口座名義人フリガナの一致バリデーター
-       */
-      class AccountHolderKanaMatchValidator extends Validator {
-        constructor(name1KanaId, name2KanaId) {
-          super("口座名義人フリガナは氏名（カナ）と一致させてください。");
-          this.name1KanaId = name1KanaId;
-          this.name2KanaId = name2KanaId;
-        }
-
-        validate(value) {
-          if (!value || value.trim() === "") {
-            return ValidationResult.success(); // 空の場合は必須チェックに任せる
-          }
-
-          const name1KanaElement = document.getElementById(this.name1KanaId);
-          const name2KanaElement = document.getElementById(this.name2KanaId);
-
-          if (!name1KanaElement || !name2KanaElement) {
-            return ValidationResult.success();
-          }
-
-          // 全角・半角スペースを除去して比較
-          const fullNameKana = (name1KanaElement.value.trim() + name2KanaElement.value.trim()).replace(/[\s　]/g, "");
-          const normalizedValue = value.trim().replace(/[\s　]/g, "");
-
-          return normalizedValue === fullNameKana
-            ? ValidationResult.success()
-            : ValidationResult.error(this.errorMessage);
-        }
-      }
-
-      /**
-       * 電話番号相互バリデーター（自宅または携帯のいずれかは必須）
-       */
-      class PhoneEitherRequiredValidator extends Validator {
-        constructor(homePhoneId, mobilePhoneId) {
-          super("自宅または携帯電話番号のいずれかは必須です。");
-          this.homePhoneId = homePhoneId;
-          this.mobilePhoneId = mobilePhoneId;
-        }
-
-        validate(value) {
-          const homePhoneElement = document.getElementById(this.homePhoneId);
-          const mobilePhoneElement = document.getElementById(this.mobilePhoneId);
-
-          if (!homePhoneElement || !mobilePhoneElement) {
-            return ValidationResult.success();
-          }
-
-          const homeValue = homePhoneElement.value.trim();
-          const mobileValue = mobilePhoneElement.value.trim();
-
-          return homeValue || mobileValue ? ValidationResult.success() : ValidationResult.error(this.errorMessage);
-        }
-      }
-
-      /**
-       * フォームフィールドを表すクラス
-       */
-      class FormField {
-        constructor(elementId, label) {
-          this.elementId = elementId;
-          this.label = label;
-          this.element = document.getElementById(elementId);
-          this.errorElement = document.getElementById(elementId + "_error");
-          this.validators = [];
-          this.inputTransformers = [];
-
-          if (!this.element) {
-            console.warn(`Element with id '${elementId}' not found`);
-            return;
-          }
-
-          this.setupEventListeners();
-        }
-
-        /**
-         * バリデーターを追加
-         */
-        addValidator(validator) {
-          this.validators.push(validator);
-          return this;
-        }
-
-        /**
-         * 入力変換器を追加（例：全角→半角変換）
-         */
-        addInputTransformer(transformer) {
-          this.inputTransformers.push(transformer);
-          return this;
-        }
-
-        /**
-         * イベントリスナーの設定
-         */
-        setupEventListeners() {
-          if (!this.element) return;
-
-          // IME変換状態を管理するフラグ
-          this.isComposing = false;
-
-          // IME変換開始
-          this.element.addEventListener("compositionstart", () => {
-            this.isComposing = true;
-          });
-
-          // IME変換終了時に変換処理を実行
-          this.element.addEventListener("compositionend", () => {
-            this.isComposing = false;
-            setTimeout(() => {
-              this.applyTransformers();
-              this.validateRealtime();
-            }, 0);
-          });
-
-          // 通常の入力（IME使用以外）の場合
-          this.element.addEventListener("input", () => {
-            if (!this.isComposing) {
-              this.applyTransformers();
-              this.validateRealtime();
-            }
-          });
-
-          // フォーカスが外れた時にも変換処理を実行（安全のため）
-          this.element.addEventListener("blur", () => {
-            this.applyTransformers();
-            this.validate();
-          });
-        }
-
-        /**
-         * 入力変換器を適用
-         */
-        applyTransformers() {
-          if (!this.element) return;
-
-          let value = this.element.value;
-          for (const transformer of this.inputTransformers) {
-            value = transformer(value);
-          }
-          this.element.value = value;
-        }
-
-        /**
-         * リアルタイムバリデーション（必須チェック含む）
-         */
-        validateRealtime() {
-          if (!this.element) return;
-
-          const value = this.element.value;
-
-          // 全てのバリデーションを実行
-          for (const validator of this.validators) {
-            const result = validator.validate(value);
-            if (!result.isValid) {
-              this.showError(result.message);
-              return;
-            }
-          }
-
-          this.hideError();
-        }
-
-        /**
-         * 完全バリデーション
-         */
-        validate() {
-          if (!this.element) return ValidationResult.success();
-
-          const value = this.element.value;
-
-          for (const validator of this.validators) {
-            const result = validator.validate(value);
-            if (!result.isValid) {
-              this.showError(result.message);
-              return ValidationResult.error(`${this.label}: ${result.message}`);
-            }
-          }
-
-          this.hideError();
-          return ValidationResult.success();
-        }
-
-        /**
-         * エラー表示
-         */
-        showError(message) {
-          if (this.element) {
-            this.element.classList.add("error");
-          }
-          if (this.errorElement) {
-            this.errorElement.textContent = message;
-            this.errorElement.style.display = "block";
-          }
-        }
-
-        /**
-         * エラー非表示
-         */
-        hideError() {
-          if (this.element) {
-            this.element.classList.remove("error");
-          }
-          if (this.errorElement) {
-            this.errorElement.style.display = "none";
-          }
-        }
-
-        /**
-         * 値を取得
-         */
-        getValue() {
-          return this.element ? this.element.value : "";
-        }
-
-        /**
-         * 値を設定
-         */
-        setValue(value) {
-          if (this.element) {
-            this.element.value = value;
-          }
-        }
-      }
-
-      /**
-       * 郵便番号フィールド（住所検索機能付き）を管理するクラス
-       */
-      class PostalCodeField extends FormField {
-        constructor(elementId, label, addressFieldId) {
-          super(elementId, label);
-          this.addressFieldId = addressFieldId;
-          this.addressField = document.getElementById(addressFieldId);
-          this.searchButton = document.getElementById("search_address_btn");
-
-          this.setupPostalCodeFeatures();
-        }
-
-        setupPostalCodeFeatures() {
-          if (this.searchButton) {
-            this.searchButton.addEventListener("click", () => {
-              this.searchAddress();
-            });
-          }
-
-          if (this.element) {
-            this.element.addEventListener("keypress", (e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                this.searchAddress();
+            /**
+             * バリデーション結果を表すクラス
+             */
+            class ValidationResult {
+              constructor(isValid, message = "") {
+                this.isValid = isValid;
+                this.message = message;
               }
-            });
-          }
-        }
 
-        async searchAddress() {
-          const postalCode = this.element.value.trim();
-
-          // エラーメッセージをクリア
-          this.hideError();
-
-          // 郵便番号のフォーマットチェック
-          if (!/^\d{7}$/.test(postalCode)) {
-            this.showError("郵便番号は半角数字7桁で入力してください。");
-            return;
-          }
-
-          // 郵便番号検索APIを使用
-          const url = `https://zipcloud.ibsnet.co.jp/api/search?zipcode=${postalCode}`;
-
-          if (this.searchButton) {
-            this.searchButton.textContent = "検索中...";
-            this.searchButton.disabled = true;
-          }
-
-          try {
-            const response = await fetch(url);
-            const data = await response.json();
-
-            if (data.status === 200 && data.results && data.results.length > 0) {
-              const result = data.results[0];
-              if (this.addressField) {
-                this.addressField.value = `${result.address1}${result.address2}${result.address3}`;
+              static success() {
+                return new ValidationResult(true);
               }
-              this.showError("住所が自動入力されました。", "green");
-            } else {
-              this.showError(data.message || "該当する住所が見つかりませんでした。");
-              if (this.addressField) {
-                this.addressField.value = "";
+
+              static error(message) {
+                return new ValidationResult(false, message);
               }
             }
-          } catch (error) {
-            console.error("住所検索エラー:", error);
-            this.showError("住所検索に失敗しました。時間をおいて再度お試しください。");
-          } finally {
-            if (this.searchButton) {
-              this.searchButton.textContent = "住所検索";
-              this.searchButton.disabled = false;
-            }
-          }
-        }
 
-        showError(message, color = "#dc3545") {
-          if (this.element) {
-            // 成功時（緑色）の場合はerrorクラスを追加しない
-            if (color === "green" || color === "#28a745") {
-              this.element.classList.remove("error");
-            } else {
-              this.element.classList.add("error");
-            }
-          }
-          if (this.errorElement) {
-            this.errorElement.textContent = message;
-            this.errorElement.style.color = color;
-            this.errorElement.style.display = "block";
-          }
-        }
-      }
-
-      /**
-       * ラジオボタン必須バリデーター
-       */
-      class RadioRequiredValidator extends Validator {
-        constructor(radioName) {
-          super("いずれかの選択肢を選択してください。");
-          this.radioName = radioName;
-        }
-
-        validate(value) {
-          // 同じnameのラジオボタンのいずれかが選択されているかチェック
-          const radios = document.querySelectorAll(`input[name="${this.radioName}"]`);
-          const hasChecked = Array.from(radios).some((radio) => radio.checked);
-
-          return hasChecked ? ValidationResult.success() : ValidationResult.error(this.errorMessage);
-        }
-      }
-
-      /**
-       * ラジオボタン群を管理するクラス
-       */
-      class RadioField {
-        constructor(radioName, label) {
-          this.radioName = radioName;
-          this.label = label;
-          this.radioElements = Array.from(document.querySelectorAll(`input[name="${radioName}"]`));
-          this.errorElement = document.getElementById(radioName + "_error");
-          this.validators = [];
-
-          this.setupEventListeners();
-        }
-
-        addValidator(validator) {
-          this.validators.push(validator);
-          return this;
-        }
-
-        setupEventListeners() {
-          console.log(`RadioField (${this.radioName}) のイベントリスナーを設定中...`);
-          this.radioElements.forEach((radio) => {
-            radio.addEventListener("change", () => {
-              console.log(`ラジオボタン (${this.radioName}) が変更されました`);
-              this.validateRealtime();
-
-              // 学歴選択の場合は表示制御を実行
-              if (this.radioName === "education_level") {
-                console.log("学歴選択が変更されたため、updateFormVisibility を実行");
-                updateFormVisibility();
+            /**
+             * バリデーターの基底クラス
+             */
+            class Validator {
+              constructor(errorMessage) {
+                this.errorMessage = errorMessage;
               }
+
+              /**
+               * バリデーション実行（サブクラスでオーバーライド）
+               * @param {string} value - 入力値
+               * @returns {ValidationResult} - バリデーション結果
+               */
+              validate(value) {
+                throw new Error("validate method must be implemented");
+              }
+            }
+
+            /**
+             * 必須バリデーター
+             */
+            class RequiredValidator extends Validator {
+              constructor() {
+                super("この項目は必須です。");
+              }
+
+              validate(value) {
+                return value && value.trim() !== "" ? ValidationResult.success() : ValidationResult.error(this.errorMessage);
+              }
+            }
+
+            /**
+             * 正規表現バリデーター
+             */
+            class RegexValidator extends Validator {
+              constructor(pattern, errorMessage) {
+                super(errorMessage);
+                this.pattern = pattern;
+              }
+
+              validate(value) {
+                if (!value || value.trim() === "") {
+                  return ValidationResult.success(); // 空の場合は必須チェックに任せる
+                }
+
+                return this.pattern.test(value.trim())
+                  ? ValidationResult.success()
+                  : ValidationResult.error(this.errorMessage);
+              }
+            }
+
+            // ===== バリデーションパターン定数 =====
+            const VALIDATION_PATTERNS = {
+              KANA: {
+                regex: /^[ｦ-ﾟ\s]+$/,
+                message: "半角カタカナで入力してください。",
+              },
+              POSTAL_CODE: {
+                regex: /^\d{7}$/,
+                message: "郵便番号は半角数字7桁で入力してください。",
+              },
+              MOBILE_PHONE: {
+                regex: /^0[789]0-\d{4}-\d{4}$/,
+                message: "正しい携帯電話番号の形式で入力してください。（例：090-1234-5678）",
+              },
+              EMAIL: {
+                regex: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                message: "正しいメールアドレスの形式で入力してください。",
+              },
+              HOME_PHONE: {
+                regex: /^0\d{1,3}-\d{1,4}-\d{4}$/,
+                message: "正しい電話番号の形式で入力してください。（例：03-1234-5678）",
+              },
+              BANK_CODE: {
+                regex: /^\d{4}$/,
+                message: "銀行コードは4桁の半角数字で入力してください。",
+              },
+              BRANCH_CODE: {
+                regex: /^\d{3}$/,
+                message: "支店コードは3桁の半角数字で入力してください。",
+              },
+              ACCOUNT_NUMBER: {
+                regex: /^\d{1,8}$/,
+                message: "口座番号は1-8桁の半角数字で入力してください。",
+              },
+            };
+
+            /**
+             * チェックボックス必須バリデーター
+             */
+            class CheckboxRequiredValidator extends Validator {
+              constructor(checkboxIds) {
+                super("いずれかの選択肢を選択してください。");
+                this.checkboxIds = checkboxIds;
+              }
+
+              validate(value) {
+                // checkboxIdsのいずれかがチェックされているかチェック
+                const hasChecked = this.checkboxIds.some((id) => {
+                  const checkbox = document.getElementById(id);
+                  return checkbox && checkbox.checked;
+                });
+
+                return hasChecked ? ValidationResult.success() : ValidationResult.error(this.errorMessage);
+              }
+            }
+
+            /**
+             * 口座名義人の一致バリデーター（漢字）
+             */
+            class AccountHolderMatchValidator extends Validator {
+              constructor(name1Id, name2Id) {
+                super("口座名義人は必ず応募者本人名義の口座を入力してください。");
+                this.name1Id = name1Id;
+                this.name2Id = name2Id;
+              }
+
+              validate(value) {
+                if (!value || value.trim() === "") {
+                  return ValidationResult.success(); // 空の場合は必須チェックに任せる
+                }
+
+                const name1Element = document.getElementById(this.name1Id);
+                const name2Element = document.getElementById(this.name2Id);
+
+                if (!name1Element || !name2Element) {
+                  return ValidationResult.success();
+                }
+
+                // 全角・半角スペースを除去して比較
+                const fullName = (name1Element.value.trim() + name2Element.value.trim()).replace(/[\s　]/g, "");
+                const normalizedValue = value.trim().replace(/[\s　]/g, "");
+
+                return normalizedValue === fullName ? ValidationResult.success() : ValidationResult.error(this.errorMessage);
+              }
+            }
+
+            /**
+             * 半角カタカナの小文字を大文字に変換する関数
+             */
+            function normalizeHalfWidthKana(str) {
+              const kanaMap = {
+                ｧ: "ｱ",
+                ｨ: "ｲ",
+                ｩ: "ｳ",
+                ｪ: "ｴ",
+                ｫ: "ｵ",
+                ｬ: "ﾔ",
+                ｭ: "ﾕ",
+                ｮ: "ﾖ",
+                ｯ: "ﾂ",
+              };
+
+              return str.replace(/[ｧｨｩｪｫｬｭｮｯ]/g, function (match) {
+                return kanaMap[match] || match;
+              });
+            }
+
+            /**
+             * 口座名義人フリガナの一致バリデーター
+             */
+            class AccountHolderKanaMatchValidator extends Validator {
+              constructor(name1KanaId, name2KanaId) {
+                super("口座名義人フリガナは必ず応募者本人名義の口座を入力してください。");
+                this.name1KanaId = name1KanaId;
+                this.name2KanaId = name2KanaId;
+              }
+
+              validate(value) {
+                if (!value || value.trim() === "") {
+                  return ValidationResult.success(); // 空の場合は必須チェックに任せる
+                }
+
+                const name1KanaElement = document.getElementById(this.name1KanaId);
+                const name2KanaElement = document.getElementById(this.name2KanaId);
+
+                if (!name1KanaElement || !name2KanaElement) {
+                  return ValidationResult.success();
+                }
+
+                // 全角・半角スペースを除去し、小文字を大文字に変換してから比較
+                const fullNameKana = normalizeHalfWidthKana(
+                  (name1KanaElement.value.trim() + name2KanaElement.value.trim()).replace(/[\s　]/g, "")
+                );
+                const normalizedValue = normalizeHalfWidthKana(value.trim().replace(/[\s　]/g, ""));
+
+                return normalizedValue === fullNameKana
+                  ? ValidationResult.success()
+                  : ValidationResult.error(this.errorMessage);
+              }
+            }
+
+            /**
+             * 電話番号相互バリデーター（自宅または携帯のいずれかは必須）
+             */
+            class PhoneEitherRequiredValidator extends Validator {
+              constructor(homePhoneId, mobilePhoneId) {
+                super("自宅または携帯電話番号のいずれかは必須です。");
+                this.homePhoneId = homePhoneId;
+                this.mobilePhoneId = mobilePhoneId;
+              }
+
+              validate(value) {
+                const homePhoneElement = document.getElementById(this.homePhoneId);
+                const mobilePhoneElement = document.getElementById(this.mobilePhoneId);
+
+                if (!homePhoneElement || !mobilePhoneElement) {
+                  return ValidationResult.success();
+                }
+
+                const homeValue = homePhoneElement.value.trim();
+                const mobileValue = mobilePhoneElement.value.trim();
+
+                return homeValue || mobileValue ? ValidationResult.success() : ValidationResult.error(this.errorMessage);
+              }
+            }
+
+            /**
+             * フォームフィールドを表すクラス
+             */
+            class FormField {
+              constructor(elementId, label) {
+                this.elementId = elementId;
+                this.label = label;
+                this.element = document.getElementById(elementId);
+                this.errorElement = document.getElementById(elementId + "_error");
+                this.validators = [];
+                this.inputTransformers = [];
+
+                if (!this.element) {
+                  console.warn(`Element with id '${elementId}' not found`);
+                  return;
+                }
+
+                this.setupEventListeners();
+              }
+
+              /**
+               * バリデーターを追加
+               */
+              addValidator(validator) {
+                this.validators.push(validator);
+                return this;
+              }
+
+              /**
+               * 入力変換器を追加（例：全角→半角変換）
+               */
+              addInputTransformer(transformer) {
+                this.inputTransformers.push(transformer);
+                return this;
+              }
+
+              /**
+               * イベントリスナーの設定
+               */
+              setupEventListeners() {
+                if (!this.element) return;
+
+                // IME変換状態を管理するフラグ
+                this.isComposing = false;
+
+                // IME変換開始
+                this.element.addEventListener("compositionstart", () => {
+                  this.isComposing = true;
+                });
+
+                // IME変換終了時に変換処理を実行
+                this.element.addEventListener("compositionend", () => {
+                  this.isComposing = false;
+                  setTimeout(() => {
+                    this.applyTransformers();
+                    this.validateRealtime();
+                  }, 0);
+                });
+
+                // 通常の入力（IME使用以外）の場合
+                this.element.addEventListener("input", () => {
+                  if (!this.isComposing) {
+                    this.applyTransformers();
+                    this.validateRealtime();
+                  }
+                });
+
+                // フォーカスが外れた時にも変換処理を実行（安全のため）
+                this.element.addEventListener("blur", () => {
+                  this.applyTransformers();
+                  this.validate();
+                });
+              }
+
+              /**
+               * 入力変換器を適用
+               */
+              applyTransformers() {
+                if (!this.element) return;
+
+                let value = this.element.value;
+                for (const transformer of this.inputTransformers) {
+                  value = transformer(value);
+                }
+                this.element.value = value;
+              }
+
+              /**
+               * リアルタイムバリデーション（必須チェック含む）
+               */
+              validateRealtime() {
+                if (!this.element) return;
+
+                const value = this.element.value;
+
+                // 全てのバリデーションを実行
+                for (const validator of this.validators) {
+                  const result = validator.validate(value);
+                  if (!result.isValid) {
+                    this.showError(result.message);
+                    return;
+                  }
+                }
+
+                this.hideError();
+              }
+
+              /**
+               * 完全バリデーション
+               */
+              validate() {
+                if (!this.element) return ValidationResult.success();
+
+                const value = this.element.value;
+
+                for (const validator of this.validators) {
+                  const result = validator.validate(value);
+                  if (!result.isValid) {
+                    this.showError(result.message);
+                    return ValidationResult.error(`${this.label}: ${result.message}`);
+                  }
+                }
+
+                this.hideError();
+                return ValidationResult.success();
+              }
+
+              /**
+               * エラー表示
+               */
+              showError(message) {
+                if (this.element) {
+                  this.element.classList.add("error");
+                }
+                if (this.errorElement) {
+                  this.errorElement.textContent = message;
+                  this.errorElement.style.display = "block";
+                }
+              }
+
+              /**
+               * エラー非表示
+               */
+              hideError() {
+                if (this.element) {
+                  this.element.classList.remove("error");
+                }
+                if (this.errorElement) {
+                  this.errorElement.style.display = "none";
+                }
+              }
+
+              /**
+               * 値を取得
+               */
+              getValue() {
+                return this.element ? this.element.value : "";
+              }
+
+              /**
+               * 値を設定
+               */
+              setValue(value) {
+                if (this.element) {
+                  this.element.value = value;
+                }
+              }
+            }
+
+            /**
+             * 郵便番号フィールド（住所検索機能付き）を管理するクラス
+             */
+            class PostalCodeField extends FormField {
+              constructor(elementId, label, addressFieldId) {
+                super(elementId, label);
+                this.addressFieldId = addressFieldId;
+                this.addressField = document.getElementById(addressFieldId);
+                this.searchButton = document.getElementById("search_address_btn");
+
+                this.setupPostalCodeFeatures();
+              }
+
+              setupPostalCodeFeatures() {
+                if (this.searchButton) {
+                  this.searchButton.addEventListener("click", () => {
+                    this.searchAddress();
+                  });
+                }
+
+                if (this.element) {
+                  this.element.addEventListener("keypress", (e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      this.searchAddress();
+                    }
+                  });
+                }
+              }
+
+              async searchAddress() {
+                const postalCode = this.element.value.trim();
+
+                // エラーメッセージをクリア
+                this.hideError();
+
+                // 郵便番号のフォーマットチェック
+                if (!/^\d{7}$/.test(postalCode)) {
+                  this.showError("郵便番号は半角数字7桁で入力してください。");
+                  return;
+                }
+
+                // 郵便番号検索APIを使用
+                const url = `https://zipcloud.ibsnet.co.jp/api/search?zipcode=${postalCode}`;
+
+                if (this.searchButton) {
+                  this.searchButton.textContent = "検索中...";
+                  this.searchButton.disabled = true;
+                }
+
+                        try {
+                const response = await fetch(url);
+
+                // レスポンスが正常でない場合
+                if (!response.ok) {
+                  throw new Error(`HTTP Error: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                if (data.status === 200 && data.results && data.results.length > 0) {
+                  const result = data.results[0];
+                  if (this.addressField) {
+                    this.addressField.value = `${result.address1}${result.address2}${result.address3}`;
+                  }
+                  this.showError("住所が自動入力されました。", "green");
+                } else {
+                  this.showError(data.message || "該当する住所が見つかりませんでした。");
+                  if (this.addressField) {
+                    this.addressField.value = "";
+                  }
+                }
+              } catch (error) {
+                console.error("住所検索エラー:", error);
+
+                // ネットワークエラーかどうかを判定
+                const isNetworkError = error instanceof TypeError ||
+                                      error.name === 'NetworkError' ||
+                                      error.message.includes('Failed to fetch') ||
+                                      error.message.includes('Network request failed') ||
+                                      error.message.includes('HTTP Error');
+
+                if (isNetworkError) {
+                  this.showError("ネットワークに接続されていないため、住所検索機能をご利用いただけません。住所を手入力してください。");
+                } else {
+                  this.showError("住所検索に失敗しました。時間をおいて再度お試しください。");
+                }
+              } finally {
+                  if (this.searchButton) {
+                    this.searchButton.textContent = "住所検索";
+                    this.searchButton.disabled = false;
+                  }
+                }
+              }
+
+              showError(message, color = "#dc3545") {
+                if (this.element) {
+                  // 成功時（緑色）の場合はerrorクラスを追加しない
+                  if (color === "green" || color === "#28a745") {
+                    this.element.classList.remove("error");
+                  } else {
+                    this.element.classList.add("error");
+                  }
+                }
+                if (this.errorElement) {
+                  this.errorElement.textContent = message;
+                  this.errorElement.style.color = color;
+                  this.errorElement.style.display = "block";
+                }
+              }
+            }
+
+            /**
+             * ラジオボタン必須バリデーター
+             */
+            class RadioRequiredValidator extends Validator {
+              constructor(radioName) {
+                super("いずれかの選択肢を選択してください。");
+                this.radioName = radioName;
+              }
+
+              validate(value) {
+                // 同じnameのラジオボタンのいずれかが選択されているかチェック
+                const radios = document.querySelectorAll(`input[name="${this.radioName}"]`);
+                const hasChecked = Array.from(radios).some((radio) => radio.checked);
+
+                return hasChecked ? ValidationResult.success() : ValidationResult.error(this.errorMessage);
+              }
+            }
+
+            /**
+             * ラジオボタン群を管理するクラス
+             */
+            class RadioField {
+              constructor(radioName, label) {
+                this.radioName = radioName;
+                this.label = label;
+                this.radioElements = Array.from(document.querySelectorAll(`input[name="${radioName}"]`));
+                this.errorElement = document.getElementById(radioName + "_error");
+                this.validators = [];
+
+                this.setupEventListeners();
+              }
+
+              addValidator(validator) {
+                this.validators.push(validator);
+                return this;
+              }
+
+              setupEventListeners() {
+                console.log(`RadioField (${this.radioName}) のイベントリスナーを設定中...`);
+                this.radioElements.forEach((radio) => {
+                  radio.addEventListener("change", () => {
+                    console.log(`ラジオボタン (${this.radioName}) が変更されました`);
+                    this.validateRealtime();
+
+                    // 学歴選択の場合は表示制御を実行
+                    if (this.radioName === "education_level") {
+                      console.log("学歴選択が変更されたため、updateFormVisibility を実行");
+                      updateFormVisibility();
+                    }
+                  });
+                });
+              }
+
+              validateRealtime() {
+                for (const validator of this.validators) {
+                  const result = validator.validate("");
+                  if (!result.isValid) {
+                    this.showError(result.message);
+                    return;
+                  }
+                }
+                this.hideError();
+              }
+
+              validate() {
+                for (const validator of this.validators) {
+                  const result = validator.validate("");
+                  if (!result.isValid) {
+                    this.showError(result.message);
+                    return ValidationResult.error(`${this.label}: ${result.message}`);
+                  }
+                }
+                this.hideError();
+                return ValidationResult.success();
+              }
+
+              showError(message) {
+                this.radioElements.forEach((radio) => {
+                  radio.classList.add("error");
+                });
+                if (this.errorElement) {
+                  this.errorElement.textContent = message;
+                  this.errorElement.style.display = "block";
+                }
+              }
+
+              hideError() {
+                this.radioElements.forEach((radio) => {
+                  radio.classList.remove("error");
+                });
+                if (this.errorElement) {
+                  this.errorElement.style.display = "none";
+                }
+              }
+
+              getValue() {
+                const checkedRadio = this.radioElements.find((radio) => radio.checked);
+                if (checkedRadio) {
+                  const label = document.querySelector(`label[for="${checkedRadio.id}"]`);
+                  return label ? label.textContent : checkedRadio.value;
+                }
+                return "";
+              }
+
+              getValueCode() {
+                const checkedRadio = this.radioElements.find((radio) => radio.checked);
+                return checkedRadio ? checkedRadio.value : "";
+              }
+            }
+
+            /**
+             * チェックボックス群を管理するクラス
+             */
+            class CheckboxField {
+              constructor(checkboxIds, label) {
+                this.checkboxIds = checkboxIds;
+                this.label = label;
+                this.checkboxElements = checkboxIds.map((id) => document.getElementById(id)).filter((el) => el !== null);
+                this.errorElement = document.getElementById("toshin_zaisekireki_error");
+                this.validators = [];
+
+                this.setupEventListeners();
+              }
+
+              addValidator(validator) {
+                this.validators.push(validator);
+                return this;
+              }
+
+              setupEventListeners() {
+                this.checkboxElements.forEach((checkbox) => {
+                  checkbox.addEventListener("change", () => {
+                    this.validateRealtime();
+                  });
+                });
+              }
+
+              validateRealtime() {
+                for (const validator of this.validators) {
+                  const result = validator.validate("");
+                  if (!result.isValid) {
+                    this.showError(result.message);
+                    return;
+                  }
+                }
+                this.hideError();
+              }
+
+              validate() {
+                for (const validator of this.validators) {
+                  const result = validator.validate("");
+                  if (!result.isValid) {
+                    this.showError(result.message);
+                    return ValidationResult.error(`${this.label}: ${result.message}`);
+                  }
+                }
+                this.hideError();
+                return ValidationResult.success();
+              }
+
+              showError(message) {
+                this.checkboxElements.forEach((checkbox) => {
+                  checkbox.classList.add("error");
+                });
+                if (this.errorElement) {
+                  this.errorElement.textContent = message;
+                  this.errorElement.style.display = "block";
+                }
+              }
+
+              hideError() {
+                this.checkboxElements.forEach((checkbox) => {
+                  checkbox.classList.remove("error");
+                });
+                if (this.errorElement) {
+                  this.errorElement.style.display = "none";
+                }
+              }
+
+              getValue() {
+                const checkedValues = [];
+                this.checkboxElements.forEach((checkbox, index) => {
+                  if (checkbox.checked) {
+                    checkedValues.push(checkbox.nextElementSibling.textContent);
+                  }
+                });
+                return checkedValues.join(", ");
+              }
+            }
+
+            /**
+             * フォーム全体を管理するクラス
+             */
+            class FormManager {
+              constructor(formId) {
+                this.formId = formId;
+                this.formElement = document.getElementById(formId);
+                this.fields = new Map();
+                this.checkboxFields = new Map();
+                this.radioFields = new Map();
+                this.validationErrorsElement = document.getElementById("validation-errors");
+                this.validationErrorsListElement = document.getElementById("validation-errors-list");
+              }
+
+              /**
+               * フィールドを追加
+               */
+              addField(field) {
+                if (field instanceof CheckboxField) {
+                  this.checkboxFields.set(field.label, field);
+                } else if (field instanceof RadioField) {
+                  this.radioFields.set(field.label, field);
+                } else {
+                  this.fields.set(field.elementId, field);
+                }
+                return this;
+              }
+
+              /**
+               * チェックボックスフィールドを追加（別名メソッド）
+               */
+              addCheckboxField(field) {
+                this.checkboxFields.set(field.label, field);
+                return this;
+              }
+
+              /**
+               * ラジオボタンフィールドを追加
+               */
+              addRadioField(field) {
+                this.radioFields.set(field.label, field);
+                return this;
+              }
+
+              /**
+               * 全フィールドのバリデーション
+               */
+              validateAll() {
+                const errors = [];
+
+                // 通常のフィールドのバリデーション
+                for (const [id, field] of this.fields) {
+                  const result = field.validate();
+                  if (!result.isValid) {
+                    errors.push(result.message);
+                  }
+                }
+
+                // チェックボックスフィールドのバリデーション
+                for (const [label, field] of this.checkboxFields) {
+                  const result = field.validate();
+                  if (!result.isValid) {
+                    errors.push(result.message);
+                  }
+                }
+
+                // ラジオボタンフィールドのバリデーション
+                for (const [label, field] of this.radioFields) {
+                  const result = field.validate();
+                  if (!result.isValid) {
+                    errors.push(result.message);
+                  }
+                }
+
+                if (errors.length > 0) {
+                  this.showValidationErrors(errors);
+                  return false;
+                } else {
+                  this.hideValidationErrors();
+                  return true;
+                }
+              }
+
+              /**
+               * バリデーションエラー表示
+               */
+              showValidationErrors(errors) {
+                if (this.validationErrorsListElement) {
+                  let html = "<ul>";
+                  errors.forEach((error) => {
+                    html += `<li>${error}</li>`;
+                  });
+                  html += "</ul>";
+                  this.validationErrorsListElement.innerHTML = html;
+                }
+
+                if (this.validationErrorsElement) {
+                  this.validationErrorsElement.style.display = "block";
+                  this.validationErrorsElement.scrollIntoView({ behavior: "smooth", block: "center" });
+                }
+              }
+
+              /**
+               * バリデーションエラー非表示
+               */
+              hideValidationErrors() {
+                if (this.validationErrorsElement) {
+                  this.validationErrorsElement.style.display = "none";
+                }
+              }
+
+              /**
+               * フォームデータを取得
+               */
+              getFormData() {
+                const data = {};
+
+                // 通常のフィールドのデータ取得
+                for (const [id, field] of this.fields) {
+                  data[id] = field.getValue();
+                }
+
+                // チェックボックスフィールドのデータ取得
+                for (const [label, field] of this.checkboxFields) {
+                  data[label] = field.getValue();
+                }
+
+                // ラジオボタンフィールドのデータ取得
+                for (const [label, field] of this.radioFields) {
+                  data[label] = field.getValue();
+                }
+
+                return data;
+              }
+
+              /**
+               * 外部から受け取ったデータをフォームの各フィールドにデフォルト値として設定
+               *
+               * この関数は、外部ソースから提供されたデータを使用して、フォーム内の各入力フィールドに
+               * デフォルト値を設定することを目的としています。通常のフィールドに対しては、対応する
+               * データが存在する場合、その値をフィールドにセットします。
+               */
+              setFormData(data) {
+                // 入力フィールドに対して、対応する値を設定
+                for (const [id, field] of this.fields) {
+                  if (data[id] !== undefined) {
+                    field.setValue(data[id]);
+                  }
+                }
+
+                // チェックボックスフィールドは設定処理をスキップ（複雑なため）
+                // ラジオボタンフィールドも設定処理をスキップ（複雑なため）
+              }
+            }
+
+            // ===== 入力変換器 =====
+
+            /**
+             * 半角数字を全角数字に変換（住所・建物名用）
+             */
+            function toFullWidth(str) {
+              return str.replace(/[0-9-]/g, function (s) {
+                return String.fromCharCode(s.charCodeAt(0) + 65248);
+              });
+            }
+
+            /**
+             * 全角・ひらがなを半角カタカナに変換
+             */
+            function toHalfWidthKana(str) {
+              // ひらがなを全角カタカナに変換
+              str = str.replace(/[\u3041-\u3096]/g, function (match) {
+                const code = match.charCodeAt(0) + 0x60;
+                return String.fromCharCode(code);
+              });
+
+              // 全角カタカナを半角カタカナに変換
+              const kanaMap = {
+                ア: "ｱ",
+                イ: "ｲ",
+                ウ: "ｳ",
+                エ: "ｴ",
+                オ: "ｵ",
+                カ: "ｶ",
+                キ: "ｷ",
+                ク: "ｸ",
+                ケ: "ｹ",
+                コ: "ｺ",
+                サ: "ｻ",
+                シ: "ｼ",
+                ス: "ｽ",
+                セ: "ｾ",
+                ソ: "ｿ",
+                タ: "ﾀ",
+                チ: "ﾁ",
+                ツ: "ﾂ",
+                テ: "ﾃ",
+                ト: "ﾄ",
+                ナ: "ﾅ",
+                ニ: "ﾆ",
+                ヌ: "ﾇ",
+                ネ: "ﾈ",
+                ノ: "ﾉ",
+                ハ: "ﾊ",
+                ヒ: "ﾋ",
+                フ: "ﾌ",
+                ヘ: "ﾍ",
+                ホ: "ﾎ",
+                マ: "ﾏ",
+                ミ: "ﾐ",
+                ム: "ﾑ",
+                メ: "ﾒ",
+                モ: "ﾓ",
+                ヤ: "ﾔ",
+                ユ: "ﾕ",
+                ヨ: "ﾖ",
+                ラ: "ﾗ",
+                リ: "ﾘ",
+                ル: "ﾙ",
+                レ: "ﾚ",
+                ロ: "ﾛ",
+                ワ: "ﾜ",
+                ヲ: "ｦ",
+                ン: "ﾝ",
+                ガ: "ｶﾞ",
+                ギ: "ｷﾞ",
+                グ: "ｸﾞ",
+                ゲ: "ｹﾞ",
+                ゴ: "ｺﾞ",
+                ザ: "ｻﾞ",
+                ジ: "ｼﾞ",
+                ズ: "ｽﾞ",
+                ゼ: "ｾﾞ",
+                ゾ: "ｿﾞ",
+                ダ: "ﾀﾞ",
+                ヂ: "ﾁﾞ",
+                ヅ: "ﾂﾞ",
+                デ: "ﾃﾞ",
+                ド: "ﾄﾞ",
+                バ: "ﾊﾞ",
+                ビ: "ﾋﾞ",
+                ブ: "ﾌﾞ",
+                ベ: "ﾍﾞ",
+                ボ: "ﾎﾞ",
+                パ: "ﾊﾟ",
+                ピ: "ﾋﾟ",
+                プ: "ﾌﾟ",
+                ペ: "ﾍﾟ",
+                ポ: "ﾎﾟ",
+                ャ: "ｬ",
+                ュ: "ｭ",
+                ョ: "ｮ",
+                ッ: "ｯ",
+                ー: "ｰ",
+                ヴ: "ｳﾞ",
+                ァ: "ｧ",
+                ィ: "ｨ",
+                ゥ: "ｩ",
+                ェ: "ｪ",
+                ォ: "ｫ",
+              };
+
+              return str.replace(/[\u30A1-\u30FF]/g, function (match) {
+                return kanaMap[match] || match;
+              });
+            }
+
+            /**
+             * 全角数字・全角ハイフンを半角数字・半角ハイフンに変換
+             */
+            function toHalfWidthNumber(str) {
+              return str.replace(/[０-９－]/g, function (match) {
+                if (match === "－") {
+                  return "-";
+                }
+                return String.fromCharCode(match.charCodeAt(0) - 65248);
+              });
+            }
+
+            // ===== フォーム初期化 =====
+
+            document.addEventListener("DOMContentLoaded", function () {
+              // FormManagerのインスタンス作成
+              const formManager = new FormManager("MainForm");
+
+              // フィールドの設定
+              formManager
+                // 基本情報
+                .addField(new FormField("name_1", "姓").addValidator(new RequiredValidator()))
+                .addField(new FormField("name_2", "名").addValidator(new RequiredValidator()))
+                .addField(
+                  new FormField("name_1_kana", "姓（カナ）")
+                    .addValidator(new RequiredValidator())
+                    .addValidator(new RegexValidator(VALIDATION_PATTERNS.KANA.regex, VALIDATION_PATTERNS.KANA.message))
+                    .addInputTransformer(toHalfWidthKana)
+                )
+                .addField(
+                  new FormField("name_2_kana", "名（カナ）")
+                    .addValidator(new RequiredValidator())
+                    .addValidator(new RegexValidator(VALIDATION_PATTERNS.KANA.regex, VALIDATION_PATTERNS.KANA.message))
+                    .addInputTransformer(toHalfWidthKana)
+                )
+                .addField(new FormField("id_sex", "性別").addValidator(new RequiredValidator()))
+                .addField(new FormField("birthday", "生年月日").addValidator(new RequiredValidator()))
+
+                // 住所情報
+                .addField(
+                  new PostalCodeField("address_num", "郵便番号", "address_str")
+                    .addValidator(new RequiredValidator())
+                    .addValidator(
+                      new RegexValidator(VALIDATION_PATTERNS.POSTAL_CODE.regex, VALIDATION_PATTERNS.POSTAL_CODE.message)
+                    )
+                    .addInputTransformer(toHalfWidthNumber)
+                )
+                .addField(
+                  new FormField("address_str", "住所").addValidator(new RequiredValidator()).addInputTransformer(toFullWidth)
+                )
+                .addField(new FormField("address_str_building", "建物名・部屋番号").addInputTransformer(toFullWidth)) // 必須ではない
+                .addField(
+                  new FormField("address_str_kana", "住所建物名フリガナ")
+                    .addValidator(new RequiredValidator())
+                    .addValidator(new RegexValidator(VALIDATION_PATTERNS.KANA.regex, VALIDATION_PATTERNS.KANA.message))
+                    .addInputTransformer(toHalfWidthKana)
+                )
+
+                // 電話番号
+                .addField(
+                  new FormField("tel_home", "電話番号（自宅）")
+                    .addValidator(new PhoneEitherRequiredValidator("tel_home", "tel_mobile"))
+                    .addValidator(
+                      new RegexValidator(VALIDATION_PATTERNS.HOME_PHONE.regex, VALIDATION_PATTERNS.HOME_PHONE.message)
+                    )
+                    .addInputTransformer(toHalfWidthNumber)
+                )
+                .addField(
+                  new FormField("tel_mobile", "電話番号（携帯）")
+                    .addValidator(new PhoneEitherRequiredValidator("tel_home", "tel_mobile"))
+                    .addValidator(
+                      new RegexValidator(VALIDATION_PATTERNS.MOBILE_PHONE.regex, VALIDATION_PATTERNS.MOBILE_PHONE.message)
+                    )
+                    .addInputTransformer(toHalfWidthNumber)
+                )
+
+                // メールアドレス
+                .addField(
+                  new FormField("email_address", "メールアドレス")
+                    .addValidator(new RequiredValidator())
+                    .addValidator(new RegexValidator(VALIDATION_PATTERNS.EMAIL.regex, VALIDATION_PATTERNS.EMAIL.message))
+                )
+
+                // 学歴情報
+                .addField(
+                  new RadioField("education_level", "最終学歴").addValidator(new RadioRequiredValidator("education_level"))
+                )
+
+                // 大学情報
+                .addField(new FormField("daigaku", "大学").addValidator(new RequiredValidator()))
+                .addField(new FormField("gakubu", "学部・学類・科類等").addValidator(new RequiredValidator()))
+                .addField(new FormField("gakka", "学科").addValidator(new RequiredValidator()))
+                .addField(new FormField("daigaku_nyugaku_bi", "入学年月日").addValidator(new RequiredValidator()))
+                .addField(new FormField("daigakuin", "大学院")) // 必須ではない
+                .addField(new FormField("kenkyuka", "研究科")) // 必須ではない
+                .addField(new FormField("senkou", "専攻")) // 必須ではない
+
+                // その他
+                .addField(new FormField("koukou_name", "出身高校").addValidator(new RequiredValidator()))
+                .addField(
+                  new RadioField("toshin_zaisekireki", "東進在籍歴").addValidator(
+                    new RadioRequiredValidator("toshin_zaisekireki")
+                  )
+                )
+
+                // 給与受取口座
+                .addField(
+                  new FormField("bank_code", "銀行コード")
+                    .addValidator(new RequiredValidator())
+                    .addValidator(
+                      new RegexValidator(VALIDATION_PATTERNS.BANK_CODE.regex, VALIDATION_PATTERNS.BANK_CODE.message)
+                    )
+                    .addInputTransformer(toHalfWidthNumber)
+                )
+                .addField(new FormField("bank_name", "銀行名").addValidator(new RequiredValidator()))
+                .addField(
+                  new FormField("branch_code", "支店コード")
+                    .addValidator(new RequiredValidator())
+                    .addValidator(
+                      new RegexValidator(VALIDATION_PATTERNS.BRANCH_CODE.regex, VALIDATION_PATTERNS.BRANCH_CODE.message)
+                    )
+                    .addInputTransformer(toHalfWidthNumber)
+                )
+                .addField(new FormField("branch_name", "支店名").addValidator(new RequiredValidator()))
+                .addField(new FormField("account_type", "口座種別").addValidator(new RequiredValidator()))
+                .addField(
+                  new FormField("account_number", "口座番号")
+                    .addValidator(new RequiredValidator())
+                    .addValidator(
+                      new RegexValidator(VALIDATION_PATTERNS.ACCOUNT_NUMBER.regex, VALIDATION_PATTERNS.ACCOUNT_NUMBER.message)
+                    )
+                    .addInputTransformer(toHalfWidthNumber)
+                )
+                .addField(
+                  new FormField("account_holder", "口座名義人")
+                    .addValidator(new RequiredValidator())
+                    .addValidator(new AccountHolderMatchValidator("name_1", "name_2"))
+                )
+                .addField(
+                  new FormField("account_holder_kana", "口座名義人フリガナ")
+                    .addValidator(new RequiredValidator())
+                    .addValidator(new RegexValidator(VALIDATION_PATTERNS.KANA.regex, VALIDATION_PATTERNS.KANA.message))
+                    .addValidator(new AccountHolderKanaMatchValidator("name_1_kana", "name_2_kana"))
+                    .addInputTransformer(toHalfWidthKana)
+                );
+
+              // 確認ボタンのイベントリスナー
+              document.getElementById("confirm-button").addEventListener("click", function () {
+                console.log("フォームバリデーション開始");
+
+                if (formManager.validateAll()) {
+                  // バリデーション成功時は確認画面を表示
+                  showConfirmation(formManager);
+                } else {
+                  console.log("バリデーションエラーが発生しました");
+                }
+              });
+
+              // 戻るボタンのイベントリスナー
+              document.getElementById("back-button").addEventListener("click", function () {
+                backToInput();
+              });
+
+              // CSVボタンのイベントリスナー
+              document.getElementById("csv-button").addEventListener("click", function () {
+                downloadCSV(formManager);
+              });
+
+              // 学歴選択のラジオボタンにイベントリスナーを追加（補強）
+              const educationRadios = document.querySelectorAll('input[name="education_level"]');
+              console.log(`教育レベルのラジオボタンを ${educationRadios.length} 個発見しました`);
+              educationRadios.forEach((radio, index) => {
+                console.log(`ラジオボタン ${index + 1} (ID: ${radio.id}) にイベントリスナーを追加`);
+                radio.addEventListener("change", function () {
+                  console.log(`補強イベントリスナーから updateFormVisibility を実行 (選択: ${this.value})`);
+                  updateFormVisibility();
+                });
+              });
+
+              // 初期表示状態を設定
+              console.log("初期表示状態を設定中...");
+              updateFormVisibility();
+
+              console.log("フォームが初期化されました");
             });
-          });
-        }
 
-        validateRealtime() {
-          for (const validator of this.validators) {
-            const result = validator.validate("");
-            if (!result.isValid) {
-              this.showError(result.message);
-              return;
+            // バージョン情報
+            const FORM_VERSION = "1.0.0";
+
+            // ===== 学歴に応じた表示制御 =====
+
+            /**
+             * 学歴選択に応じてフォームセクションの表示を制御
+             */
+            function updateFormVisibility() {
+              console.log("updateFormVisibility が呼ばれました");
+
+              const educationLevel = document.querySelector('input[name="education_level"]:checked')?.value;
+              console.log("選択された学歴レベル:", educationLevel);
+
+              // 大学についてのfieldsetを検索
+              const allFieldsets = document.querySelectorAll("fieldset");
+              let universityFieldset = null;
+              for (const fieldset of allFieldsets) {
+                const legend = fieldset.querySelector("legend");
+                if (legend && legend.textContent.includes("大学について")) {
+                  universityFieldset = fieldset;
+                  break;
+                }
+              }
+
+              // 出身高校のフィールドを検索
+              const allFormItems = document.querySelectorAll(".Form-Item");
+              let highSchoolField = null;
+              for (const item of allFormItems) {
+                const label = item.querySelector(".Form-Item-Label");
+                if (label && label.textContent.includes("出身高校")) {
+                  highSchoolField = item;
+                  break;
+                }
+              }
+
+              console.log("universityFieldset:", universityFieldset);
+              console.log("highSchoolField:", highSchoolField);
+
+              switch (educationLevel) {
+                case "1": // 大学
+                  console.log("大学選択 - すべて表示");
+                  // すべて表示
+                  if (universityFieldset) {
+                    universityFieldset.style.display = "block";
+                    clearUniversityFields();
+                  }
+                  if (highSchoolField) {
+                    highSchoolField.style.display = "block";
+                    clearHighSchoolField();
+                  }
+                  break;
+
+                case "2": // 短大・専門
+                case "3": // 高校
+                  console.log("短大・専門または高校選択 - 大学セクション非表示");
+                  // 大学セクションのみ非表示
+                  if (universityFieldset) {
+                    universityFieldset.style.display = "none";
+                    fillUniversityFields();
+                  }
+                  if (highSchoolField) {
+                    highSchoolField.style.display = "block";
+                    clearHighSchoolField();
+                  }
+                  break;
+
+                case "4": // 中学
+                  console.log("中学選択 - 大学セクションと出身高校を非表示");
+                  // 大学セクションと出身高校を非表示
+                  if (universityFieldset) {
+                    universityFieldset.style.display = "none";
+                    fillUniversityFields();
+                  }
+                  if (highSchoolField) {
+                    highSchoolField.style.display = "none";
+                    fillHighSchoolField();
+                  }
+                  break;
+
+                default:
+                  console.log("選択なし - すべて表示");
+                  // 選択なしの場合はすべて表示
+                  if (universityFieldset) {
+                    universityFieldset.style.display = "block";
+                    clearUniversityFields();
+                  }
+                  if (highSchoolField) {
+                    highSchoolField.style.display = "block";
+                    clearHighSchoolField();
+                  }
+                  break;
+              }
             }
-          }
-          this.hideError();
-        }
 
-        validate() {
-          for (const validator of this.validators) {
-            const result = validator.validate("");
-            if (!result.isValid) {
-              this.showError(result.message);
-              return ValidationResult.error(`${this.label}: ${result.message}`);
+            /**
+             * 大学関連フィールドに「なし」と「0001/01/01」を自動入力
+             */
+            function fillUniversityFields() {
+              console.log("大学フィールドに自動入力実行");
+              const textFields = ["daigaku", "gakubu", "gakka", "daigakuin", "kenkyuka", "senkou"];
+              const dateFields = ["daigaku_nyugaku_bi"];
+
+              textFields.forEach((fieldId) => {
+                const element = document.getElementById(fieldId);
+                if (element) {
+                  element.value = "なし";
+                  console.log(`${fieldId} に "なし" を入力`);
+                } else {
+                  console.log(`${fieldId} 要素が見つかりません`);
+                }
+              });
+
+              dateFields.forEach((fieldId) => {
+                const element = document.getElementById(fieldId);
+                if (element) {
+                  element.value = "0001-01-01";
+                  console.log(`${fieldId} に "0001-01-01" を入力`);
+                } else {
+                  console.log(`${fieldId} 要素が見つかりません`);
+                }
+              });
             }
-          }
-          this.hideError();
-          return ValidationResult.success();
-        }
 
-        showError(message) {
-          this.radioElements.forEach((radio) => {
-            radio.classList.add("error");
-          });
-          if (this.errorElement) {
-            this.errorElement.textContent = message;
-            this.errorElement.style.display = "block";
-          }
-        }
+            /**
+             * 大学関連フィールドをクリア
+             */
+            function clearUniversityFields() {
+              console.log("大学フィールドをクリア実行");
+              const allFields = ["daigaku", "gakubu", "gakka", "daigaku_nyugaku_bi", "daigakuin", "kenkyuka", "senkou"];
 
-        hideError() {
-          this.radioElements.forEach((radio) => {
-            radio.classList.remove("error");
-          });
-          if (this.errorElement) {
-            this.errorElement.style.display = "none";
-          }
-        }
-
-        getValue() {
-          const checkedRadio = this.radioElements.find((radio) => radio.checked);
-          if (checkedRadio) {
-            const label = document.querySelector(`label[for="${checkedRadio.id}"]`);
-            return label ? label.textContent : checkedRadio.value;
-          }
-          return "";
-        }
-
-        getValueCode() {
-          const checkedRadio = this.radioElements.find((radio) => radio.checked);
-          return checkedRadio ? checkedRadio.value : "";
-        }
-      }
-
-      /**
-       * チェックボックス群を管理するクラス
-       */
-      class CheckboxField {
-        constructor(checkboxIds, label) {
-          this.checkboxIds = checkboxIds;
-          this.label = label;
-          this.checkboxElements = checkboxIds.map((id) => document.getElementById(id)).filter((el) => el !== null);
-          this.errorElement = document.getElementById("toshin_zaisekireki_error");
-          this.validators = [];
-
-          this.setupEventListeners();
-        }
-
-        addValidator(validator) {
-          this.validators.push(validator);
-          return this;
-        }
-
-        setupEventListeners() {
-          this.checkboxElements.forEach((checkbox) => {
-            checkbox.addEventListener("change", () => {
-              this.validateRealtime();
-            });
-          });
-        }
-
-        validateRealtime() {
-          for (const validator of this.validators) {
-            const result = validator.validate("");
-            if (!result.isValid) {
-              this.showError(result.message);
-              return;
+              allFields.forEach((fieldId) => {
+                const element = document.getElementById(fieldId);
+                if (element) {
+                  element.value = "";
+                  console.log(`${fieldId} をクリア`);
+                }
+              });
             }
-          }
-          this.hideError();
-        }
 
-        validate() {
-          for (const validator of this.validators) {
-            const result = validator.validate("");
-            if (!result.isValid) {
-              this.showError(result.message);
-              return ValidationResult.error(`${this.label}: ${result.message}`);
+            /**
+             * 出身高校フィールドに「なし」を自動入力
+             */
+            function fillHighSchoolField() {
+              console.log("出身高校フィールドに自動入力実行");
+              const element = document.getElementById("koukou_name");
+              if (element) {
+                element.value = "なし";
+                console.log('koukou_name に "なし" を入力');
+              } else {
+                console.log("koukou_name 要素が見つかりません");
+              }
             }
-          }
-          this.hideError();
-          return ValidationResult.success();
-        }
 
-        showError(message) {
-          this.checkboxElements.forEach((checkbox) => {
-            checkbox.classList.add("error");
-          });
-          if (this.errorElement) {
-            this.errorElement.textContent = message;
-            this.errorElement.style.display = "block";
-          }
-        }
-
-        hideError() {
-          this.checkboxElements.forEach((checkbox) => {
-            checkbox.classList.remove("error");
-          });
-          if (this.errorElement) {
-            this.errorElement.style.display = "none";
-          }
-        }
-
-        getValue() {
-          const checkedValues = [];
-          this.checkboxElements.forEach((checkbox, index) => {
-            if (checkbox.checked) {
-              checkedValues.push(checkbox.nextElementSibling.textContent);
+            /**
+             * 出身高校フィールドをクリア
+             */
+            function clearHighSchoolField() {
+              console.log("出身高校フィールドをクリア実行");
+              const element = document.getElementById("koukou_name");
+              if (element) {
+                element.value = "";
+                console.log("koukou_name をクリア");
+              }
             }
-          });
-          return checkedValues.join(", ");
-        }
-      }
 
-      /**
-       * フォーム全体を管理するクラス
-       */
-      class FormManager {
-        constructor(formId) {
-          this.formId = formId;
-          this.formElement = document.getElementById(formId);
-          this.fields = new Map();
-          this.checkboxFields = new Map();
-          this.radioFields = new Map();
-          this.validationErrorsElement = document.getElementById("validation-errors");
-          this.validationErrorsListElement = document.getElementById("validation-errors-list");
-        }
+            // 確認画面表示機能
+            function showConfirmation(formManager) {
+              // 入力内容を収集
+              const formData = collectFormData(formManager);
 
-        /**
-         * フィールドを追加
-         */
-        addField(field) {
-          if (field instanceof CheckboxField) {
-            this.checkboxFields.set(field.label, field);
-          } else if (field instanceof RadioField) {
-            this.radioFields.set(field.label, field);
-          } else {
-            this.fields.set(field.elementId, field);
-          }
-          return this;
-        }
+              // 確認画面のHTMLを生成
+              const confirmationHTML = generateConfirmationHTML(formData);
 
-        /**
-         * チェックボックスフィールドを追加（別名メソッド）
-         */
-        addCheckboxField(field) {
-          this.checkboxFields.set(field.label, field);
-          return this;
-        }
+              // 確認画面に表示
+              document.getElementById("confirmationData").innerHTML = confirmationHTML;
 
-        /**
-         * ラジオボタンフィールドを追加
-         */
-        addRadioField(field) {
-          this.radioFields.set(field.label, field);
-          return this;
-        }
+              // ダウンロード通知を非表示にする（前回の通知が残っている場合）
+              hideDownloadNotification();
 
-        /**
-         * 全フィールドのバリデーション
-         */
-        validateAll() {
-          const errors = [];
+              // 画面切り替え
+              document.querySelector(".Form").style.display = "none";
+              document.getElementById("confirmationScreen").style.display = "block";
 
-          // 通常のフィールドのバリデーション
-          for (const [id, field] of this.fields) {
-            const result = field.validate();
-            if (!result.isValid) {
-              errors.push(result.message);
+              // 確認画面の先頭にスクロール
+              document.getElementById("confirmationScreen").scrollIntoView({ behavior: "smooth" });
             }
-          }
 
-          // チェックボックスフィールドのバリデーション
-          for (const [label, field] of this.checkboxFields) {
-            const result = field.validate();
-            if (!result.isValid) {
-              errors.push(result.message);
+            // 入力画面に戻る
+            function backToInput() {
+              document.getElementById("confirmationScreen").style.display = "none";
+              document.querySelector(".Form").style.display = "block";
+
+              // ダウンロード通知を非表示にする
+              hideDownloadNotification();
+
+              // 入力画面の先頭にスクロール
+              document.querySelector(".Form").scrollIntoView({ behavior: "smooth" });
             }
-          }
 
-          // ラジオボタンフィールドのバリデーション
-          for (const [label, field] of this.radioFields) {
-            const result = field.validate();
-            if (!result.isValid) {
-              errors.push(result.message);
+            // フォームデータ収集
+            function collectFormData(formManager) {
+              // 東進在籍歴のラジオボタン値を取得
+              function getToshinZaisekireki(value) {
+                switch (value) {
+                  case "1":
+                    return "あり";
+                  case "2":
+                    return "なし";
+                  default:
+                    return "";
+                }
+              }
+
+              // 口座種別の値を文字列に変換
+              function getAccountType(value) {
+                switch (value) {
+                  case "1":
+                    return "普通預金";
+                  case "2":
+                    return "当座預金";
+                  default:
+                    return "";
+                }
+              }
+
+              // 性別の値を文字列に変換
+              function getSex(value) {
+                switch (value) {
+                  case "1":
+                    return "男性";
+                  case "2":
+                    return "女性";
+                  default:
+                    return "";
+                }
+              }
+
+              // 学歴の値を文字列に変換
+              function getEducationLevel(value) {
+                switch (value) {
+                  case "1":
+                    return "1.大学・大学院・大学生・大学院生・大学入学予定";
+                  case "2":
+                    return "2.短大・専門学校";
+                  case "3":
+                    return "3.高等学校卒業・高校生";
+                  case "4":
+                    return "4.中学校卒業";
+                  default:
+                    return "";
+                }
+              }
+
+              // 値のトリム処理を行うヘルパー関数
+              function trimValue(value) {
+                if (typeof value === "string") {
+                  // 半角・全角スペースを除去
+                  return value.replace(/^[\s　]+|[\s　]+$/g, "");
+                }
+                return value;
+              }
+
+              // 日付をyyyy/mm/dd形式に変換するヘルパー関数
+              function formatDate(value) {
+                if (!value || value.trim() === "") {
+                  return "";
+                }
+                // YYYY-MM-DD形式をYYYY/MM/DD形式に変換
+                return value.replace(/-/g, "/");
+              }
+
+              return {
+                バージョン: FORM_VERSION,
+                作成日時: new Date().toLocaleString("ja-JP"),
+                姓: trimValue(document.getElementById("name_1")?.value || ""),
+                名: trimValue(document.getElementById("name_2")?.value || ""),
+                姓フリガナ: trimValue(document.getElementById("name_1_kana")?.value || ""),
+                名フリガナ: trimValue(document.getElementById("name_2_kana")?.value || ""),
+                性別: getSex(document.getElementById("id_sex")?.value),
+                生年月日: formatDate(document.getElementById("birthday")?.value || ""),
+                郵便番号: trimValue(document.getElementById("address_num")?.value || ""),
+                住所: trimValue(document.getElementById("address_str")?.value || ""),
+                建物名・部屋番号: trimValue(document.getElementById("address_str_building")?.value || ""),
+                住所建物名フリガナ: trimValue(document.getElementById("address_str_kana")?.value || ""),
+                "電話番号(自宅)": trimValue(document.getElementById("tel_home")?.value || ""),
+                "電話番号(携帯)": trimValue(document.getElementById("tel_mobile")?.value || ""),
+                メールアドレス: trimValue(document.getElementById("email_address")?.value || ""),
+                最終学歴: getEducationLevel(document.querySelector('input[name="education_level"]:checked')?.value),
+                大学: trimValue(document.getElementById("daigaku")?.value || ""),
+                "学部・学類・科類等": trimValue(document.getElementById("gakubu")?.value || ""),
+                学科: trimValue(document.getElementById("gakka")?.value || ""),
+                入学年月日: formatDate(document.getElementById("daigaku_nyugaku_bi")?.value || ""),
+                大学院: trimValue(document.getElementById("daigakuin")?.value || ""),
+                研究科: trimValue(document.getElementById("kenkyuka")?.value || ""),
+                専攻: trimValue(document.getElementById("senkou")?.value || ""),
+                出身高校: trimValue(document.getElementById("koukou_name")?.value || ""),
+                東進在籍歴: getToshinZaisekireki(document.querySelector('input[name="toshin_zaisekireki"]:checked')?.value),
+                銀行コード: trimValue(document.getElementById("bank_code")?.value || ""),
+                銀行名: trimValue(document.getElementById("bank_name")?.value || ""),
+                支店コード: trimValue(document.getElementById("branch_code")?.value || ""),
+                支店名: trimValue(document.getElementById("branch_name")?.value || ""),
+                口座種別: getAccountType(document.getElementById("account_type")?.value),
+                口座番号: trimValue(document.getElementById("account_number")?.value || ""),
+                口座名義人: trimValue(document.getElementById("account_holder")?.value || ""),
+                口座名義人フリガナ: trimValue(document.getElementById("account_holder_kana")?.value || ""),
+              };
             }
-          }
 
-          if (errors.length > 0) {
-            this.showValidationErrors(errors);
-            return false;
-          } else {
-            this.hideValidationErrors();
-            return true;
-          }
-        }
+            // 確認画面HTML生成
+            function generateConfirmationHTML(data) {
+              let html = '<table class="confirmation-table">';
 
-        /**
-         * バリデーションエラー表示
-         */
-        showValidationErrors(errors) {
-          if (this.validationErrorsListElement) {
-            let html = "<ul>";
-            errors.forEach((error) => {
-              html += `<li>${error}</li>`;
-            });
-            html += "</ul>";
-            this.validationErrorsListElement.innerHTML = html;
-          }
+              // 学歴に応じて表示する項目を決定
+              const educationLevel = document.querySelector('input[name="education_level"]:checked')?.value;
+              const hiddenUniversityFields = ["大学", "学部・学類・科類等", "学科", "入学年月日", "大学院", "研究科", "専攻"];
+              const hiddenHighSchoolFields = ["出身高校"];
 
-          if (this.validationErrorsElement) {
-            this.validationErrorsElement.style.display = "block";
-            this.validationErrorsElement.scrollIntoView({ behavior: "smooth", block: "center" });
-          }
-        }
+              for (const [key, value] of Object.entries(data)) {
+                // バージョン情報は確認画面では非表示
+                if (key === "バージョン") continue;
 
-        /**
-         * バリデーションエラー非表示
-         */
-        hideValidationErrors() {
-          if (this.validationErrorsElement) {
-            this.validationErrorsElement.style.display = "none";
-          }
-        }
+                // 学歴に応じて非表示にする項目をスキップ
+                let shouldHide = false;
 
-        /**
-         * フォームデータを取得
-         */
-        getFormData() {
-          const data = {};
+                if (educationLevel === "2" || educationLevel === "3") {
+                  // 短大・専門、高校の場合：大学関連項目を非表示
+                  if (hiddenUniversityFields.includes(key)) {
+                    shouldHide = true;
+                  }
+                } else if (educationLevel === "4") {
+                  // 中学の場合：大学関連項目と出身高校を非表示
+                  if (hiddenUniversityFields.includes(key) || hiddenHighSchoolFields.includes(key)) {
+                    shouldHide = true;
+                  }
+                }
 
-          // 通常のフィールドのデータ取得
-          for (const [id, field] of this.fields) {
-            data[id] = field.getValue();
-          }
+                if (!shouldHide && value && value.trim() !== "") {
+                  html += `
+                              <tr>
+                                  <td>${key}</td>
+                                  <td>${value}</td>
+                              </tr>
+                          `;
+                }
+              }
 
-          // チェックボックスフィールドのデータ取得
-          for (const [label, field] of this.checkboxFields) {
-            data[label] = field.getValue();
-          }
-
-          // ラジオボタンフィールドのデータ取得
-          for (const [label, field] of this.radioFields) {
-            data[label] = field.getValue();
-          }
-
-          return data;
-        }
-
-        /**
-         * 外部から受け取ったデータをフォームの各フィールドにデフォルト値として設定
-         *
-         * この関数は、外部ソースから提供されたデータを使用して、フォーム内の各入力フィールドに
-         * デフォルト値を設定することを目的としています。通常のフィールドに対しては、対応する
-         * データが存在する場合、その値をフィールドにセットします。
-         */
-        setFormData(data) {
-          // 入力フィールドに対して、対応する値を設定
-          for (const [id, field] of this.fields) {
-            if (data[id] !== undefined) {
-              field.setValue(data[id]);
+              html += "</table>";
+              return html;
             }
-          }
 
-          // チェックボックスフィールドは設定処理をスキップ（複雑なため）
-          // ラジオボタンフィールドも設定処理をスキップ（複雑なため）
-        }
-      }
+            // CSVダウンロード機能
+            async function downloadCSV(formManager) {
+              // フォームデータを収集
+              const formData = collectFormData(formManager);
 
-      // ===== 入力変換器 =====
+              // CSVヘッダーとデータを作成
+              const headers = Object.keys(formData);
+              const values = Object.values(formData);
 
-      /**
-       * 半角数字を全角数字に変換（住所・建物名用）
-       */
-      function toFullWidth(str) {
-        return str.replace(/[0-9-]/g, function (s) {
-          return String.fromCharCode(s.charCodeAt(0) + 65248);
-        });
-      }
+              // CSVコンテンツを作成（BOM付きUTF-8）
+              let csvContent = "\uFEFF"; // BOM
+              // 1行目：見出し
+              csvContent += headers.map((header) => `"${header}"`).join(",") + "\n";
+              // 2行目：値
+              csvContent += values.map((value) => `"${value.toString().replace(/"/g, '""')}"`).join(",") + "\n";
 
-      /**
-       * 全角・ひらがなを半角カタカナに変換
-       */
-      function toHalfWidthKana(str) {
-        // ひらがなを全角カタカナに変換
-        str = str.replace(/[\u3041-\u3096]/g, function (match) {
-          const code = match.charCodeAt(0) + 0x60;
-          return String.fromCharCode(code);
-        });
+              // ファイル名生成
+              const lastName = formData["姓"] || "unnamed";
+              const firstName = formData["名"] || "";
+              const name = lastName + firstName;
+              // ファイル名に使用できない文字を_に変換
+              const sanitizedName = name.replace(/[<>:"/\\|?*]/g, "_").substring(0, 200);
+              const fileName = `${sanitizedName}_応募者情報提出シート.csv`;
 
-        // 全角カタカナを半角カタカナに変換
-        const kanaMap = {
-          ア: "ｱ",
-          イ: "ｲ",
-          ウ: "ｳ",
-          エ: "ｴ",
-          オ: "ｵ",
-          カ: "ｶ",
-          キ: "ｷ",
-          ク: "ｸ",
-          ケ: "ｹ",
-          コ: "ｺ",
-          サ: "ｻ",
-          シ: "ｼ",
-          ス: "ｽ",
-          セ: "ｾ",
-          ソ: "ｿ",
-          タ: "ﾀ",
-          チ: "ﾁ",
-          ツ: "ﾂ",
-          テ: "ﾃ",
-          ト: "ﾄ",
-          ナ: "ﾅ",
-          ニ: "ﾆ",
-          ヌ: "ﾇ",
-          ネ: "ﾈ",
-          ノ: "ﾉ",
-          ハ: "ﾊ",
-          ヒ: "ﾋ",
-          フ: "ﾌ",
-          ヘ: "ﾍ",
-          ホ: "ﾎ",
-          マ: "ﾏ",
-          ミ: "ﾐ",
-          ム: "ﾑ",
-          メ: "ﾒ",
-          モ: "ﾓ",
-          ヤ: "ﾔ",
-          ユ: "ﾕ",
-          ヨ: "ﾖ",
-          ラ: "ﾗ",
-          リ: "ﾘ",
-          ル: "ﾙ",
-          レ: "ﾚ",
-          ロ: "ﾛ",
-          ワ: "ﾜ",
-          ヲ: "ｦ",
-          ン: "ﾝ",
-          ガ: "ｶﾞ",
-          ギ: "ｷﾞ",
-          グ: "ｸﾞ",
-          ゲ: "ｹﾞ",
-          ゴ: "ｺﾞ",
-          ザ: "ｻﾞ",
-          ジ: "ｼﾞ",
-          ズ: "ｽﾞ",
-          ゼ: "ｾﾞ",
-          ゾ: "ｿﾞ",
-          ダ: "ﾀﾞ",
-          ヂ: "ﾁﾞ",
-          ヅ: "ﾂﾞ",
-          デ: "ﾃﾞ",
-          ド: "ﾄﾞ",
-          バ: "ﾊﾞ",
-          ビ: "ﾋﾞ",
-          ブ: "ﾌﾞ",
-          ベ: "ﾍﾞ",
-          ボ: "ﾎﾞ",
-          パ: "ﾊﾟ",
-          ピ: "ﾋﾟ",
-          プ: "ﾌﾟ",
-          ペ: "ﾍﾟ",
-          ポ: "ﾎﾟ",
-          ャ: "ｬ",
-          ュ: "ｭ",
-          ョ: "ｮ",
-          ッ: "ｯ",
-          ー: "ｰ",
-        };
+              try {
+                // ダウンロード処理実行
+                const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+                const link = document.createElement("a");
 
-        return str.replace(/[\u30A1-\u30FF]/g, function (match) {
-          return kanaMap[match] || match;
-        });
-      }
+                if (link.download !== undefined) {
+                  const url = URL.createObjectURL(blob);
+                  link.setAttribute("href", url);
+                  link.setAttribute("download", fileName);
+                  link.style.visibility = "hidden";
+                  document.body.appendChild(link);
+                  link.click();
+                  document.body.removeChild(link);
+                  URL.revokeObjectURL(url);
 
-      /**
-       * 全角数字・全角ハイフンを半角数字・半角ハイフンに変換
-       */
-      function toHalfWidthNumber(str) {
-        return str.replace(/[０-９－]/g, function (match) {
-          if (match === "－") {
-            return "-";
-          }
-          return String.fromCharCode(match.charCodeAt(0) - 65248);
-        });
-      }
-
-      // ===== フォーム初期化 =====
-
-      document.addEventListener("DOMContentLoaded", function () {
-        // FormManagerのインスタンス作成
-        const formManager = new FormManager("MainForm");
-
-        // フィールドの設定
-        formManager
-          // 基本情報
-          .addField(new FormField("name_1", "姓").addValidator(new RequiredValidator()))
-          .addField(new FormField("name_2", "名").addValidator(new RequiredValidator()))
-          .addField(
-            new FormField("name_1_kana", "姓（カナ）")
-              .addValidator(new RequiredValidator())
-              .addValidator(new RegexValidator(VALIDATION_PATTERNS.KANA.regex, VALIDATION_PATTERNS.KANA.message))
-              .addInputTransformer(toHalfWidthKana)
-          )
-          .addField(
-            new FormField("name_2_kana", "名（カナ）")
-              .addValidator(new RequiredValidator())
-              .addValidator(new RegexValidator(VALIDATION_PATTERNS.KANA.regex, VALIDATION_PATTERNS.KANA.message))
-              .addInputTransformer(toHalfWidthKana)
-          )
-          .addField(new FormField("id_sex", "性別").addValidator(new RequiredValidator()))
-          .addField(new FormField("birthday", "生年月日").addValidator(new RequiredValidator()))
-
-          // 住所情報
-          .addField(
-            new PostalCodeField("address_num", "郵便番号", "address_str")
-              .addValidator(new RequiredValidator())
-              .addValidator(
-                new RegexValidator(VALIDATION_PATTERNS.POSTAL_CODE.regex, VALIDATION_PATTERNS.POSTAL_CODE.message)
-              )
-              .addInputTransformer(toHalfWidthNumber)
-          )
-          .addField(
-            new FormField("address_str", "住所").addValidator(new RequiredValidator()).addInputTransformer(toFullWidth)
-          )
-          .addField(new FormField("address_str_building", "建物名").addInputTransformer(toFullWidth)) // 必須ではない
-          .addField(
-            new FormField("address_str_kana", "住所建物名フリガナ")
-              .addValidator(new RequiredValidator())
-              .addValidator(new RegexValidator(VALIDATION_PATTERNS.KANA.regex, VALIDATION_PATTERNS.KANA.message))
-              .addInputTransformer(toHalfWidthKana)
-          )
-
-          // 電話番号
-          .addField(
-            new FormField("tel_home", "電話番号（自宅）")
-              .addValidator(new PhoneEitherRequiredValidator("tel_home", "tel_mobile"))
-              .addValidator(
-                new RegexValidator(VALIDATION_PATTERNS.HOME_PHONE.regex, VALIDATION_PATTERNS.HOME_PHONE.message)
-              )
-              .addInputTransformer(toHalfWidthNumber)
-          )
-          .addField(
-            new FormField("tel_mobile", "電話番号（携帯）")
-              .addValidator(new PhoneEitherRequiredValidator("tel_home", "tel_mobile"))
-              .addValidator(
-                new RegexValidator(VALIDATION_PATTERNS.MOBILE_PHONE.regex, VALIDATION_PATTERNS.MOBILE_PHONE.message)
-              )
-              .addInputTransformer(toHalfWidthNumber)
-          )
-
-          // メールアドレス
-          .addField(
-            new FormField("email_address", "メールアドレス")
-              .addValidator(new RequiredValidator())
-              .addValidator(new RegexValidator(VALIDATION_PATTERNS.EMAIL.regex, VALIDATION_PATTERNS.EMAIL.message))
-          )
-
-          // 学歴情報
-          .addField(
-            new RadioField("education_level", "最終学歴").addValidator(new RadioRequiredValidator("education_level"))
-          )
-
-          // 大学情報
-          .addField(new FormField("daigaku", "大学").addValidator(new RequiredValidator()))
-          .addField(new FormField("gakubu", "学部").addValidator(new RequiredValidator()))
-          .addField(new FormField("gakka", "学科").addValidator(new RequiredValidator()))
-          .addField(new FormField("daigaku_nyugaku_bi", "入学年月日").addValidator(new RequiredValidator()))
-          .addField(new FormField("daigakuin", "大学院")) // 必須ではない
-          .addField(new FormField("kenkyuka", "研究科")) // 必須ではない
-          .addField(new FormField("senkou", "専攻")) // 必須ではない
-
-          // その他
-          .addField(new FormField("koukou_name", "出身高校").addValidator(new RequiredValidator()))
-
-          // 給与受取口座
-          .addField(
-            new FormField("bank_code", "銀行コード")
-              .addValidator(new RequiredValidator())
-              .addValidator(
-                new RegexValidator(VALIDATION_PATTERNS.BANK_CODE.regex, VALIDATION_PATTERNS.BANK_CODE.message)
-              )
-              .addInputTransformer(toHalfWidthNumber)
-          )
-          .addField(new FormField("bank_name", "銀行名").addValidator(new RequiredValidator()))
-          .addField(
-            new FormField("branch_code", "支店コード")
-              .addValidator(new RequiredValidator())
-              .addValidator(
-                new RegexValidator(VALIDATION_PATTERNS.BRANCH_CODE.regex, VALIDATION_PATTERNS.BRANCH_CODE.message)
-              )
-              .addInputTransformer(toHalfWidthNumber)
-          )
-          .addField(new FormField("branch_name", "支店名").addValidator(new RequiredValidator()))
-          .addField(new FormField("account_type", "口座種別").addValidator(new RequiredValidator()))
-          .addField(
-            new FormField("account_number", "口座番号")
-              .addValidator(new RequiredValidator())
-              .addValidator(
-                new RegexValidator(VALIDATION_PATTERNS.ACCOUNT_NUMBER.regex, VALIDATION_PATTERNS.ACCOUNT_NUMBER.message)
-              )
-              .addInputTransformer(toHalfWidthNumber)
-          )
-          .addField(
-            new FormField("account_holder", "口座名義人")
-              .addValidator(new RequiredValidator())
-              .addValidator(new AccountHolderMatchValidator("name_1", "name_2"))
-          )
-          .addField(
-            new FormField("account_holder_kana", "口座名義人フリガナ")
-              .addValidator(new RequiredValidator())
-              .addValidator(new RegexValidator(VALIDATION_PATTERNS.KANA.regex, VALIDATION_PATTERNS.KANA.message))
-              .addValidator(new AccountHolderKanaMatchValidator("name_1_kana", "name_2_kana"))
-              .addInputTransformer(toHalfWidthKana)
-          )
-
-          // 合否判定日
-          .addField(new FormField("gohi_hantei_bi", "合否判定日").addValidator(new RequiredValidator()));
-
-        // チェックボックスフィールドの設定
-        const toshinZaisekiField = new CheckboxField(
-          [
-            "daigaku_juken_toshin_zaisekireki_1",
-            "daigaku_juken_toshin_zaisekireki_2",
-            "daigaku_juken_toshin_zaisekireki_3",
-            "daigaku_juken_toshin_zaisekireki_9",
-          ],
-          "東進在籍歴"
-        ).addValidator(
-          new CheckboxRequiredValidator([
-            "daigaku_juken_toshin_zaisekireki_1",
-            "daigaku_juken_toshin_zaisekireki_2",
-            "daigaku_juken_toshin_zaisekireki_3",
-            "daigaku_juken_toshin_zaisekireki_9",
-          ])
-        );
-
-        formManager.addField(toshinZaisekiField);
-
-        // 確認ボタンのイベントリスナー
-        document.getElementById("confirm-button").addEventListener("click", function () {
-          console.log("フォームバリデーション開始");
-
-          if (formManager.validateAll()) {
-            // バリデーション成功時は確認画面を表示
-            showConfirmation(formManager);
-          } else {
-            console.log("バリデーションエラーが発生しました");
-          }
-        });
-
-        // 戻るボタンのイベントリスナー
-        document.getElementById("back-button").addEventListener("click", function () {
-          backToInput();
-        });
-
-        // CSVボタンのイベントリスナー
-        document.getElementById("csv-button").addEventListener("click", function () {
-          downloadCSV(formManager);
-        });
-
-        // 学歴選択のラジオボタンにイベントリスナーを追加（補強）
-        const educationRadios = document.querySelectorAll('input[name="education_level"]');
-        console.log(`教育レベルのラジオボタンを ${educationRadios.length} 個発見しました`);
-        educationRadios.forEach((radio, index) => {
-          console.log(`ラジオボタン ${index + 1} (ID: ${radio.id}) にイベントリスナーを追加`);
-          radio.addEventListener("change", function () {
-            console.log(`補強イベントリスナーから updateFormVisibility を実行 (選択: ${this.value})`);
-            updateFormVisibility();
-          });
-        });
-
-        // 初期表示状態を設定
-        console.log("初期表示状態を設定中...");
-        updateFormVisibility();
-
-        console.log("フォームが初期化されました");
-      });
-
-      // バージョン情報
-      const FORM_VERSION = "1.0.0";
-
-      // ===== 学歴に応じた表示制御 =====
-
-      /**
-       * 学歴選択に応じてフォームセクションの表示を制御
-       */
-      function updateFormVisibility() {
-        console.log("updateFormVisibility が呼ばれました");
-
-        const educationLevel = document.querySelector('input[name="education_level"]:checked')?.value;
-        console.log("選択された学歴レベル:", educationLevel);
-
-        // 大学についてのfieldsetを検索
-        const allFieldsets = document.querySelectorAll("fieldset");
-        let universityFieldset = null;
-        for (const fieldset of allFieldsets) {
-          const legend = fieldset.querySelector("legend");
-          if (legend && legend.textContent.includes("大学について")) {
-            universityFieldset = fieldset;
-            break;
-          }
-        }
-
-        // 出身高校のフィールドを検索
-        const allFormItems = document.querySelectorAll(".Form-Item");
-        let highSchoolField = null;
-        for (const item of allFormItems) {
-          const label = item.querySelector(".Form-Item-Label");
-          if (label && label.textContent.includes("出身高校")) {
-            highSchoolField = item;
-            break;
-          }
-        }
-
-        console.log("universityFieldset:", universityFieldset);
-        console.log("highSchoolField:", highSchoolField);
-
-        switch (educationLevel) {
-          case "1": // 大学
-            console.log("大学選択 - すべて表示");
-            // すべて表示
-            if (universityFieldset) {
-              universityFieldset.style.display = "block";
-              clearUniversityFields();
+                  // ダウンロード処理が実行されたことを通知
+                  showDownloadAttemptNotification(fileName);
+                } else {
+                  showDownloadErrorNotification("お使いのブラウザではダウンロード機能がサポートされていません。");
+                }
+              } catch (error) {
+                showDownloadErrorNotification("CSVファイル作成中にエラーが発生しました：" + error.message);
+              }
             }
-            if (highSchoolField) {
-              highSchoolField.style.display = "block";
-              clearHighSchoolField();
+
+            // ダウンロード処理実行通知を表示
+            function showDownloadAttemptNotification(fileName) {
+              const notification = document.getElementById("download-notification");
+              const filenameDiv = document.getElementById("download-filename");
+
+              // エラー通知を非表示にする
+              const errorNotification = document.getElementById("download-error-notification");
+              if (errorNotification) {
+                errorNotification.style.display = "none";
+              }
+
+              if (notification && filenameDiv) {
+                filenameDiv.textContent = `ファイル名: ${fileName}`;
+                notification.style.display = "block";
+
+                // 通知が見えるようにスクロール
+                notification.scrollIntoView({ behavior: "smooth", block: "center" });
+              }
             }
-            break;
 
-          case "2": // 短大・専門
-          case "3": // 高校
-            console.log("短大・専門または高校選択 - 大学セクション非表示");
-            // 大学セクションのみ非表示
-            if (universityFieldset) {
-              universityFieldset.style.display = "none";
-              fillUniversityFields();
+            // ダウンロード通知を表示（後方互換性のため）
+            function showDownloadNotification(fileName) {
+              showDownloadAttemptNotification(fileName);
             }
-            if (highSchoolField) {
-              highSchoolField.style.display = "block";
-              clearHighSchoolField();
+
+            // ダウンロード通知を非表示
+            function hideDownloadNotification() {
+              const notification = document.getElementById("download-notification");
+              const errorNotification = document.getElementById("download-error-notification");
+
+              if (notification) {
+                notification.style.display = "none";
+              }
+              if (errorNotification) {
+                errorNotification.style.display = "none";
+              }
             }
-            break;
 
-          case "4": // 中学
-            console.log("中学選択 - 大学セクションと出身高校を非表示");
-            // 大学セクションと出身高校を非表示
-            if (universityFieldset) {
-              universityFieldset.style.display = "none";
-              fillUniversityFields();
+            // ダウンロード失敗通知を表示
+            function showDownloadErrorNotification(errorMessage) {
+              const errorNotification = document.getElementById("download-error-notification");
+              const errorMessageDiv = document.getElementById("download-error-message");
+
+              // 成功通知を非表示にする
+              const successNotification = document.getElementById("download-notification");
+              if (successNotification) {
+                successNotification.style.display = "none";
+              }
+
+              if (errorNotification && errorMessageDiv) {
+                errorMessageDiv.textContent = errorMessage;
+                errorNotification.style.display = "block";
+
+                // 通知が見えるようにスクロール
+                errorNotification.scrollIntoView({ behavior: "smooth", block: "center" });
+              }
             }
-            if (highSchoolField) {
-              highSchoolField.style.display = "none";
-              fillHighSchoolField();
-            }
-            break;
-
-          default:
-            console.log("選択なし - すべて表示");
-            // 選択なしの場合はすべて表示
-            if (universityFieldset) {
-              universityFieldset.style.display = "block";
-              clearUniversityFields();
-            }
-            if (highSchoolField) {
-              highSchoolField.style.display = "block";
-              clearHighSchoolField();
-            }
-            break;
-        }
-      }
-
-      /**
-       * 大学関連フィールドに「なし」と「0001/01/01」を自動入力
-       */
-      function fillUniversityFields() {
-        console.log("大学フィールドに自動入力実行");
-        const textFields = ["daigaku", "gakubu", "gakka", "daigakuin", "kenkyuka", "senkou"];
-        const dateFields = ["daigaku_nyugaku_bi"];
-
-        textFields.forEach((fieldId) => {
-          const element = document.getElementById(fieldId);
-          if (element) {
-            element.value = "なし";
-            console.log(`${fieldId} に "なし" を入力`);
-          } else {
-            console.log(`${fieldId} 要素が見つかりません`);
-          }
-        });
-
-        dateFields.forEach((fieldId) => {
-          const element = document.getElementById(fieldId);
-          if (element) {
-            element.value = "0001-01-01";
-            console.log(`${fieldId} に "0001-01-01" を入力`);
-          } else {
-            console.log(`${fieldId} 要素が見つかりません`);
-          }
-        });
-      }
-
-      /**
-       * 大学関連フィールドをクリア
-       */
-      function clearUniversityFields() {
-        console.log("大学フィールドをクリア実行");
-        const allFields = ["daigaku", "gakubu", "gakka", "daigaku_nyugaku_bi", "daigakuin", "kenkyuka", "senkou"];
-
-        allFields.forEach((fieldId) => {
-          const element = document.getElementById(fieldId);
-          if (element) {
-            element.value = "";
-            console.log(`${fieldId} をクリア`);
-          }
-        });
-      }
-
-      /**
-       * 出身高校フィールドに「なし」を自動入力
-       */
-      function fillHighSchoolField() {
-        console.log("出身高校フィールドに自動入力実行");
-        const element = document.getElementById("koukou_name");
-        if (element) {
-          element.value = "なし";
-          console.log('koukou_name に "なし" を入力');
-        } else {
-          console.log("koukou_name 要素が見つかりません");
-        }
-      }
-
-      /**
-       * 出身高校フィールドをクリア
-       */
-      function clearHighSchoolField() {
-        console.log("出身高校フィールドをクリア実行");
-        const element = document.getElementById("koukou_name");
-        if (element) {
-          element.value = "";
-          console.log("koukou_name をクリア");
-        }
-      }
-
-      // 確認画面表示機能
-      function showConfirmation(formManager) {
-        // 入力内容を収集
-        const formData = collectFormData(formManager);
-
-        // 確認画面のHTMLを生成
-        const confirmationHTML = generateConfirmationHTML(formData);
-
-        // 確認画面に表示
-        document.getElementById("confirmationData").innerHTML = confirmationHTML;
-
-        // ダウンロード通知を非表示にする（前回の通知が残っている場合）
-        hideDownloadNotification();
-
-        // 画面切り替え
-        document.querySelector(".Form").style.display = "none";
-        document.getElementById("confirmationScreen").style.display = "block";
-
-        // 確認画面の先頭にスクロール
-        document.getElementById("confirmationScreen").scrollIntoView({ behavior: "smooth" });
-      }
-
-      // 入力画面に戻る
-      function backToInput() {
-        document.getElementById("confirmationScreen").style.display = "none";
-        document.querySelector(".Form").style.display = "block";
-
-        // ダウンロード通知を非表示にする
-        hideDownloadNotification();
-
-        // 入力画面の先頭にスクロール
-        document.querySelector(".Form").scrollIntoView({ behavior: "smooth" });
-      }
-
-      // フォームデータ収集
-      function collectFormData(formManager) {
-        // 東進在籍歴のチェックボックス値を取得
-        const toshinZaiseki = [];
-        if (document.getElementById("daigaku_juken_toshin_zaisekireki_1")?.checked)
-          toshinZaiseki.push("東進ハイスクール");
-        if (document.getElementById("daigaku_juken_toshin_zaisekireki_2")?.checked)
-          toshinZaiseki.push("東進衛星予備校");
-        if (document.getElementById("daigaku_juken_toshin_zaisekireki_3")?.checked) toshinZaiseki.push("東大特進");
-        if (document.getElementById("daigaku_juken_toshin_zaisekireki_9")?.checked) toshinZaiseki.push("在籍なし");
-
-        // 口座種別の値を文字列に変換
-        function getAccountType(value) {
-          switch (value) {
-            case "1":
-              return "普通預金";
-            case "2":
-              return "当座預金";
-            default:
-              return "";
-          }
-        }
-
-        // 性別の値を文字列に変換
-        function getSex(value) {
-          switch (value) {
-            case "1":
-              return "男性";
-            case "2":
-              return "女性";
-            default:
-              return "";
-          }
-        }
-
-        // 学歴の値を文字列に変換
-        function getEducationLevel(value) {
-          switch (value) {
-            case "1":
-              return "1.大学・大学院・大学生・大学院生・大学入学予定";
-            case "2":
-              return "2.短大・専門学校";
-            case "3":
-              return "3.高等学校卒業・高校生";
-            case "4":
-              return "4.中学校卒業";
-            default:
-              return "";
-          }
-        }
-
-        // 値のトリム処理を行うヘルパー関数
-        function trimValue(value) {
-          if (typeof value === "string") {
-            // 半角・全角スペースを除去
-            return value.replace(/^[\s　]+|[\s　]+$/g, "");
-          }
-          return value;
-        }
-
-        // 日付をyyyy/mm/dd形式に変換するヘルパー関数
-        function formatDate(value) {
-          if (!value || value.trim() === "") {
-            return "";
-          }
-          // YYYY-MM-DD形式をYYYY/MM/DD形式に変換
-          return value.replace(/-/g, "/");
-        }
-
-        return {
-          バージョン: FORM_VERSION,
-          作成日時: new Date().toLocaleString("ja-JP"),
-          姓: trimValue(document.getElementById("name_1")?.value || ""),
-          名: trimValue(document.getElementById("name_2")?.value || ""),
-          姓フリガナ: trimValue(document.getElementById("name_1_kana")?.value || ""),
-          名フリガナ: trimValue(document.getElementById("name_2_kana")?.value || ""),
-          性別: getSex(document.getElementById("id_sex")?.value),
-          生年月日: formatDate(document.getElementById("birthday")?.value || ""),
-          郵便番号: trimValue(document.getElementById("address_num")?.value || ""),
-          住所: trimValue(document.getElementById("address_str")?.value || ""),
-          建物名: trimValue(document.getElementById("address_str_building")?.value || ""),
-          住所建物名フリガナ: trimValue(document.getElementById("address_str_kana")?.value || ""),
-          "電話番号(自宅)": trimValue(document.getElementById("tel_home")?.value || ""),
-          "電話番号(携帯)": trimValue(document.getElementById("tel_mobile")?.value || ""),
-          メールアドレス: trimValue(document.getElementById("email_address")?.value || ""),
-          最終学歴: getEducationLevel(document.querySelector('input[name="education_level"]:checked')?.value),
-          大学: trimValue(document.getElementById("daigaku")?.value || ""),
-          学部: trimValue(document.getElementById("gakubu")?.value || ""),
-          学科: trimValue(document.getElementById("gakka")?.value || ""),
-          入学年月日: formatDate(document.getElementById("daigaku_nyugaku_bi")?.value || ""),
-          大学院: trimValue(document.getElementById("daigakuin")?.value || ""),
-          研究科: trimValue(document.getElementById("kenkyuka")?.value || ""),
-          専攻: trimValue(document.getElementById("senkou")?.value || ""),
-          東進在籍歴: toshinZaiseki.join("、"),
-          出身高校: trimValue(document.getElementById("koukou_name")?.value || ""),
-          銀行コード: trimValue(document.getElementById("bank_code")?.value || ""),
-          銀行名: trimValue(document.getElementById("bank_name")?.value || ""),
-          支店コード: trimValue(document.getElementById("branch_code")?.value || ""),
-          支店名: trimValue(document.getElementById("branch_name")?.value || ""),
-          口座種別: getAccountType(document.getElementById("account_type")?.value),
-          口座番号: trimValue(document.getElementById("account_number")?.value || ""),
-          口座名義人: trimValue(document.getElementById("account_holder")?.value || ""),
-          口座名義人フリガナ: trimValue(document.getElementById("account_holder_kana")?.value || ""),
-          合否判定日: formatDate(document.getElementById("gohi_hantei_bi")?.value || ""),
-        };
-      }
-
-      // 確認画面HTML生成
-      function generateConfirmationHTML(data) {
-        let html = '<table class="confirmation-table">';
-
-        // 学歴に応じて表示する項目を決定
-        const educationLevel = document.querySelector('input[name="education_level"]:checked')?.value;
-        const hiddenUniversityFields = ["大学", "学部", "学科", "入学年月日", "大学院", "研究科", "専攻"];
-        const hiddenHighSchoolFields = ["出身高校"];
-
-        for (const [key, value] of Object.entries(data)) {
-          // バージョン情報は確認画面では非表示
-          if (key === "バージョン") continue;
-
-          // 学歴に応じて非表示にする項目をスキップ
-          let shouldHide = false;
-
-          if (educationLevel === "2" || educationLevel === "3") {
-            // 短大・専門、高校の場合：大学関連項目を非表示
-            if (hiddenUniversityFields.includes(key)) {
-              shouldHide = true;
-            }
-          } else if (educationLevel === "4") {
-            // 中学の場合：大学関連項目と出身高校を非表示
-            if (hiddenUniversityFields.includes(key) || hiddenHighSchoolFields.includes(key)) {
-              shouldHide = true;
-            }
-          }
-
-          if (!shouldHide && value && value.trim() !== "") {
-            html += `
-                        <tr>
-                            <td>${key}</td>
-                            <td>${value}</td>
-                        </tr>
-                    `;
-          }
-        }
-
-        html += "</table>";
-        return html;
-      }
-
-      // CSVダウンロード機能
-      async function downloadCSV(formManager) {
-        // フォームデータを収集
-        const formData = collectFormData(formManager);
-
-        // CSVヘッダーとデータを作成
-        const headers = Object.keys(formData);
-        const values = Object.values(formData);
-
-        // CSVコンテンツを作成（BOM付きUTF-8）
-        let csvContent = "\uFEFF"; // BOM
-        // 1行目：見出し
-        csvContent += headers.map((header) => `"${header}"`).join(",") + "\n";
-        // 2行目：値
-        csvContent += values.map((value) => `"${value.toString().replace(/"/g, '""')}"`).join(",") + "\n";
-
-        // ファイル名生成
-        const lastName = formData["姓"] || "unnamed";
-        const firstName = formData["名"] || "";
-        const name = lastName + firstName;
-        const gohiHanteiDate = formData["合否判定日"] || "";
-        const fileName = `${gohiHanteiDate}合判_${name}_応募者情報提出シート.csv`;
-
-        try {
-          // ダウンロード処理実行
-          const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-          const link = document.createElement("a");
-
-          if (link.download !== undefined) {
-            const url = URL.createObjectURL(blob);
-            link.setAttribute("href", url);
-            link.setAttribute("download", fileName);
-            link.style.visibility = "hidden";
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
-
-            // ダウンロード処理が実行されたことを通知
-            showDownloadAttemptNotification(fileName);
-          } else {
-            showDownloadErrorNotification("お使いのブラウザではダウンロード機能がサポートされていません。");
-          }
-        } catch (error) {
-          showDownloadErrorNotification("CSVファイル作成中にエラーが発生しました：" + error.message);
-        }
-      }
-
-      // ダウンロード処理実行通知を表示
-      function showDownloadAttemptNotification(fileName) {
-        const notification = document.getElementById("download-notification");
-        const filenameDiv = document.getElementById("download-filename");
-
-        // エラー通知を非表示にする
-        const errorNotification = document.getElementById("download-error-notification");
-        if (errorNotification) {
-          errorNotification.style.display = "none";
-        }
-
-        if (notification && filenameDiv) {
-          filenameDiv.textContent = `ファイル名: ${fileName}`;
-          notification.style.display = "block";
-
-          // 通知が見えるようにスクロール
-          notification.scrollIntoView({ behavior: "smooth", block: "center" });
-        }
-      }
-
-      // ダウンロード通知を表示（後方互換性のため）
-      function showDownloadNotification(fileName) {
-        showDownloadAttemptNotification(fileName);
-      }
-
-      // ダウンロード通知を非表示
-      function hideDownloadNotification() {
-        const notification = document.getElementById("download-notification");
-        const errorNotification = document.getElementById("download-error-notification");
-
-        if (notification) {
-          notification.style.display = "none";
-        }
-        if (errorNotification) {
-          errorNotification.style.display = "none";
-        }
-      }
-
-      // ダウンロード失敗通知を表示
-      function showDownloadErrorNotification(errorMessage) {
-        const errorNotification = document.getElementById("download-error-notification");
-        const errorMessageDiv = document.getElementById("download-error-message");
-
-        // 成功通知を非表示にする
-        const successNotification = document.getElementById("download-notification");
-        if (successNotification) {
-          successNotification.style.display = "none";
-        }
-
-        if (errorNotification && errorMessageDiv) {
-          errorMessageDiv.textContent = errorMessage;
-          errorNotification.style.display = "block";
-
-          // 通知が見えるようにスクロール
-          errorNotification.scrollIntoView({ behavior: "smooth", block: "center" });
-        }
-      }
     </script>
   </body>
 </html>
